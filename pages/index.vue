@@ -24,7 +24,8 @@ import {
   ShieldCheckIcon,
   SpeakerWaveIcon,
   BoltSlashIcon,
-  CommandLineIcon
+  CommandLineIcon,
+  GlobeAltIcon
 } from '@heroicons/vue/24/outline'
 
   gsap.registerPlugin(ScrollTrigger)
@@ -81,7 +82,7 @@ import {
     description: 'Diagnosa dan perbaikan masalah sistem operasi & aplikasi'
   },
   { 
-    icon: CommandLineIcon,
+    icon: GlobeAltIcon,
     title: 'Perbaikan lainnya',
     description: 'Penanganan kerusakan perangkat lainnya'
   }
