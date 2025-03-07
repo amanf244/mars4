@@ -4,7 +4,9 @@
       <Navbar />
       <HeroSection />
       <ServicesSection :services="services" />
-      <ProductsSection :products="products" />
+      <!-- <ProductsSection :products="products" /> -->
+      <AboutSection />
+      <GallerySection />
       <CtaSection />
     </div>
   </template>

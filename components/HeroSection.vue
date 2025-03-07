@@ -11,20 +11,22 @@
              :ref="`particle${i}`"></div>
       </div>
 
-      <!-- Screw (Sekrup) -->
-      <div ref="screw" class="absolute left-10 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-gray-700 rounded-full shadow-xl cursor-pointer flex items-center justify-center">
-        <svg class="w-6 h-6 text-white" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" stroke="white" stroke-width="10" fill="none"/>
-          <line x1="20" y1="50" x2="80" y2="50" stroke="white" stroke-width="10"/>
-          <line x1="50" y1="20" x2="50" y2="80" stroke="white" stroke-width="10"/>
-        </svg>
-      </div>
-
-      <!-- Phone -->
-      <div ref="phone" class="absolute right-10 w-40 h-72 md:w-48 md:h-80 bg-gray-800 rounded-3xl border-4 border-gray-700 transform-gpu phone-3d shadow-2xl">
+      <!-- Phone Left -->
+      <div ref="phoneLeft" class="absolute left-10 w-40 h-72 md:w-48 md:h-80 bg-gray-800 rounded-3xl border-4 border-gray-700 transform-gpu phone-3d shadow-2xl">
         <div class="absolute top-2 left-1/2 -translate-x-1/2 w-4 h-1 bg-gray-600 rounded"></div>
         <div class="absolute inset-2 bg-gray-700 rounded-xl overflow-hidden">
-          <div ref="crack" class="absolute w-full h-full">
+          <div ref="crackLeft" class="absolute w-full h-full">
+            <div class="absolute w-1 h-8 bg-red-500/80 right-1/4 top-1/3 rotate-45 animate-pulse"></div>
+            <div class="absolute w-1 h-8 bg-red-500/80 left-1/4 top-2/3 -rotate-45 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone Right -->
+      <div ref="phoneRight" class="absolute right-10 w-40 h-72 md:w-48 md:h-80 bg-gray-800 rounded-3xl border-4 border-gray-700 transform-gpu phone-3d shadow-2xl">
+        <div class="absolute top-2 left-1/2 -translate-x-1/2 w-4 h-1 bg-gray-600 rounded"></div>
+        <div class="absolute inset-2 bg-gray-700 rounded-xl overflow-hidden">
+          <div ref="crackRight" class="absolute w-full h-full">
             <div class="absolute w-1 h-8 bg-red-500/80 left-1/4 top-1/3 rotate-45 animate-pulse"></div>
             <div class="absolute w-1 h-8 bg-red-500/80 right-1/4 top-2/3 -rotate-45 animate-pulse"></div>
           </div>
@@ -45,12 +47,12 @@
       <div class="relative container mx-auto px-5 text-center z-10">
         <h1 ref="title" class="text-4xl md:text-6xl font-bold mb-6 opacity-0">
           <span class="bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
-            Smartphone Repair<br>& Sparepart Specialist
+            Perbaikan Smartphone<br>& Pembelian Sparepart
           </span>
         </h1>
         
         <p ref="subtitle" class="text-lg md:text-xl text-gray-300 mb-8 opacity-0">
-          Fast Repair Service • Original Parts • 6 Months Warranty
+          Service cepat • Part original • Bergaransi
         </p>
 
         <div class="flex flex-col md:flex-row gap-4 justify-center">
@@ -78,32 +80,42 @@ export default {
     const container = ref(null)
     const title = ref(null)
     const subtitle = ref(null)
-    const phone = ref(null)
+    const phoneLeft = ref(null)
+    const phoneRight = ref(null)
     const tools = ref(null)
-    const crack = ref(null)
+    const crackLeft = ref(null)
+    const crackRight = ref(null)
     const battery = ref(null)
     const screen = ref(null)
-    const screw = ref(null)  // Tambahan screw
 
     const initAnimations = () => {
       const isMobile = window.innerWidth < 768
       const masterTL = gsap.timeline()
 
-      masterTL.from(phone.value, { x: isMobile ? 100 : 300, rotate: isMobile ? 10 : 20, duration: 1.5, ease: "elastic.out(1, 0.3)" })
+     // Animate both phones simultaneously
+     masterTL.from([phoneLeft.value, phoneRight.value], {
+        x: isMobile ? 100 : 300,
+        rotate: isMobile ? 10 : 20,
+        duration: 1.5,
+        ease: "elastic.out(1, 0.3)",
+        stagger: 0 // Remove stagger for simultaneous animation
+      })
 
-      masterTL.from(crack.value.children, { scaleY: 0, stagger: 0.3, duration: 0.8, ease: "power4.out" })
-
-      masterTL.from([tools.value, battery.value, screen.value, screw.value], { opacity: 0, y: 50, stagger: 0.2, duration: 0.8, ease: "back.out(1.7)" })
+      // Animate cracks for both phones
+      masterTL.from([crackLeft.value.children, crackRight.value.children], {
+        scaleY: 0,
+        stagger: 0,
+        duration: 1,
+        ease: "power4.out"
+      }, "<") // Start with previous animation
 
       masterTL.to(title.value, { opacity: 1, y: 0, duration: 1, ease: "power4.out" })
       masterTL.to(subtitle.value, { opacity: 1, duration: 1 }, "-=0.5")
-
-      gsap.to(screw.value, { rotation: 360, duration: 5, repeat: -1, ease: "linear", transformOrigin: "center center" })
     }
 
     onMounted(() => initAnimations())
 
-    return { container, title, subtitle, phone, tools, crack, battery, screen, screw }
+    return { container, title, subtitle, phoneLeft, tools, crackLeft, crackRight, battery, screen, phoneRight }
   }
 }
 </script>
