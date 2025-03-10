@@ -5,8 +5,8 @@
       <HeroSection />
       <ServicesSection :services="services" />
       <!-- <ProductsSection :products="products" /> -->
-      <AboutSection />
       <GallerySection />
+      <AboutSection />
       <CtaSection />
     </div>
   </template>

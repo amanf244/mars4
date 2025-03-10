@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section ref="container" class="relative bg-gray-900 text-white h-screen overflow-hidden flex items-center">
+    <section id="home" ref="container" class="relative bg-gray-900 text-white h-screen overflow-hidden flex items-center">
       <!-- Gradient Overlay -->
       <div class="absolute inset-0 hero-gradient opacity-50"></div>
       

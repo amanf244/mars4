@@ -1,5 +1,11 @@
 <template>
-  <nav class="fixed w-full z-50 bg-black/50 backdrop-blur-md">
+  <nav 
+    class="fixed w-full z-50 transition-all duration-500"
+    :class="{
+      'bg-black/80 backdrop-blur-lg': activeSection && activeSection !== 'home',
+      'bg-transparent backdrop-blur-none': !activeSection || activeSection === 'home'
+    }"
+  >
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
       <div class="text-2xl font-bold text-purple-400">MARS4</div>
 
@@ -55,47 +61,54 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const isOpen = ref(false)
 const activeSection = ref(null)
 const sections = {
   services: 'Layanan',
-  products: 'Produk',
+  gallery: 'Galeri',
   about: 'Tentang',
   contact: 'Kontak'
 }
 
-// Handle smooth scroll dan update section aktif
 const handleClick = (id) => {
   const element = document.getElementById(id)
   if (element) {
-    element.scrollIntoView({ behavior: 'smooth' })
+    const yOffset = -64
+    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+    window.scrollTo({ top: y, behavior: 'smooth' })
     activeSection.value = id
   }
-  isOpen.value = false // Tutup menu mobile setelah klik
+  isOpen.value = false
 }
 
-// Setup Intersection Observer untuk deteksi section aktif
+const observer = ref(null)
+
 onMounted(() => {
-  const observer = new IntersectionObserver(
+  observer.value = new IntersectionObserver(
     (entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-          activeSection.value = entry.target.id
+        if (entry.isIntersecting) {
+          activeSection.value = entry.target.id === 'home' ? null : entry.target.id
         }
       })
     },
     {
-      threshold: 0.5,
-      rootMargin: '0px 0px -50% 0px'
+      threshold: 0.2,
+      rootMargin: '-25% 0px -25% 0px'
     }
   )
 
-  // Observe semua section
-  Object.keys(sections).forEach(id => {
+  // Observe semua section termasuk home
+  const allSections = ['home', ...Object.keys(sections)]
+  allSections.forEach(id => {
     const section = document.getElementById(id)
-    if (section) observer.observe(section)
+    if (section) observer.value.observe(section)
   })
+})
+
+onUnmounted(() => {
+  if (observer.value) observer.value.disconnect()
 })
 </script>

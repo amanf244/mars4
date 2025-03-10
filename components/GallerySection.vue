@@ -1,100 +1,130 @@
 <template>
-    <section id="gallery" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
-      <div class="max-w-7xl mx-auto">
-        <h2 class="text-3xl font-bold text-white mb-12 text-center">
-          <span class="bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
-            Hasil Pekerjaan Kami
-          </span>
-        </h2>
-  
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          <div 
-            v-for="(item, index) in galleryItems" 
-            :key="index"
-            class="group relative overflow-hidden rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
-          >
+  <section id="gallery" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-bold text-white mb-12 text-center">
+        <span class="bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
+          Hasil Pekerjaan Kami
+        </span>
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div 
+          v-for="(item, index) in galleryItems" 
+          :key="index"
+          class="group relative overflow-hidden rounded-xl transform transition-all duration-500 hover:z-10"
+          style="perspective: 1000px;"
+        >
+          <div class="relative h-64 transform transition-all duration-500 group-hover:scale-[1.02] will-change-transform">
             <img 
               :src="item.image" 
               :alt="item.caption"
-              class="w-full h-64 object-cover transform transition-all duration-300 group-hover:brightness-75"
+              :data-zoom-caption="`${item.title}\n${item.caption}\n${item.text}`"
+              loading="lazy"
+              class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110 cursor-zoom-in"
+              style="transform-origin: center center;"
             />
-            <div class="absolute inset-0 flex items-end bg-gradient-to-t from-black/60 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p class="text-white text-sm font-medium">{{ item.caption }}</p>
-            </div>
+            <!-- Overlay dengan judul, caption dan teks deskripsi -->
+            <div class="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-4 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none">
+  <h3 class="text-white text-xl font-bold mb-1">{{ item.title }}</h3>
+  <p class="text-white text-lg mb-1">{{ item.caption }}</p>
+  <p class="text-gray-300 text-sm">{{ item.text }}</p>
+</div>
+            <div class="absolute inset-0 border-2 border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"></div>
           </div>
         </div>
       </div>
-    </section>
-  </template>
+    </div>
+  </section>
+</template>
   
-  <script setup>
-  import { onMounted } from 'vue'
-  import { gsap } from 'gsap'
-  
-  const galleryItems = [
-    { 
-      image: 'https://picsum.photos/400/300?random=1',
-      caption: 'Penggantian Layar iPhone'
+<script setup>
+import { onMounted } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import mediumZoom from 'medium-zoom'
+gsap.registerPlugin(ScrollTrigger)
+
+// Contoh data gallery dengan properti tambahan: title dan text
+const galleryItems = [
+  { 
+    image: '/gallery/redmi9_emmc.jpg', 
+    title: 'Judul Pekerjaan 1', 
+    caption: 'Pergantian eMMC', 
+    text: 'Upgrade 6/128 untuk performa lebih baik.' 
+  },
+  { 
+    image: 'https://picsum.photos/400/300?random=2', 
+    title: 'Judul Pekerjaan 2', 
+    caption: 'Reparasi Port Charging', 
+    text: 'Port charging diperbaiki untuk koneksi optimal.' 
+  },
+  { 
+    image: 'https://picsum.photos/400/300?random=3', 
+    title: 'Judul Pekerjaan 3', 
+    caption: 'Pembersihan Internal', 
+    text: 'Pembersihan komponen internal untuk mencegah overheating.' 
+  },
+  { 
+    image: 'https://picsum.photos/400/300?random=4', 
+    title: 'Judul Pekerjaan 4', 
+    caption: 'Penggantian Baterai', 
+    text: 'Baterai lama diganti dengan yang baru untuk daya tahan lebih lama.' 
+  },
+  { 
+    image: 'https://picsum.photos/400/300?random=5', 
+    title: 'Judul Pekerjaan 5', 
+    caption: 'Reparasi Kamera', 
+    text: 'Kamera diperbaiki untuk hasil foto yang lebih jernih.' 
+  },
+  { 
+    image: 'https://picsum.photos/400/300?random=6', 
+    title: 'Judul Pekerjaan 6', 
+    caption: 'Pemulihan Data', 
+    text: 'Data yang hilang berhasil dipulihkan dengan aman.' 
+  },
+  { 
+    image: 'https://picsum.photos/400/300?random=7', 
+    title: 'Judul Pekerjaan 7', 
+    caption: 'Update Software', 
+    text: 'Pembaruan software untuk meningkatkan performa sistem.' 
+  },
+  { 
+    image: 'https://picsum.photos/400/300?random=8', 
+    title: 'Judul Pekerjaan 8', 
+    caption: 'Perbaikan Speaker', 
+    text: 'Speaker diperbaiki untuk kualitas audio yang lebih baik.' 
+  }
+]
+
+onMounted(() => {
+  gsap.fromTo('.group', 
+    {
+      opacity: 0,
+      y: 40,
+      scale: 0.95
     },
-    { 
-      image: 'https://picsum.photos/400/300?random=2',
-      caption: 'Reparasi Port Charging'
-    },
-    { 
-      image: 'https://picsum.photos/400/300?random=3',
-      caption: 'Pembersihan Internal'
-    },
-    { 
-      image: 'https://picsum.photos/400/300?random=4',
-      caption: 'Penggantian Baterai'
-    },
-    { 
-      image: 'https://picsum.photos/400/300?random=5',
-      caption: 'Reparasi Kamera'
-    },
-    { 
-      image: 'https://picsum.photos/400/300?random=6',
-      caption: 'Pemulihan Data'
-    },
-    { 
-      image: 'https://picsum.photos/400/300?random=7',
-      caption: 'Update Software'
-    },
-    { 
-      image: 'https://picsum.photos/400/300?random=8',
-      caption: 'Perbaikan Speaker'
-    }
-  ]
-  
-  onMounted(() => {
-    // gsap.utils.toArray('.gallery-group').forEach((item, i) => {
-    //   gsap.from(item, {
-    //     scrollTrigger: {
-    //       trigger: item,
-    //       start: "top center+=100"
-    //     },
-    //     opacity: 0,
-    //     y: 50,
-    //     duration: 0.8,
-    //     delay: i * 0.1
-    //   })
-    // })
-    gsap.fromTo('.group', 
-      {
-        opacity: 0,
-        y: 40
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.3,
-        ease: 'back.out(1.2)',
-        scrollTrigger: {
-          trigger: '#gallery',
-          start: 'top center+=100'
-        }
+    {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.8,
+      stagger: 0.3,
+      ease: 'back.out(1.7)',
+      scrollTrigger: {
+        trigger: '#gallery',
+        start: 'top center+=100',
+        end: 'bottom center',
+        toggleActions: 'play none none none'
       }
-    )
-  })
-  </script>
+    }
+  )
+  
+  // Inisialisasi medium-zoom dengan delay untuk memastikan semua gambar telah termuat
+  setTimeout(() => {
+    mediumZoom('.group img', {
+      margin: 24,
+      background: '#000'
+    })
+  }, 500)
+})
+</script>
