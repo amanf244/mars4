@@ -7,8 +7,14 @@
     }"
   >
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="text-2xl font-bold text-purple-400">MARS4</div>
-
+       <!-- Logo yang bisa diklik -->
+       <a 
+        href="#home" 
+        @click.prevent="handleClick('home')"
+        class="text-2xl font-bold text-purple-400 hover:text-purple-300 transition-colors cursor-pointer"
+      >
+        Aldep 4
+      </a>
       <!-- Desktop Menu -->
       <div class="space-x-8 text-gray-300 hidden md:flex">
         <a 

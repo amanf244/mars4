@@ -1,21 +1,28 @@
 <template>
-    <!-- <div class="min-h-screen bg-gradient-to-b from-gray-900 to-purple-900"> -->
-    <div class="min-h-screen bg-gray-900">
+  <div class="min-h-screen bg-gray-900">
+    <!-- Tampilkan loading state saat isLoading true -->
+    <div v-if="isLoading" class="flex justify-center items-center h-screen">
+      <!-- Anda dapat mengganti teks ini dengan komponen spinner yang lebih menarik -->
+      <div class="text-white text-xl">Loading...</div>
+    </div>
+    <!-- Tampilkan konten utama setelah loading selesai -->
+    <div v-else>
       <Navbar />
       <HeroSection />
       <ServicesSection :services="services" />
-      <!-- <ProductsSection :products="products" /> -->
-      <GallerySection />
       <AboutSection />
+      <GallerySection />
       <CtaSection />
     </div>
-  </template>
-  
-  <script setup>
-  import { gsap } from 'gsap'
-  import { ScrollTrigger } from 'gsap/ScrollTrigger'
-  
-  // Import ikon dari Heroicons
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+// Import ikon dari Heroicons
 import {
   DevicePhoneMobileIcon,
   Battery100Icon,
@@ -30,13 +37,30 @@ import {
   GlobeAltIcon
 } from '@heroicons/vue/24/outline'
 
-  gsap.registerPlugin(ScrollTrigger)
-  
-  const services = [
+gsap.registerPlugin(ScrollTrigger)
+
+// Variabel untuk loading state
+const isLoading = ref(true)
+
+onMounted(() => {
+  // Pilihan 1: Gunakan event 'load' untuk memastikan semua aset telah terunduh
+  // window.addEventListener('load', () => {
+  //   isLoading.value = false
+  // })
+  isLoading.value = false
+
+  // Pilihan 2: Jika Anda ingin mensimulasikan dengan delay
+  // setTimeout(() => {
+  //   isLoading.value = false
+  // }, 2000)
+})
+
+const services = [
   { 
     icon: DevicePhoneMobileIcon,
     title: 'Ganti Layar',
-    description: 'Layar berkualitas premium dengan garansi resmi'
+    description: 'Layar berkualitas premium dengan garansi resmi',
+    startingPrice: '150K'
   },
   { 
     icon: Battery100Icon,
@@ -89,11 +113,11 @@ import {
     description: 'Penanganan kerusakan perangkat lainnya'
   }
 ]
-  
-  const products = [
-    { name: 'OLED Display', price: '$99' },
-    { name: 'Wireless Charger', price: '$29' },
-    { name: 'Protective Case', price: '$15' },
-    { name: 'Premium Cables', price: '$12' }
-  ]
-  </script>
+
+const products = [
+  { name: 'OLED Display', price: '$99' },
+  { name: 'Wireless Charger', price: '$29' },
+  { name: 'Protective Case', price: '$15' },
+  { name: 'Premium Cables', price: '$12' }
+]
+</script>

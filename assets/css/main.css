@@ -5,3 +5,15 @@ nav {
       background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
       backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-bgContrast: #f9f9f9;
+}
+
+@layer theme {
+  .dark {
+    --color-bgContrast: #66C8B6;
+  }
+}

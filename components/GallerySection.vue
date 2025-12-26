@@ -24,11 +24,11 @@
               style="transform-origin: center center;"
             />
             <!-- Overlay dengan judul, caption dan teks deskripsi -->
-            <div class="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-4 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none">
-  <h3 class="text-white text-xl font-bold mb-1">{{ item.title }}</h3>
-  <p class="text-white text-lg mb-1">{{ item.caption }}</p>
-  <p class="text-gray-300 text-sm">{{ item.text }}</p>
-</div>
+            <div class="overlay-text absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-4 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none">
+              <h3 class="text-white text-xl font-bold mb-1">{{ item.title }}</h3>
+              <p class="text-white text-lg mb-1">{{ item.caption }}</p>
+              <p class="text-gray-300 text-sm">{{ item.text }}</p>
+            </div>
             <div class="absolute inset-0 border-2 border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"></div>
           </div>
         </div>
@@ -44,55 +44,36 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import mediumZoom from 'medium-zoom'
 gsap.registerPlugin(ScrollTrigger)
 
-// Contoh data gallery dengan properti tambahan: title dan text
 const galleryItems = [
   { 
     image: '/gallery/redmi9_emmc.jpg', 
     title: 'Judul Pekerjaan 1', 
-    caption: 'Pergantian eMMC', 
+    caption: 'Pergantian eMMC Redmi 9', 
     text: 'Upgrade 6/128 untuk performa lebih baik.' 
   },
-  { 
-    image: 'https://picsum.photos/400/300?random=2', 
+  {
+    image: '/gallery/perbaikan_emmc.jpeg', 
     title: 'Judul Pekerjaan 2', 
-    caption: 'Reparasi Port Charging', 
-    text: 'Port charging diperbaiki untuk koneksi optimal.' 
+    caption: 'Pergantian eMMC', 
+    text: 'Pergantian eMMc yang sudah mati.'
   },
-  { 
-    image: 'https://picsum.photos/400/300?random=3', 
+  {
+    image: '/gallery/perbaikan_konektor_lcd.jpeg', 
     title: 'Judul Pekerjaan 3', 
-    caption: 'Pembersihan Internal', 
-    text: 'Pembersihan komponen internal untuk mencegah overheating.' 
-  },
-  { 
-    image: 'https://picsum.photos/400/300?random=4', 
+    caption: 'Perbaikan Jalur Konektor LCD', 
+    text: 'Perbaikan jalur konektor LCD yang putus.'
+  }, 
+  {
+    image: '/gallery/Reball_chipset.jpeg', 
     title: 'Judul Pekerjaan 4', 
-    caption: 'Penggantian Baterai', 
-    text: 'Baterai lama diganti dengan yang baru untuk daya tahan lebih lama.' 
+    caption: 'Reball Chipset', 
+    text: 'Reball chipset yang cold joint.'
   },
-  { 
-    image: 'https://picsum.photos/400/300?random=5', 
+  {
+    image: '/gallery/perbaikkan_jalur_pad.jpeg', 
     title: 'Judul Pekerjaan 5', 
-    caption: 'Reparasi Kamera', 
-    text: 'Kamera diperbaiki untuk hasil foto yang lebih jernih.' 
-  },
-  { 
-    image: 'https://picsum.photos/400/300?random=6', 
-    title: 'Judul Pekerjaan 6', 
-    caption: 'Pemulihan Data', 
-    text: 'Data yang hilang berhasil dipulihkan dengan aman.' 
-  },
-  { 
-    image: 'https://picsum.photos/400/300?random=7', 
-    title: 'Judul Pekerjaan 7', 
-    caption: 'Update Software', 
-    text: 'Pembaruan software untuk meningkatkan performa sistem.' 
-  },
-  { 
-    image: 'https://picsum.photos/400/300?random=8', 
-    title: 'Judul Pekerjaan 8', 
-    caption: 'Perbaikan Speaker', 
-    text: 'Speaker diperbaiki untuk kualitas audio yang lebih baik.' 
+    caption: 'Perbaikan Jalur Pad ic', 
+    text: 'Perbaikan jalur pad ic yang rusak.'
   }
 ]
 
@@ -121,9 +102,23 @@ onMounted(() => {
   
   // Inisialisasi medium-zoom dengan delay untuk memastikan semua gambar telah termuat
   setTimeout(() => {
-    mediumZoom('.group img', {
+    const zoom = mediumZoom('.group img', {
       margin: 24,
       background: '#000'
+    })
+    // Sembunyikan overlay saat zoom dibuka
+    zoom.on('open', (event) => {
+      const overlay = event.target.parentElement.querySelector('.overlay-text')
+      if (overlay) {
+        overlay.style.display = 'none'
+      }
+    })
+    // Tampilkan kembali overlay saat zoom ditutup
+    zoom.on('close', (event) => {
+      const overlay = event.target.parentElement.querySelector('.overlay-text')
+      if (overlay) {
+        overlay.style.display = ''
+      }
     })
   }, 500)
 })
