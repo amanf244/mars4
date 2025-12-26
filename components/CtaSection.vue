@@ -172,7 +172,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const ctaSection = ref(null)
 const counterRefs = ref([])
-const phoneNumber = '0896-3053-4368'
+const phoneNumber = '62896-3053-4368'
 
 // Contact options data
 const contactOptions = [
