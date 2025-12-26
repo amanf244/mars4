@@ -47,31 +47,31 @@ gsap.registerPlugin(ScrollTrigger)
 const galleryItems = [
   { 
     image: '/gallery/redmi9_emmc.jpg', 
-    title: 'Judul Pekerjaan 1', 
+    title: 'Pekerjaan 1', 
     caption: 'Pergantian eMMC Redmi 9', 
     text: 'Upgrade 6/128 untuk performa lebih baik.' 
   },
   {
     image: '/gallery/perbaikan_emmc.jpeg', 
-    title: 'Judul Pekerjaan 2', 
+    title: 'Pekerjaan 2', 
     caption: 'Pergantian eMMC', 
     text: 'Pergantian eMMc yang sudah mati.'
   },
   {
     image: '/gallery/perbaikan_konektor_lcd.jpeg', 
-    title: 'Judul Pekerjaan 3', 
+    title: 'Pekerjaan 3', 
     caption: 'Perbaikan Jalur Konektor LCD', 
     text: 'Perbaikan jalur konektor LCD yang putus.'
   }, 
   {
     image: '/gallery/Reball_chipset.jpeg', 
-    title: 'Judul Pekerjaan 4', 
+    title: 'Pekerjaan 4', 
     caption: 'Reball Chipset', 
     text: 'Reball chipset yang cold joint.'
   },
   {
     image: '/gallery/perbaikkan_jalur_pad.jpeg', 
-    title: 'Judul Pekerjaan 5', 
+    title: 'Pekerjaan 5', 
     caption: 'Perbaikan Jalur Pad ic', 
     text: 'Perbaikan jalur pad ic yang rusak.'
   }

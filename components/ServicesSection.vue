@@ -185,7 +185,7 @@ const selectPlan = (service, plan) => {
 
 // Buka modal pemesanan
 const openOrderModal = (service) => {
-  alert(`Memesan layanan: ${service.title}\nHubungi kami di WhatsApp: 0896-3053-4368`)
+  alert(`Memesan layanan: ${service.title}\nHubungi kami di WhatsApp: 62896-3053-4368`)
   
   // Animasi tombol
   gsap.to('.cta-button', {
