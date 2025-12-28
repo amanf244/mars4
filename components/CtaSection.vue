@@ -1,5 +1,6 @@
 <template>
   <section 
+  id="contact"
     ref="ctaSection"
     class="cta-section relative overflow-hidden py-24 px-4 sm:px-6 bg-gradient-to-br from-purple-900/40 via-black to-blue-900/40"
   >
@@ -120,10 +121,7 @@
               @click="handleContact(option.type)"
               class="flex items-center gap-2 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 hover:text-white transition-all duration-200 group"
             >
-              <component 
-                :is="option.icon" 
-                class="w-5 h-5 group-hover:scale-110 transition-transform"
-              />
+              <Icon :name="option.icon" class="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span>{{ option.label }}</span>
             </button>
           </div>
@@ -157,6 +155,77 @@
             </div>
           </div>
         </div>
+
+      <!-- Lokasi Kami -->
+<div class="mt-20 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+
+  <!-- Info Lokasi -->
+  <div class="text-left space-y-6">
+    <h3 class="text-3xl font-bold text-white">Lokasi Kami</h3>
+
+    <p class="text-gray-300 leading-relaxed">
+      Kantor kami berlokasi di area strategis Jakarta Selatan dan mudah diakses
+      menggunakan kendaraan pribadi maupun transportasi umum.
+    </p>
+
+    <div class="space-y-4">
+      <div class="flex items-start gap-3">
+        <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+          📍
+        </div>
+        <span class="text-gray-300">
+          Lampu merah Warjok, Jl. KH Abdul Fatah Hasan No.42, Cipare, Kec. Serang, Kota Serang, Banten 42117
+        </span>
+      </div>
+
+      <div class="flex items-start gap-3">
+        <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+          ⏰
+        </div>
+        <span class="text-gray-300">
+          Senin – Minggu, 24 Jam
+        </span>
+      </div>
+    </div>
+
+    <!-- Button arah -->
+    <a
+      href="https://www.google.com/maps/place/Aldep+4/@-6.1255189,106.1642106,21z/data=!4m14!1m7!3m6!1s0x2e41f546bc68b4cb:0xc76df0cc1a934822!2sAldep+4!8m2!3d-6.125473!4d106.1642682!16s%2Fg%2F11mrnth9cf!3m5!1s0x2e41f546bc68b4cb:0xc76df0cc1a934822!8m2!3d-6.125473!4d106.1642682!16s%2Fg%2F11mrnth9cf?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D"
+      target="_blank"
+      class="inline-block mt-4 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-semibold rounded-xl hover:scale-105 transition-transform"
+    >
+      Lihat di Peta
+    </a>
+  </div>
+
+  <!-- Map -->
+  <div class="w-full h-[300px] md:h-[420px] rounded-xl">
+     <LMap
+     class="w-full h-[300px] md:h-[420px] rounded-xl"
+      ref="map"
+      :zoom="zoom"
+      :center="[-6.125473, 106.1642682]"
+      :use-global-leaflet="false"
+    >
+      <LTileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="&amp;copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors"
+        layer-type="base"
+        name="OpenStreetMap"
+      />
+
+       <LMarker :lat-lng="[-6.125473, 106.1642682]">
+    <LTooltip> Disini lokasinya </LTooltip>
+  </LMarker>
+
+    </LMap>
+    <!-- Overlay agar nyatu -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+  </div>
+
+</div>
+
+
       </div>
     </div>
   </section>
@@ -173,13 +242,16 @@ gsap.registerPlugin(ScrollTrigger)
 const ctaSection = ref(null)
 const counterRefs = ref([])
 const phoneNumber = '62896-3053-4368'
+const zoom = ref(100)
 
 // Contact options data
 const contactOptions = [
-  { type: 'email', label: 'Email Support', icon: 'svg' },
-  { type: 'phone', label: 'Telepon Langsung', icon: 'svg' },
-  { type: 'ticket', label: 'Buat Tiket', icon: 'svg' }
+  { type: 'email', label: 'Email Support', icon: 'mdi:email' },
+  { type: 'phone', label: 'Telepon Langsung', icon: 'mdi:phone' },
+  { type: 'ticket', label: 'Buat Tiket', icon: 'mdi:ticket-confirmation' },
+  { type: 'facebook', label: 'Facebook', icon: 'mdi:facebook' }
 ]
+
 
 // Stats data
 const stats = [
