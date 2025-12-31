@@ -1,18 +1,16 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 pt-24 pb-16 px-4 sm:px-6 lg:px-8">
-    <!-- Background Particles -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none">
-      <div 
-        v-for="i in 20" 
-        :key="i"
-        class="absolute w-1 h-1 bg-purple-500/20 rounded-full"
-        :style="{
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animation: `float ${3 + Math.random() * 4}s infinite ease-in-out ${Math.random() * 2}s`
-        }"
-      ></div>
-    </div>
+    <!-- Background Particles (Client Only) -->
+    <ClientOnly>
+      <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div 
+          v-for="i in 20" 
+          :key="i"
+          class="absolute w-1 h-1 bg-purple-500/20 rounded-full"
+          :style="getParticleStyle()"
+        ></div>
+      </div>
+    </ClientOnly>
 
     <div class="max-w-7xl mx-auto relative z-10">
       <!-- Header dengan Breadcrumb -->
@@ -173,19 +171,19 @@
               <div class="absolute bottom-0 left-0 right-0 p-5">
                 <h3 class="text-white font-bold text-xl mb-1">{{ item.title }}</h3>
                 <p class="text-gray-200 text-sm mb-2">{{ item.caption }}</p>
-                <p class="text-gray-400 text-xs">{{ item.text }}</p>
+                <p class="text-gray-400 text-xs line-clamp-3">{{ item.text }}</p>
                 
                 <!-- Action Buttons -->
                 <div class="flex gap-2 mt-3">
-                  <button 
-                    @click.stop="openLightbox(item.id, currentPhotoIndex[item.id])"
+                  <NuxtLink 
+                    :to="`/gallery/${item.id}/${slugify(item.title)}`"
                     class="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs rounded-lg backdrop-blur-sm transition-colors flex items-center gap-1"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
                     </svg>
                     Lihat Detail
-                  </button>
+                  </NuxtLink>
                   <button 
                     @click.stop="shareItem(item)"
                     class="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs rounded-lg backdrop-blur-sm transition-colors flex items-center gap-1"
@@ -230,9 +228,9 @@
               </div>
             </div>
             
-            <!-- Tombol Baca Selengkapnya -->
-            <button
-              @click="openDetailModal(item)"
+            <!-- Tombol Baca Selengkapnya (Link ke halaman detail) -->
+            <NuxtLink
+              :to="`/gallery/${item.id}/${slugify(item.title)}`"
               class="w-full py-2.5 px-4 bg-gradient-to-r from-purple-600/20 to-blue-600/20 hover:from-purple-600/30 hover:to-blue-600/30 text-purple-300 hover:text-white font-medium rounded-lg border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 flex items-center justify-center gap-2 group/readmore"
             >
               <span>Baca Selengkapnya</span>
@@ -244,7 +242,7 @@
               >
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
-            </button>
+            </NuxtLink>
           </div>
         </div>
       </div>
@@ -414,197 +412,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Modal untuk Detail Lengkap -->
-    <div 
-      v-if="detailModal.active"
-      class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 detail-modal"
-      @click="closeDetailModal"
-    >
-      <div 
-        class="relative max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700/50 modal-content"
-        @click.stop
-      >
-        <!-- Close Button -->
-        <button
-          @click="closeDetailModal"
-          class="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-        
-        <!-- Carousel di Modal -->
-        <div class="relative h-64 md:h-80 overflow-hidden rounded-t-2xl">
-          <div 
-            class="absolute inset-0 flex transition-transform duration-500 ease-out"
-            :style="{ transform: `translateX(-${modalPhotoIndex * 100}%)` }"
-          >
-            <div 
-              v-for="(photo, index) in detailModal.item?.photos" 
-              :key="index"
-              class="relative min-w-full h-full"
-            >
-              <img 
-                :src="photo.url" 
-                :alt="`${detailModal.item?.title} - Foto ${index + 1}`"
-                class="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          
-          <!-- Navigation di Modal -->
-          <div 
-            v-if="detailModal.item?.photos.length > 1"
-            class="absolute inset-0 flex items-center justify-between p-4"
-          >
-            <button
-              @click.stop="prevModalPhoto"
-              class="w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110"
-              :disabled="modalPhotoIndex === 0"
-              :class="{ 'opacity-50 cursor-not-allowed': modalPhotoIndex === 0 }"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-              </svg>
-            </button>
-            <button
-              @click.stop="nextModalPhoto"
-              class="w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110"
-              :disabled="modalPhotoIndex === detailModal.item?.photos.length - 1"
-              :class="{ 'opacity-50 cursor-not-allowed': modalPhotoIndex === detailModal.item?.photos.length - 1 }"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </button>
-          </div>
-          
-          <!-- Photo Counter di Modal -->
-          <div 
-            v-if="detailModal.item?.photos.length > 1"
-            class="absolute bottom-4 left-4 px-3 py-1 bg-black/50 backdrop-blur-sm text-white text-sm rounded-full"
-          >
-            {{ modalPhotoIndex + 1 }} / {{ detailModal.item?.photos.length }}
-          </div>
-          
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-          <div class="absolute bottom-0 left-0 right-0 p-6">
-            <span class="inline-block px-3 py-1 bg-purple-600 text-white text-xs font-medium rounded-full mb-2">
-              {{ detailModal.item?.category }}
-            </span>
-            <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">{{ detailModal.item?.title }}</h2>
-            <p class="text-gray-200 text-lg">{{ detailModal.item?.caption }}</p>
-          </div>
-        </div>
-        
-        <!-- Konten Detail -->
-        <div class="p-6 md:p-8">
-          <div class="flex items-center gap-4 mb-6 text-sm text-gray-400">
-            <div class="flex items-center gap-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-              {{ detailModal.item?.date }}
-            </div>
-            <div class="flex items-center gap-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              Durasi: {{ detailModal.item?.duration }}
-            </div>
-          </div>
-          
-          <!-- Deskripsi Lengkap -->
-          <div class="prose prose-invert max-w-none">
-            <h3 class="text-white text-xl font-bold mb-4">Deskripsi Lengkap Pekerjaan</h3>
-            <p class="text-gray-300 mb-4">
-              {{ detailModal.item?.fullText || detailModal.item?.text }}
-              <span v-if="!detailModal.item?.fullText">
-                Proses pengerjaan dilakukan dengan alat presisi tinggi dan pengalaman teknisi yang telah bersertifikat.
-                Kami menjamin kualitas pekerjaan dengan garansi 30 hari untuk semua jenis perbaikan.
-              </span>
-            </p>
-            
-            <!-- Detail Teknis -->
-            <div class="mt-6 p-4 bg-gray-800/30 rounded-xl">
-              <h4 class="text-white font-bold mb-3">Detail Teknis:</h4>
-              <ul class="text-gray-300 space-y-2">
-                <li class="flex items-center gap-2">
-                  <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>Gunakan komponen original atau setara kualitas</span>
-                </li>
-                <li class="flex items-center gap-2">
-                  <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>Proses mikroskop untuk presisi tinggi</span>
-                </li>
-                <li class="flex items-center gap-2">
-                  <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>Quality control 3 tahap sebelum serah terima</span>
-                </li>
-              </ul>
-            </div>
-            
-            <!-- Galeri Foto dalam Modal -->
-            <div class="mt-8">
-              <h4 class="text-white font-bold mb-4">Galeri Foto:</h4>
-              <div class="grid grid-cols-3 gap-2">
-                <button
-                  v-for="(photo, index) in detailModal.item?.photos"
-                  :key="index"
-                  @click="openLightboxByItem(detailModal.item, index)"
-                  class="relative aspect-square overflow-hidden rounded-lg border-2 transition-all"
-                  :class="modalPhotoIndex === index 
-                    ? 'border-purple-500' 
-                    : 'border-gray-700 hover:border-gray-500'"
-                >
-                  <img 
-                    :src="photo.url" 
-                    :alt="`Foto ${index + 1}`"
-                    class="w-full h-full object-cover"
-                  />
-                  <div 
-                    v-if="photo.caption"
-                    class="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center p-2"
-                  >
-                    <span class="text-white text-xs text-center">{{ photo.caption }}</span>
-                  </div>
-                </button>
-              </div>
-            </div>
-            
-            <!-- CTA Tambahan -->
-            <div class="mt-8 flex flex-col sm:flex-row gap-4">
-              <button
-                @click="openLightboxByItem(detailModal.item)"
-                class="flex-1 py-3 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all flex items-center justify-center gap-2"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                Lihat Semua Foto
-              </button>
-              <button
-                @click="shareItem(detailModal.item)"
-                class="flex-1 py-3 px-6 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl border border-gray-600 transition-all flex items-center justify-center gap-2"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-                </svg>
-                Bagikan
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -613,9 +420,26 @@ import { ref, computed, onMounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+// Data partikel di client side
+const particles = ref([])
+
+// Fungsi untuk generate style partikel di client side
+const getParticleStyle = () => {
+  // Hanya dijalankan di client
+  if (typeof window === 'undefined') {
+    return {}
+  }
+  
+  return {
+    left: `${Math.random() * 100}%`,
+    top: `${Math.random() * 100}%`,
+    animation: `float ${3 + Math.random() * 4}s infinite ease-in-out ${Math.random() * 2}s`
+  }
+}
+
 gsap.registerPlugin(ScrollTrigger)
 
-// State untuk tracking foto aktif di setiap card (dengan ID sebagai key)
+// State untuk tracking foto aktif di setiap card
 const currentPhotoIndex = ref({})
 
 // Data dengan multiple photos per item
@@ -770,6 +594,18 @@ const goToPhoto = (itemId, photoIndex) => {
   }
 }
 
+// Helper function untuk membuat slug
+const slugify = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
+}
+
 // Categories
 const categories = computed(() => {
   return [...new Set(allGalleryItems.value.map(item => item.category))]
@@ -855,68 +691,18 @@ const closeLightbox = () => {
   document.body.style.overflow = ''
 }
 
-// Modal detail state
-const detailModal = ref({
-  active: false,
-  item: null
-})
-const modalPhotoIndex = ref(0)
-
-// Fungsi untuk modal detail
-const openDetailModal = (item) => {
-  detailModal.value = {
-    active: true,
-    item: item
-  }
-  modalPhotoIndex.value = 0
-  document.body.style.overflow = 'hidden'
-}
-
-const closeDetailModal = () => {
-  gsap.to('.detail-modal', {
-    opacity: 0,
-    scale: 0.95,
-    duration: 0.3,
-    ease: 'power2.in',
-    onComplete: () => {
-      detailModal.value.active = false
-      document.body.style.overflow = ''
-    }
-  })
-}
-
-const nextModalPhoto = () => {
-  if (detailModal.value.item && modalPhotoIndex.value < detailModal.value.item.photos.length - 1) {
-    modalPhotoIndex.value++
-  }
-}
-
-const prevModalPhoto = () => {
-  if (modalPhotoIndex.value > 0) {
-    modalPhotoIndex.value--
-  }
-}
-
-// Fungsi untuk mencari index item untuk lightbox dari modal detail
-const openLightboxByItem = (item, index = 0) => {
-  if (!item) return
-  
-  closeDetailModal()
-  setTimeout(() => {
-    openLightbox(item.id, index)
-  }, 300)
-}
-
+// Fungsi share item
 const shareItem = (item) => {
+  const itemUrl = `${window.location.origin}/gallery/${item.id}/${slugify(item.title)}`
+  
   if (navigator.share) {
     navigator.share({
       title: `${item.title} - ${item.caption}`,
       text: item.text,
-      url: window.location.href
+      url: itemUrl
     })
   } else {
-    // Fallback untuk browser yang tidak support Web Share API
-    navigator.clipboard.writeText(`${item.title} - ${item.caption}\n${item.text}\n${window.location.href}`)
+    navigator.clipboard.writeText(`${item.title} - ${item.caption}\n${item.text}\n${itemUrl}`)
     alert('Link berhasil disalin ke clipboard!')
   }
 }
@@ -998,10 +784,6 @@ onMounted(() => {
           prevLightbox()
           break
       }
-    } else if (detailModal.value.active) {
-      if (e.key === 'Escape') {
-        closeDetailModal()
-      }
     }
   }
   
@@ -1011,63 +793,19 @@ onMounted(() => {
     window.removeEventListener('keydown', handleKeydown)
   }
 })
-
-// Auto-slide untuk foto dalam card (opsional)
-onMounted(() => {
-  // Hanya untuk demo, bisa diaktifkan jika diinginkan
-  // setInterval(() => {
-  //   allGalleryItems.value.forEach(item => {
-  //     if (item.photos.length > 1) {
-  //       const currentIndex = currentPhotoIndex.value[item.id] || 0
-  //       const nextIndex = (currentIndex + 1) % item.photos.length
-  //       currentPhotoIndex.value = {
-  //         ...currentPhotoIndex.value,
-  //         [item.id]: nextIndex
-  //       }
-  //     }
-  //   })
-  // }, 5000)
-})
 </script>
 
 <style scoped>
-.detail-modal {
-  animation: modalEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes modalEnter {
-  0% {
-    opacity: 0;
-    transform: scale(0.95) translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-/* Scrollbar khusus untuk modal */
-.modal-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-  background: #1f2937;
-  border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-  background: #4f46e5;
-  border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb:hover {
-  background: #7c3aed;
-}
-
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1145,10 +883,6 @@ onMounted(() => {
   .text-lg {
     font-size: 1rem;
   }
-  
-  .grid.grid-cols-3 {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 /* Smooth carousel transition */
@@ -1179,7 +913,8 @@ img[loading="lazy"] {
 }
 
 /* Improve focus states for accessibility */
-button:focus-visible {
+button:focus-visible,
+a:focus-visible {
   outline: 2px solid #8b5cf6;
   outline-offset: 2px;
 }
