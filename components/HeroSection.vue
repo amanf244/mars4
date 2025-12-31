@@ -19,6 +19,7 @@
       <div class="absolute right-1/4 bottom-1/3 w-80 h-80 bg-green-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
 
       <!-- Left Phone with Enhanced 3D -->
+        <!--
       <div ref="phoneLeft" 
            class="absolute left-10 w-44 h-80 md:w-52 md:h-88 bg-gradient-to-b from-gray-800 to-gray-900 rounded-[2.5rem] border-8 border-gray-700/50 shadow-2xl phone-3d cursor-pointer"
            @mouseenter="hoverDevice('phoneLeft')"
@@ -27,43 +28,45 @@
         <div class="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-600/80 rounded-full"></div>
         <div class="absolute top-24 left-1/2 -translate-x-1/2 w-6 h-6 bg-gray-600/50 rounded-full"></div>
         <div class="absolute inset-4 bg-gradient-to-br from-gray-900 to-gray-800 rounded-[1.8rem] overflow-hidden border border-gray-700/30">
-          <!-- Crack Effects -->
+          
           <div ref="crackLeft" class="absolute w-full h-full">
             <div class="absolute w-1 h-12 bg-red-500 right-1/3 top-1/4 rotate-45 animate-pulse" style="filter: drop-shadow(0 0 8px rgba(239,68,68,0.6));"></div>
             <div class="absolute w-1 h-8 bg-red-500 left-1/3 top-2/3 -rotate-45 animate-pulse" style="filter: drop-shadow(0 0 8px rgba(239,68,68,0.6));"></div>
             <div class="absolute w-0.5 h-6 bg-red-400/70 top-1/2 left-1/2 rotate-90 animate-pulse delay-300"></div>
           </div>
-          <!-- Screen Content -->
+         
           <div class="absolute inset-0 flex items-center justify-center">
             <div class="text-center p-4">
               <div class="text-red-400 text-xs md:text-sm font-bold mb-2">LAYAR RUSAK</div>
-              <!-- <div class="text-gray-400 text-xs">Touch to repair</div> -->
+              
             </div>
           </div>
         </div>
         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-700/50 rounded-full border border-gray-600/30"></div>
       </div>
-
+ -->
       <!-- Enhanced Laptop Center -->
+
+         <!--
       <div ref="laptop" 
            class="absolute left-1/2 transform -translate-x-1/2 w-60 h-44 md:w-72 md:h-52 bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl laptop-3d cursor-pointer shadow-2xl"
            @mouseenter="hoverDevice('laptop')"
            @mouseleave="unhoverDevice('laptop')"
            @click="repairDevice('laptop')">
-        <!-- Laptop Screen -->
+        
         <div class="absolute -top-7 left-0 w-full h-7 bg-gradient-to-b from-gray-800 to-gray-900 rounded-t-xl border-2 border-gray-700/50 border-b-0">
           <div class="absolute top-1 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-gray-600 rounded-full"></div>
           <div class="absolute top-2.5 left-1/2 -translate-x-1/2 w-16 h-0.5 bg-gray-700/50 rounded-full"></div>
         </div>
         
-        <!-- Laptop Display -->
+        
         <div class="absolute -top-7 left-0 w-full h-7 bg-gradient-to-b from-gray-900 to-gray-800 rounded-t-xl flex items-center justify-center">
           <div class="w-12 h-1 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full"></div>
         </div>
         
-        <!-- Laptop Body -->
+        
         <div class="absolute bottom-0 left-0 w-full h-36 md:h-40 bg-gradient-to-t from-gray-800 to-gray-900 rounded-xl border-2 border-gray-700/50 border-t-0">
-          <!-- Keyboard -->
+         
           <div class="absolute inset-3 bg-gray-900/80 rounded-lg p-2">
             <div class="grid grid-cols-7 gap-1">
               <div v-for="i in 14" :key="i" class="h-2 bg-gray-700/70 rounded-sm"></div>
@@ -73,25 +76,28 @@
             </div>
           </div>
           
-          <!-- Touchpad -->
+          
           <div class="absolute bottom-3 left-1/2 -translate-x-1/2 w-20 h-3 bg-gradient-to-r from-gray-700 to-gray-800 rounded-full"></div>
           
-          <!-- Crack Effect -->
+          
           <div ref="crackLaptop" class="absolute w-full h-full">
             <div class="absolute w-1.5 h-16 bg-red-500 left-1/3 top-1/4 rotate-12 animate-pulse" style="filter: drop-shadow(0 0 10px rgba(239,68,68,0.7));"></div>
             <div class="absolute w-1 h-10 bg-red-500 right-1/3 top-1/2 -rotate-6 animate-pulse delay-500" style="filter: drop-shadow(0 0 10px rgba(239,68,68,0.7));"></div>
             <div class="absolute w-0.5 h-8 bg-red-400/80 top-3/4 left-2/5 rotate-45 animate-pulse delay-700"></div>
           </div>
           
-          <!-- Status Indicator -->
+          
           <div class="absolute top-2 right-2 flex items-center">
             <div class="w-2 h-2 bg-red-500 rounded-full animate-ping mr-1"></div>
             <span class="text-xs text-red-400">REPAIR NEEDED</span>
           </div>
         </div>
       </div>
+      -->
 
       <!-- Right Phone with Enhanced 3D -->
+
+       <!--
       <div ref="phoneRight" 
            class="absolute right-10 w-44 h-80 md:w-52 md:h-88 bg-gradient-to-b from-gray-800 to-gray-900 rounded-[2.5rem] border-8 border-gray-700/50 shadow-2xl phone-3d cursor-pointer"
            @mouseenter="hoverDevice('phoneRight')"
@@ -100,22 +106,23 @@
         <div class="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-600/80 rounded-full"></div>
         <div class="absolute top-24 left-1/2 -translate-x-1/2 w-6 h-6 bg-gray-600/50 rounded-full"></div>
         <div class="absolute inset-4 bg-gradient-to-br from-gray-900 to-gray-800 rounded-[1.8rem] overflow-hidden border border-gray-700/30">
-          <!-- Crack Effects -->
+          
           <div ref="crackRight" class="absolute w-full h-full">
             <div class="absolute w-1 h-12 bg-red-500 left-1/3 top-1/4 rotate-45 animate-pulse" style="filter: drop-shadow(0 0 8px rgba(239,68,68,0.6));"></div>
             <div class="absolute w-1 h-8 bg-red-500 right-1/3 top-2/3 -rotate-45 animate-pulse" style="filter: drop-shadow(0 0 8px rgba(239,68,68,0.6));"></div>
             <div class="absolute w-0.5 h-6 bg-red-400/70 top-1/3 left-2/5 rotate-12 animate-pulse delay-500"></div>
           </div>
-          <!-- Screen Content -->
+          
           <div class="absolute inset-0 flex items-center justify-center">
             <div class="text-center p-4">
               <div class="text-red-400 text-xs md:text-sm font-bold mb-2">KERUSAKAN BATERAI</div>
-              <!-- <div class="text-gray-400 text-xs">Touch to repair</div> -->
+              
             </div>
           </div>
         </div>
         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-700/50 rounded-full border border-gray-600/30"></div>
       </div>
+      -->
 
       <!-- Floating Repair Parts with Enhanced Design -->
       <div v-for="(part, index) in repairParts" 

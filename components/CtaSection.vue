@@ -164,7 +164,7 @@
     <h3 class="text-3xl font-bold text-white">Lokasi Kami</h3>
 
     <p class="text-gray-300 leading-relaxed">
-      Kantor kami berlokasi di area strategis Jakarta Selatan dan mudah diakses
+      Toko kami berlokasi di area strategis Kota Serang dan mudah diakses
       menggunakan kendaraan pribadi maupun transportasi umum.
     </p>
 
