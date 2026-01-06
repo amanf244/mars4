@@ -1,4 +1,8 @@
 export default defineNuxtPlugin(async () => {
   const auth = useAuthStore()
-  await auth.restore()
+  
+  // Hanya di client side
+  if (import.meta.client && !auth.initialized) {
+    await auth.restore()
+  }
 })

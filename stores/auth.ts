@@ -14,83 +14,106 @@ export const useAuthStore = defineStore('auth', {
     user: null as User | null,
     token: null as string | null,
     initialized: false as boolean,
-    restoring: false as boolean // untuk mencegah race condition
+    restoring: false as boolean
   }),
 
   getters: {
-    isAuthenticated: (s) => !!s.user && !!s.token,
-    role: (s) => s.user?.role,
-    isAdmin: (s) => s.user?.role === 'admin'
+    isAuthenticated: (state) => !!state.user && !!state.token,
+    role: (state) => state.user?.role,
+    isAdmin: (state) => state.user?.role === 'admin'
   },
 
   actions: {
-    async login(payload: { email: string; password: string }) {
+    async login(payload: { 
+      email: string; 
+      password: string; 
+      rememberMe?: boolean;
+      deviceName?: string 
+    }) {
       try {
-        const response = await $fetch<{
-          success: boolean
-          token: string
-          user: User
-        }>('http://localhost:3333/login', {
+        const { data, error } = await useFetch('/api/v1/auth/login', {
           method: 'POST',
-          body: payload
+          body: payload,
+          baseURL: 'http://localhost:5084/'
         })
 
+        if (error.value) throw error.value
+
+        const response = data.value as any
+        
         if (!response.success) throw new Error('Login gagal')
 
         this.user = response.user
         this.token = response.token
+        this.initialized = true
 
-        // simpan token ke cookie
+        // Simpan token ke cookie
         const tokenCookie = useCookie('token', {
+          maxAge: payload.rememberMe ? 60 * 60 * 24 * 7 : undefined,
           sameSite: 'lax',
-          secure: process.env.NODE_ENV === 'production',
-          httpOnly: false // jika ingin bisa diakses client
+          //secure: process.env.NODE_ENV === 'production'
         })
         tokenCookie.value = response.token
+
+        console.log('✅ Login successful')
+
       } catch (err: any) {
-        console.error('Login error:', err)
+        console.error('❌ Login error:', err)
         throw err
       }
     },
 
     async restore() {
-      if (this.initialized || this.restoring) return
+      // Hanya di client
+      if (!import.meta.client || this.initialized || this.restoring) return
+      
       this.restoring = true
-
-      const tokenCookie = useCookie<string | null>('token')
-      const token = tokenCookie.value
-
-      if (!token) {
-        this.initialized = true
-        this.restoring = false
-        return
-      }
-
-      this.token = token
-
+      
       try {
-        const user = await $fetch<User>('http://localhost:3333/me', {
+        const tokenCookie = useCookie<string | null>('token')
+        const token = tokenCookie.value
+
+        if (!token) {
+          this.initialized = true
+          return
+        }
+
+        this.token = token
+
+        const { data, error } = await useFetch('/api/v1/auth/me', {
           headers: {
             Authorization: `Bearer ${token}`
-          }
+          },
+          baseURL: 'http://localhost:5084/'
         })
-        this.user = user
+
+        if (error.value) {
+          throw error.value
+        }
+
+        this.user = data.value as User
+        
       } catch (err) {
-        console.warn('Restore failed, logging out', err)
-        this.logout()
+        console.warn('Restore failed, clearing auth', err)
+        this.clearAuth()
       } finally {
         this.initialized = true
         this.restoring = false
       }
     },
 
-    logout() {
+    clearAuth() {
       this.user = null
       this.token = null
       this.initialized = true
 
       const tokenCookie = useCookie('token')
       tokenCookie.value = null
+    },
+
+    logout() {
+      this.clearAuth()
+      navigateTo('/login')
     }
   }
 })

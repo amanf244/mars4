@@ -1,0 +1,38 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Mars4 App",
+  "version": "0.1.0",
+  "identifier": "com.Mars4UI.dev",
+  "build": {
+  "frontendDist": "../.output/public",
+  "devUrl": "http://localhost:3000/login",
+  "beforeDevCommand": "npm run dev:tauri",
+  "beforeBuildCommand": "npm run build:tauri"
+},
+
+  "app": {
+    "windows": [
+      {
+        "title": "Mars4UI",
+        "width": 800,
+        "height": 600,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

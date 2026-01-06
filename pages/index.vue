@@ -37,6 +37,11 @@ import {
   GlobeAltIcon
 } from '@heroicons/vue/24/outline'
 
+// definePageMeta({
+//   requiresAuth: false,
+//   middleware: 'guest'
+// })
+
 gsap.registerPlugin(ScrollTrigger)
 
 // Variabel untuk loading state

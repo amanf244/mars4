@@ -2,14 +2,16 @@
 import { ref } from 'vue'
 
 const auth = useAuthStore()
+const route = useRoute()
 
+// Gunakan guest middleware
 definePageMeta({
-  requiresAuth: false
+  middleware: 'guest'
 })
 
 const email = ref('admin@example.com')
-const password = ref('Password123')
-const rememberMe = ref(false) // ✅ BARU
+const password = ref('Admin123!')
+const rememberMe = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
 
@@ -21,15 +23,16 @@ const handleLogin = async () => {
     await auth.login({
       email: email.value,
       password: password.value,
-      rememberMe: rememberMe.value, // ✅ DIKIRIM KE BACKEND
+      rememberMe: rememberMe.value,
       deviceName: 'web-browser'
     })
 
-    if (auth.role === 'admin') {
-      navigateTo('/admin/dashboard')
-    } else {
-      navigateTo('/dashboard')
-    }
+    // Redirect setelah login berhasil
+    const redirectTo = route.query.redirect as string || 
+      (auth.role === 'admin' ? '/admin/dashboard' : '/dashboard')
+    
+    await navigateTo(redirectTo)
+    
   } catch (error: any) {
     errorMessage.value =
       error?.data?.message || error.message || 'Login gagal'
@@ -38,7 +41,6 @@ const handleLogin = async () => {
   }
 }
 </script>
-
 
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
@@ -69,23 +71,22 @@ const handleLogin = async () => {
         </div>
 
         <div class="flex items-center justify-between">
-  <label class="flex items-center gap-2 text-sm">
-    <input
-      type="checkbox"
-      v-model="rememberMe"
-      class="rounded border-gray-300"
-    />
-    Remember me
-  </label>
+          <label class="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              v-model="rememberMe"
+              class="rounded border-gray-300"
+            />
+            Remember me
+          </label>
 
-  <NuxtLink
-    to="/forgot-password"
-    class="text-sm text-blue-600 hover:underline"
-  >
-    Forgot password?
-  </NuxtLink>
-</div>
-
+          <NuxtLink
+            to="/forgot-password"
+            class="text-sm text-blue-600 hover:underline"
+          >
+            Forgot password?
+          </NuxtLink>
+        </div>
 
         <p v-if="errorMessage" class="text-red-500 text-sm">
           {{ errorMessage }}
