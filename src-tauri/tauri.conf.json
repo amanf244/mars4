@@ -5,7 +5,7 @@
   "identifier": "com.Mars4UI.dev",
   "build": {
   "frontendDist": "../.output/public",
-  "devUrl": "http://localhost:3000/login",
+  "devUrl": "http://localhost:3000",
   "beforeDevCommand": "npm run dev:tauri",
   "beforeBuildCommand": "npm run build:tauri"
 },

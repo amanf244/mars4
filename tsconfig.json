@@ -1,4 +1,10 @@
 {
   // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./.nuxt/tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "src-tauri/target",
+    "src-tauri/**/target",
+    "**/dist"
+  ]
 }

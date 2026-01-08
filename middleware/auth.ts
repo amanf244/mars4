@@ -1,19 +1,13 @@
-export default defineNuxtRouteMiddleware(async (to) => {
+import { useAuthStore } from '~/stores/auth'
+
+export default defineNuxtRouteMiddleware(async (to, from) => {
   const auth = useAuthStore()
-  
-  // Untuk halaman yang perlu auth, tunggu inisialisasi
-  if (to.meta.requiresAuth) {
-    if (!auth.initialized && import.meta.client) {
-      await auth.restore()
-    }
-    
-    if (!auth.isAuthenticated) {
-      return navigateTo(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
-    }
-    
-    // Check role
-    if (to.meta.role && auth.role !== to.meta.role) {
-      return navigateTo('/403')
-    }
+
+  if (to.meta.requiresAuth && !auth.initialized && import.meta.client) {
+    await auth.restore()
+  }
+
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+    return navigateTo(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
   }
 })

@@ -66,11 +66,11 @@ watch(() => filters.limit, () => {
 
 // Handle item actions
 const handleView = (id: number) => {
-  navigateTo(`/admin/gallery/${id}`)
+  // navigateTo(`/admin/gallery/${id}`)
 }
 
 const handleEdit = (id: number) => {
-  navigateTo(`/admin/gallery/edit/${id}`)
+  // navigateTo(`/admin/gallery/edit/${id}`)
 }
 
 const handleDelete = async (id: number) => {

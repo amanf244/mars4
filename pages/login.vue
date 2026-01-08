@@ -5,9 +5,7 @@ const auth = useAuthStore()
 const route = useRoute()
 
 // Gunakan guest middleware
-definePageMeta({
-  middleware: 'guest'
-})
+
 
 const email = ref('admin@example.com')
 const password = ref('Admin123!')

@@ -9,11 +9,13 @@ console.log('isTauri:', isTauri);
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
 
-   runtimeConfig: {
+    runtimeConfig: {
+    apiBase: process.env.API_BASE || 'http://localhost:5084/api',  // ⬅️ dipakai di server
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:5084/api'
     }
   },
+  
 
   ssr: !isTauri,
 

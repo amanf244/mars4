@@ -584,37 +584,38 @@ export default {
       }, 200)
     }
     
-    const usePart = (part: RepairPart) => {
-      // Animate part being used
-      const partIndex = repairParts.value.findIndex(p => p.id === part.id)
-      const partElement = (component as any).$refs[`part${partIndex}`]
-      
-      if (partElement) {
-        gsap.to(partElement, {
-          scale: 1.5,
-          opacity: 0,
-          duration: 0.5,
-          onComplete: () => {
-            // Move part to random new position
-            repairParts.value[partIndex].position = {
-              x: Math.random() * 80 + 10,
-              y: Math.random() * 70 + 15
-            }
-            
-            // Reset part appearance
-            setTimeout(() => {
-              gsap.to(partElement, {
-                scale: 1,
-                opacity: 1,
-                duration: 0.5
-              })
-            }, 100)
-            
-            partsAvailable.value--
-          }
-        })
+   const usePart = (part: RepairPart) => {
+  const partIndex = repairParts.value.findIndex(p => p.id === part.id)
+  const partElement = (component as any).$refs[`part${partIndex}`]
+
+  if (partIndex === -1 || !partElement) return   // ⬅️ tambahkan cek index
+
+  gsap.to(partElement, {
+    scale: 1.5,
+    opacity: 0,
+    duration: 0.5,
+    onComplete: () => {
+      const currentPart = repairParts.value[partIndex]
+      if (!currentPart) return                     // ⬅️ jaga-jaga
+
+      currentPart.position = {
+        x: Math.random() * 80 + 10,
+        y: Math.random() * 70 + 15
       }
+
+      setTimeout(() => {
+        gsap.to(partElement, {
+          scale: 1,
+          opacity: 1,
+          duration: 0.5
+        })
+      }, 100)
+
+      partsAvailable.value--
     }
+  })
+}
+
     
     const startEmergencyRepair = () => {
       // Simulate emergency repair start

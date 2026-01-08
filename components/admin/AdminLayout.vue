@@ -70,16 +70,10 @@ const logout = async () => {
   navigateTo('/login')
 }
 
-// SSR-safe render flag
-const isClient = ref(false)
-onMounted(() => {
-  isClient.value = true
-})
 </script>
 
 <template>
   <div
-    v-if="isClient"
     :class="[
       'min-h-screen transition-colors duration-300',
       darkMode ? 'dark bg-gray-900' : 'bg-gray-50'
@@ -137,16 +131,7 @@ onMounted(() => {
     </div>
   </div>
 
-  <div v-else class="min-h-screen bg-gray-50">
-    <div class="flex items-center justify-center min-h-screen">
-      <div class="text-center">
-        <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"
-        ></div>
-        <p class="mt-4 text-gray-600">Loading admin panel...</p>
-      </div>
-    </div>
-  </div>
+  
 </template>
 
 <style scoped>
