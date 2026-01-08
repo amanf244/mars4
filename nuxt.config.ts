@@ -1,6 +1,9 @@
 import tailwindcss from "@tailwindcss/vite"
 
 const isTauri = process.env.TAURI === 'true'
+console.log('🔧 Tauri Environment Check:')
+console.log('TAURI env:', process.env.TAURI)
+console.log('isTauri:', isTauri)
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
@@ -9,13 +12,13 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
-  // ✅ LANGSUNG KE BACKEND ASP.NET
+  // ✅ PENTING: Runtime Config untuk API
   runtimeConfig: {
-    // Server-side (tidak dipakai karena client langsung call backend)
-    apiBase: process.env.API_BASE || 'http://localhost:5084/api',
     public: {
-      // Client-side - PENTING: Full URL ke backend ASP.NET
-      apiBase: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:5084/api/v1'
+      // API Base URL - dari environment variables
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:5084/api',
+      // API Version - bisa diubah tanpa hardcode di setiap file
+      apiVersion: '/v1',
     }
   },
 

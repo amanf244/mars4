@@ -1,11 +1,10 @@
 // stores/auth.ts
 /**
- * Nuxt 4 Pinia Store untuk Authentication
- * CLIENT langsung call backend ASP.NET
- * TIDAK perlu proxy melalui Nuxt server
+ * Auth Store - Menggunakan useApi composable
  */
 
-import { API_ENDPOINTS } from '~/types/api'
+
+import { defineStore } from 'pinia'
 
 type Role = 'admin' | 'user'
 
@@ -39,7 +38,6 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     /**
      * Login action
-     * ✅ LANGSUNG CALL BACKEND ASP.NET
      */
     async login(payload: {
       email: string
@@ -48,23 +46,12 @@ export const useAuthStore = defineStore('auth', {
       deviceName?: string
     }) {
       try {
-        const { public: config } = useRuntimeConfig()
+        const api = useApi()
 
-        console.log('🔵 LOGIN START', {
-          endpoint: API_ENDPOINTS.AUTH.LOGIN,
-          baseUrl: config.apiBase,
-        })
+        console.log('🔵 LOGIN START', { email: payload.email })
 
-        // ✅ LANGSUNG KE BACKEND (bukan Nuxt server)
-        const response = await $fetch<LoginResponse>(
-          `${config.apiBase}${API_ENDPOINTS.AUTH.LOGIN}`,
-          {
-            method: 'POST',
-            body: payload,
-            // ✅ PENTING: Credentials untuk CORS cookies
-            credentials: 'include',
-          }
-        )
+        // ✅ gunakan useApi().auth.login()
+        const response = await api.auth.login(payload)
 
         console.log('✅ LOGIN SUCCESS', {
           user: response.user.email,
@@ -86,8 +73,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     /**
-     * Restore auth
-     * ✅ LANGSUNG CALL BACKEND ASP.NET
+     * Restore auth dari session
      */
     async restore() {
       if (process.server) {
@@ -99,31 +85,17 @@ export const useAuthStore = defineStore('auth', {
 
       this.restoring = true
       const startTime = Date.now()
-      const timeout = 5000
 
       try {
-        const { public: config } = useRuntimeConfig()
+        const api = useApi()
 
-        console.log('🔄 RESTORE START', {
-          endpoint: API_ENDPOINTS.AUTH.ME,
-          baseUrl: config.apiBase,
-        })
+        console.log('🔄 RESTORE START')
 
-        // ✅ LANGSUNG KE BACKEND
+        // ✅ gunakan useApi().auth.me()
         const me = await Promise.race([
-          $fetch<User>(
-            `${config.apiBase}${API_ENDPOINTS.AUTH.ME}`,
-            {
-              method: 'GET',
-              // ✅ PENTING: Credentials untuk CORS cookies
-              credentials: 'include',
-            }
-          ),
+          api.auth.me(),
           new Promise<never>((_, reject) =>
-            setTimeout(
-              () => reject(new Error('Auth restore timeout')),
-              timeout
-            )
+            setTimeout(() => reject(new Error('Timeout')), 5000)
           ),
         ])
 
@@ -145,23 +117,16 @@ export const useAuthStore = defineStore('auth', {
     },
 
     /**
-     * Logout
-     * ✅ LANGSUNG CALL BACKEND ASP.NET
+     * Logout action
      */
     async logout() {
       try {
-        const { public: config } = useRuntimeConfig()
+        const api = useApi()
 
         console.log('🔵 LOGOUT START')
 
-        // ✅ LANGSUNG KE BACKEND
-        await $fetch(
-          `${config.apiBase}${API_ENDPOINTS.AUTH.LOGOUT}`,
-          {
-            method: 'POST',
-            credentials: 'include',
-          }
-        )
+        // ✅ gunakan useApi().auth.logout()
+        await api.auth.logout()
 
         console.log('✅ LOGGED OUT')
       } catch (error) {
