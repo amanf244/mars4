@@ -1,10 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: 'auth',
-  requiresAuth: true,
-  role: 'admin'
+  meta: {
+    requiresAuth: true,
+    requiresRole: 'admin'
+  }
 })
-
 // State untuk dark mode
 const darkMode = ref(false)
 // State untuk sidebar collapsed

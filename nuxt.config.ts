@@ -1,21 +1,27 @@
-import tailwindcss from "@tailwindcss/vite";
+import tailwindcss from "@tailwindcss/vite"
 
-
-const isTauri = process.env.TAURI === 'true';
-console.log('🔧 Tauri Environment Check:');
-console.log('TAURI env:', process.env.TAURI);
-console.log('isTauri:', isTauri);
+const isTauri = process.env.TAURI === 'true'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
 
-    runtimeConfig: {
-    apiBase: process.env.API_BASE || 'http://localhost:5084/api',  // ⬅️ dipakai di server
+  future: {
+    compatibilityVersion: 4,
+  },
+
+  // ✅ LANGSUNG KE BACKEND ASP.NET
+  runtimeConfig: {
+    // Server-side (tidak dipakai karena client langsung call backend)
+    apiBase: process.env.API_BASE || 'http://localhost:5084/api',
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:5084/api'
+      // Client-side - PENTING: Full URL ke backend ASP.NET
+      apiBase: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:5084/api/v1'
     }
   },
-  
+
+  plugins: [
+    '~/plugins/auth-init.client.ts'
+  ],
 
   ssr: !isTauri,
 
@@ -29,7 +35,10 @@ export default defineNuxtConfig({
 
   app: isTauri
     ? { baseURL: './' }
-    : undefined,
+    : {
+        layoutTransition: { name: 'layout', mode: 'out-in' },
+        pageTransition: { name: 'page', mode: 'out-in' },
+      },
 
   build: {
     transpile: ['gsap', 'three'],
@@ -37,7 +46,34 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    ssr: {
+      noExternal: ['pinia'],
+    },
   },
 
-  modules: ['@pinia/nuxt', '@nuxtjs/leaflet', '@nuxt/icon'],
+  modules: [
+    '@pinia/nuxt',
+    '@nuxtjs/leaflet',
+    '@nuxt/icon',
+  ],
+
+  components: {
+    dirs: [
+      {
+        path: '~/components',
+        pathPrefix: false,
+      },
+      {
+        path: '~/components/admin',
+        prefix: 'Admin',
+      },
+    ],
+  },
+
+  imports: {
+    dirs: [
+      '~/composables',
+      '~/composables/**',
+    ],
+  },
 })
