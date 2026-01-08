@@ -1,8 +1,11 @@
-export default defineNuxtPlugin(async (nuxtApp) => {
+export default defineNuxtPlugin(async () => {
   const auth = useAuthStore()
   
-  // Restore SEKALI saat app pertama load di browser
+  console.log('🟢 AUTH PLUGIN - INIT START', { initialized: auth.initialized })
+  
   if (!auth.initialized) {
+    console.log('🟠 AUTH PLUGIN - RESTORING')
     await auth.restore()
+    console.log('🟢 AUTH PLUGIN - RESTORED', { user: auth.user?.email })
   }
 })
