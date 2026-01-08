@@ -1,4 +1,7 @@
 <script setup lang="ts">
+  import QuickActions from '~/components/admin/QuickActions.vue'
+import StatsCard from '~/components/admin/StatsCard.vue'
+
 definePageMeta({
   middleware: 'auth',
   meta: {
@@ -128,10 +131,13 @@ const auth = {
     @logout="handleLogout"
   >
     <template #sidebar-content>
-      <QuickActions 
-        :actions="quickActions"
-        :darkMode="darkMode"
-      />
+      <ClientOnly>
+  <QuickActions 
+    :actions="quickActions"
+    :darkMode="darkMode"
+  />
+</ClientOnly>
+
     </template>
 
     <template #mobile-sidebar-content>
@@ -157,16 +163,18 @@ const auth = {
     </template>
 
     <!-- Konten utama -->
-    <!-- Stats Cards -->
+   <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <StatsCard 
-        v-for="stat in stats"
-        :key="stat.title"
-        :stat="stat"
-        :darkMode="darkMode"
-      />
+      <ClientOnly>
+  <StatsCard 
+    v-for="stat in stats"
+    :key="stat.title"
+    :stat="stat"
+    :darkMode="darkMode"
+  />
+</ClientOnly>
+
     </div>
-    
     <!-- Chart & Recent Activity -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
       <!-- Chart Container -->

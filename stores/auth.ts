@@ -39,38 +39,43 @@ export const useAuthStore = defineStore('auth', {
     /**
      * Login action
      */
-    async login(payload: {
-      email: string
-      password: string
-      rememberMe?: boolean
-      deviceName?: string
-    }) {
-      try {
-        const api = useApi()
+   /**
+ * Login action
+ */
+async login(payload: {
+  email: string
+  password: string
+  rememberMe?: boolean
+  deviceName?: string
+}) {
+  try {
+    const api = useApi()
+    console.log('🔵 LOGIN START', { email: payload.email })
+    // ✅ gunakan useApi().auth.login()
+    const response = await api.auth.login(payload)
+    console.log('✅ LOGIN SUCCESS', {
+      user: response.user.email,
+      role: response.user.role,
+    })
+    if (!response.success || !response.user) {
+      throw new Error(response.message || 'Login gagal')
+    }
 
-        console.log('🔵 LOGIN START', { email: payload.email })
+    // ✅ SIMPAN JWT TOKEN dari response
+    if (response.token) {
+      localStorage.setItem('authToken', response.token)
+      console.log('✅ JWT Token saved to localStorage')
+    }
 
-        // ✅ gunakan useApi().auth.login()
-        const response = await api.auth.login(payload)
+    this.user = response.user
+    this.initialized = true
+    return response
+  } catch (error: any) {
+    console.error('❌ LOGIN ERROR:', error?.message || error)
+    throw error
+  }
+},
 
-        console.log('✅ LOGIN SUCCESS', {
-          user: response.user.email,
-          role: response.user.role,
-        })
-
-        if (!response.success || !response.user) {
-          throw new Error(response.message || 'Login gagal')
-        }
-
-        this.user = response.user
-        this.initialized = true
-
-        return response
-      } catch (error: any) {
-        console.error('❌ LOGIN ERROR:', error?.message || error)
-        throw error
-      }
-    },
 
     /**
      * Restore auth dari session
@@ -117,25 +122,25 @@ export const useAuthStore = defineStore('auth', {
     },
 
     /**
-     * Logout action
-     */
-    async logout() {
-      try {
-        const api = useApi()
-
-        console.log('🔵 LOGOUT START')
-
-        // ✅ gunakan useApi().auth.logout()
-        await api.auth.logout()
-
-        console.log('✅ LOGGED OUT')
-      } catch (error) {
-        console.error('❌ LOGOUT ERROR:', error)
-      } finally {
-        this.clearAuth()
-        await navigateTo('/login')
-      }
-    },
+ * Logout action
+ */
+async logout() {
+  try {
+    const api = useApi()
+    console.log('🔵 LOGOUT START')
+    // ✅ gunakan useApi().auth.logout()
+    await api.auth.logout()
+    console.log('✅ LOGGED OUT')
+    // ✅ HAPUS JWT TOKEN
+    localStorage.removeItem('authToken')
+    console.log('✅ JWT Token removed from localStorage')
+  } catch (error) {
+    console.error('❌ LOGOUT ERROR:', error)
+  } finally {
+    this.clearAuth()
+    await navigateTo('/login')
+  }
+},
 
     /**
      * Clear auth state

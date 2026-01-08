@@ -1,45 +1,54 @@
 // composables/useApi.ts
 /**
- * Composable untuk API management
- * Handle URL building dengan config
+ * Composable untuk API management dengan JWT Token support
+ * Handle URL building dengan config dan JWT authentication
  */
-
 import { API_ENDPOINTS } from '~/types/api'
 
 export const useApi = () => {
   const config = useRuntimeConfig()
 
   /**
+   * Get JWT token dari localStorage
+   */
+  const getToken = (): string | null => {
+    if (process.server) return null
+    return localStorage.getItem('authToken')
+  }
+
+  /**
    * Build full URL dari endpoint + config
-   * Contoh: '/auth/login' → 'http://localhost:5084/api/v1/auth/login'
    */
   const buildUrl = (endpoint: string): string => {
-    const base = config.public.apiBase       // http://localhost:5084/api
-    const version = config.public.apiVersion // /v1
+    const base = config.public.apiBase
+    const version = config.public.apiVersion
     const fullUrl = `${base}${version}${endpoint}`
-
     console.log('🔗 buildUrl:', { endpoint, base, version, fullUrl })
-
     return fullUrl
   }
 
   /**
-   * Generic fetch function
+   * Generic fetch function dengan JWT support
    */
   const apiCall = async <T = any>(
     endpoint: string,
     options: any = {}
   ): Promise<T> => {
     const url = buildUrl(endpoint)
+    const token = getToken()
 
     try {
       console.log(
         `📡 [${options.method || 'GET'}] ${url}`,
         options.body ? { body: options.body } : ''
       )
-
       return await $fetch<T>(url, {
-        credentials: 'include', // ✅ PENTING: Kirim cookies
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }), // ✅ Add JWT
+          ...options.headers,
+        },
         ...options,
       })
     } catch (error: any) {
@@ -55,16 +64,12 @@ export const useApi = () => {
   // HTTP Methods
   const get = <T = any>(endpoint: string, options: any = {}) =>
     apiCall<T>(endpoint, { method: 'GET', ...options })
-
   const post = <T = any>(endpoint: string, body?: any, options: any = {}) =>
     apiCall<T>(endpoint, { method: 'POST', body, ...options })
-
   const put = <T = any>(endpoint: string, body?: any, options: any = {}) =>
     apiCall<T>(endpoint, { method: 'PUT', body, ...options })
-
   const patch = <T = any>(endpoint: string, body?: any, options: any = {}) =>
     apiCall<T>(endpoint, { method: 'PATCH', body, ...options })
-
   const del = <T = any>(endpoint: string, options: any = {}) =>
     apiCall<T>(endpoint, { method: 'DELETE', ...options })
 
@@ -119,7 +124,6 @@ export const useApi = () => {
     put,
     patch,
     del,
-
     // Grouped endpoints
     auth,
     gallery,
