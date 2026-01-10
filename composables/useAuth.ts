@@ -1,16 +1,15 @@
 // composables/useAuth.ts
 /**
  * Nuxt 4 Composable untuk Auth
- * Lebih cleaner daripada langsung pakai store
+ * Wrapper dari useAuthStore
  */
-
 export const useAuth = () => {
   const authStore = useAuthStore()
 
-  // Return hanya yang dibutuhkan
   return {
     // State
     user: computed(() => authStore.user),
+    token: computed(() => authStore.token),
     isAuthenticated: computed(() => authStore.isAuthenticated),
     role: computed(() => authStore.role),
     isAdmin: computed(() => authStore.isAdmin),
@@ -22,5 +21,6 @@ export const useAuth = () => {
     logout: () => authStore.logout(),
     restore: () => authStore.restore(),
     clearAuth: () => authStore.clearAuth(),
+    initializeFromStorage: () => authStore.initializeFromStorage(),
   }
 }

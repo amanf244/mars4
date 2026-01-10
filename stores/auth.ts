@@ -1,35 +1,32 @@
-// stores/auth.ts
-/**
- * Auth Store - Menggunakan useApi composable
- */
-
-
-import { defineStore } from 'pinia'
-
 type Role = 'admin' | 'user'
 
 interface User {
   id: number
   email: string
   role: Role
-  name: string | null
+  name: string
 }
 
 interface LoginResponse {
   success: boolean
   message?: string
+  token: string
+  refreshToken: string
   user: User
 }
 
+
 export const useAuthStore = defineStore('auth', {
+  
   state: () => ({
     user: null as User | null,
+    token: null as string | null,
     initialized: false as boolean,
     restoring: false as boolean,
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.user,
+    isAuthenticated: (state) => !!state.user && !!state.token,
     role: (state) => state.user?.role,
     isAdmin: (state) => state.user?.role === 'admin',
     userId: (state) => state.user?.id,
@@ -37,12 +34,31 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     /**
-     * Login action
+     * Initialize - untuk SSR
      */
-   /**
- * Login action
- */
-async login(payload: {
+    initializeFromStorage() {
+      // ✅ Hanya di client
+      if (import.meta.server) {
+        this.initialized = true
+        return
+      }
+
+      const token = localStorage.getItem('authToken')
+      const userStr = localStorage.getItem('authUser')
+
+      if (token && userStr) {
+        this.token = token
+        this.user = JSON.parse(userStr)
+        console.log('✅ AUTH - Restored from localStorage')
+      }
+
+      this.initialized = true
+    },
+
+    /**
+     * Login
+     */
+   async login(payload: {
   email: string
   password: string
   rememberMe?: boolean
@@ -50,53 +66,53 @@ async login(payload: {
 }) {
   try {
     const api = useApi()
-    console.log('🔵 LOGIN START', { email: payload.email })
-    // ✅ gunakan useApi().auth.login()
     const response = await api.auth.login(payload)
-    console.log('✅ LOGIN SUCCESS', {
-      user: response.user.email,
-      role: response.user.role,
-    })
-    if (!response.success || !response.user) {
+
+    if (!response.success || !response.user || !response.token) {
       throw new Error(response.message || 'Login gagal')
     }
 
-    // ✅ SIMPAN JWT TOKEN dari response
-    if (response.token) {
-      localStorage.setItem('authToken', response.token)
-      console.log('✅ JWT Token saved to localStorage')
-    }
-
+    this.token = response.token
     this.user = response.user
     this.initialized = true
+
+    // ✅ Simpan ke localStorage (client)
+    if (import.meta.client) {
+      localStorage.setItem('authToken', response.token)
+      localStorage.setItem('authUser', JSON.stringify(response.user))
+      
+      // ✅ SIMPAN KE COOKIE JUGA (untuk SSR)
+      const cookie = useCookie('authToken', {
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        secure: true,
+        httpOnly: false,
+        sameSite: 'lax'
+      })
+      cookie.value = response.token
+    }
+
+    console.log('✅ LOGIN SUCCESS')
     return response
   } catch (error: any) {
-    console.error('❌ LOGIN ERROR:', error?.message || error)
+    console.error('❌ LOGIN ERROR:', error?.message)
+    this.clearAuth()
     throw error
   }
-},
-
-
+}
+,
     /**
-     * Restore auth dari session
+     * Restore dengan backend
      */
     async restore() {
-      if (process.server) {
-        this.initialized = true
-        return
-      }
-
-      if (this.initialized || this.restoring) return
+      if (this.initialized) return
+      if (this.restoring) return
 
       this.restoring = true
-      const startTime = Date.now()
 
       try {
         const api = useApi()
-
         console.log('🔄 RESTORE START')
 
-        // ✅ gunakan useApi().auth.me()
         const me = await Promise.race([
           api.auth.me(),
           new Promise<never>((_, reject) =>
@@ -106,15 +122,15 @@ async login(payload: {
 
         this.user = me
         this.initialized = true
-
-        const elapsed = Date.now() - startTime
-        console.log('✅ RESTORED', {
-          user: me.email,
-          elapsed: `${elapsed}ms`,
-        })
+        console.log('✅ RESTORED')
       } catch (err: any) {
-        console.error('❌ RESTORE ERROR:', err.message)
-        this.clearAuth()
+        if (err?.status === 401 || err?.statusCode === 401) {
+          console.log('ℹ️ Not authenticated')
+          this.clearAuth()
+        } else {
+          console.error('❌ RESTORE ERROR:', err.message)
+          this.clearAuth()
+        }
       } finally {
         this.initialized = true
         this.restoring = false
@@ -122,33 +138,42 @@ async login(payload: {
     },
 
     /**
- * Logout action
- */
-async logout() {
-  try {
-    const api = useApi()
-    console.log('🔵 LOGOUT START')
-    // ✅ gunakan useApi().auth.logout()
-    await api.auth.logout()
-    console.log('✅ LOGGED OUT')
-    // ✅ HAPUS JWT TOKEN
-    localStorage.removeItem('authToken')
-    console.log('✅ JWT Token removed from localStorage')
-  } catch (error) {
-    console.error('❌ LOGOUT ERROR:', error)
-  } finally {
-    this.clearAuth()
-    await navigateTo('/login')
-  }
-},
+     * Logout
+     */
+    async logout() {
+      try {
+        const api = useApi()
+        console.log('🔵 LOGOUT START')
+        await api.auth.logout()
+      } catch (error) {
+        console.error('❌ LOGOUT ERROR:', error)
+      } finally {
+        this.clearAuth()
+        // ✅ Clear hanya di client
+        if (import.meta.client) {
+          localStorage.removeItem('authToken')
+          localStorage.removeItem('authUser')
+          const cookie = useCookie('authToken')
+          cookie.value = null
+        }
+        await navigateTo('/login')
+      }
+    },
 
     /**
-     * Clear auth state
+     * Clear auth
      */
     clearAuth() {
       this.user = null
+      this.token = null
       this.initialized = true
       this.restoring = false
+      if (import.meta.client) {
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('authUser')
+        const cookie = useCookie('authToken')
+        cookie.value = null
+      }
     },
   },
 })
