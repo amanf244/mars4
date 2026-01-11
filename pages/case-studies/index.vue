@@ -72,13 +72,13 @@
 
       <!-- Grid Galeri Lengkap -->
       <div 
-        ref="galleryGrid"
+        ref="caseStudiesGrid"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12"
       >
         <div 
           v-for="(item, itemIndex) in paginatedItems"
           :key="item.id"
-          class="group gallery-item relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 hover:border-purple-500/30 backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:z-10"
+          class="group caseStudies-item relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 hover:border-purple-500/30 backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:z-10"
         >
           <!-- Carousel Mini untuk Multiple Foto -->
           <div class="relative h-64 overflow-hidden">
@@ -176,7 +176,7 @@
                 <!-- Action Buttons -->
                 <div class="flex gap-2 mt-3">
                   <NuxtLink 
-                    :to="`/gallery/${item.id}/${slugify(item.title)}`"
+                    :to="`/case-studies/${slugify(item.title)}`"
                     class="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs rounded-lg backdrop-blur-sm transition-colors flex items-center gap-1"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,7 +230,7 @@
             
             <!-- Tombol Baca Selengkapnya (Link ke halaman detail) -->
             <NuxtLink
-              :to="`/gallery/${item.id}/${slugify(item.title)}`"
+              :to="`/case-studies/${slugify(item.title)}`"
               class="w-full py-2.5 px-4 bg-gradient-to-r from-purple-600/20 to-blue-600/20 hover:from-purple-600/30 hover:to-blue-600/30 text-purple-300 hover:text-white font-medium rounded-lg border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 flex items-center justify-center gap-2 group/readmore"
             >
               <span>Baca Selengkapnya</span>
@@ -443,7 +443,7 @@ gsap.registerPlugin(ScrollTrigger)
 const currentPhotoIndex = ref({})
 
 // Data dengan multiple photos per item
-const allGalleryItems = ref([
+const allCaseStudiesItems = ref([
   { 
     id: 1,
     title: 'Redmi 9', 
@@ -451,9 +451,9 @@ const allGalleryItems = ref([
     text: 'Upgrade kapasitas eMMC menjadi 128GB untuk performa lebih cepat dan penyimpanan lebih besar.', 
     fullText: 'Proses pergantian eMMC pada Redmi 9 membutuhkan keahlian khusus karena chip terintegrasi dengan board. Kami menggunakan hot air gun dengan suhu terkontrol untuk melepas chip lama dan memasang chip baru dengan kapasitas 128GB. Setelah pemasangan, dilakukan flashing firmware dan testing menyeluruh untuk memastikan semua fungsi berjalan normal.',
     photos: [
-      { url: '/gallery/redmi9_emmc_1.jpg', caption: 'Kondisi eMMC sebelum diganti' },
-      { url: '/gallery/redmi9_emmc_2.jpg', caption: 'Proses penggantian eMMC' },
-      { url: '/gallery/redmi9_emmc_3.jpg', caption: 'Hasil akhir setelah penggantian' }
+      { url: '/case-studies/redmi9_emmc_1.jpg', caption: 'Kondisi eMMC sebelum diganti' },
+      { url: '/case-studies/redmi9_emmc_2.jpg', caption: 'Proses penggantian eMMC' },
+      { url: '/case-studies/redmi9_emmc_3.jpg', caption: 'Hasil akhir setelah penggantian' }
     ],
     category: 'eMMC Repair',
     date: '15 Jan 2024',
@@ -466,8 +466,8 @@ const allGalleryItems = ref([
     text: 'Ganti eMMC yang sudah tidak terdeteksi dengan chip baru original.', 
     fullText: 'EMMC pada Vivo Y20 mengalami kerusakan total sehingga tidak terdeteksi oleh sistem. Kami melakukan penggantian dengan chip baru original yang memiliki kompatibilitas sempurna. Setelah penggantian, dilakukan flashing ulang sistem operasi dan testing semua fungsi hardware.',
     photos: [
-      { url: '/gallery/perbaikan_emmc_1.jpeg', caption: 'EMMC lama yang sudah mati' },
-      { url: '/gallery/perbaikan_emmc_2.jpeg', caption: 'Proses pemasangan eMMC baru' }
+      { url: '/case-studies/perbaikan_emmc_1.jpeg', caption: 'EMMC lama yang sudah mati' },
+      { url: '/case-studies/perbaikan_emmc_2.jpeg', caption: 'Proses pemasangan eMMC baru' }
     ],
     category: 'eMMC Repair',
     date: '10 Jan 2024',
@@ -480,9 +480,9 @@ const allGalleryItems = ref([
     text: 'Repair jalur flex cable LCD yang putus akibat benturan.', 
     fullText: 'Konektor LCD pada Oppo A5s mengalami kerusakan fisik akibat benturan. Kami melakukan perbaikan jalur dengan teknik microsoldering untuk menyambungkan kembali jalur yang putus. Setelah perbaikan, dilakukan testing tampilan LCD dengan berbagai warna untuk memastikan kualitas gambar.',
     photos: [
-      { url: '/gallery/perbaikan_konektor_lcd_1.jpeg', caption: 'Konektor LCD yang rusak' },
-      { url: '/gallery/perbaikan_konektor_lcd_2.jpeg', caption: 'Proses repair microsoldering' },
-      { url: '/gallery/perbaikan_konektor_lcd_3.jpeg', caption: 'Hasil setelah diperbaiki' }
+      { url: '/case-studies/perbaikan_konektor_lcd_1.jpeg', caption: 'Konektor LCD yang rusak' },
+      { url: '/case-studies/perbaikan_konektor_lcd_2.jpeg', caption: 'Proses repair microsoldering' },
+      { url: '/case-studies/perbaikan_konektor_lcd_3.jpeg', caption: 'Hasil setelah diperbaiki' }
     ],
     category: 'LCD Repair',
     date: '5 Jan 2024',
@@ -495,9 +495,9 @@ const allGalleryItems = ref([
     text: 'Proses reballing chipset utama untuk mengatasi masalah hang dan restart.', 
     fullText: 'Chipset Snapdragon pada Samsung A51 mengalami cold joint yang menyebabkan device sering hang dan restart. Kami melakukan proses reballing dengan menggunakan BGA rework station untuk melepas chipset, membersihkan bola solder, dan memasang kembali dengan solder baru berkualitas tinggi.',
     photos: [
-      { url: '/gallery/Reball_chipset_1.jpeg', caption: 'Chipset sebelum direball' },
-      { url: '/gallery/Reball_chipset_2.jpeg', caption: 'Proses reballing chipset' },
-      { url: '/gallery/Reball_chipset_3.jpeg', caption: 'Chipset setelah direball' }
+      { url: '/case-studies/Reball_chipset_1.jpeg', caption: 'Chipset sebelum direball' },
+      { url: '/case-studies/Reball_chipset_2.jpeg', caption: 'Proses reballing chipset' },
+      { url: '/case-studies/Reball_chipset_3.jpeg', caption: 'Chipset setelah direball' }
     ],
     category: 'Chipset',
     date: '28 Des 2023',
@@ -510,9 +510,9 @@ const allGalleryItems = ref([
     text: 'Microsoldering jalur pad IC power yang terkelupas.', 
     fullText: 'IC Power pada iPhone X mengalami kerusakan pad akibat percikan air. Kami melakukan perbaikan dengan teknik microsoldering untuk menyambungkan kembali jalur yang terkelupas menggunakan kabel jumper ultra tipis. Setelah perbaikan, dilakukan pengukuran voltase untuk memastikan semua jalur berfungsi normal.',
     photos: [
-      { url: '/gallery/perbaikkan_jalur_pad_1.jpeg', caption: 'Pad IC yang terkelupas' },
-      { url: '/gallery/perbaikkan_jalur_pad_2.jpeg', caption: 'Proses microsoldering' },
-      { url: '/gallery/perbaikkan_jalur_pad_3.jpeg', caption: 'Hasil perbaikan jalur' }
+      { url: '/case-studies/perbaikkan_jalur_pad_1.jpeg', caption: 'Pad IC yang terkelupas' },
+      { url: '/case-studies/perbaikkan_jalur_pad_2.jpeg', caption: 'Proses microsoldering' },
+      { url: '/case-studies/perbaikkan_jalur_pad_3.jpeg', caption: 'Hasil perbaikan jalur' }
     ],
     category: 'Microsoldering',
     date: '20 Des 2023',
@@ -525,9 +525,9 @@ const allGalleryItems = ref([
     text: 'Pembersihan korosi akibat air dan penggantian komponen yang rusak.', 
     fullText: 'iPhone 11 terkena air sehingga menyebabkan korosi pada beberapa komponen utama. Kami melakukan ultrasonic cleaning untuk membersihkan korosi, kemudian mengganti komponen yang sudah rusak seperti charging port dan speaker. Setelah perbaikan, device berfungsi normal kembali.',
     photos: [
-      { url: '/gallery/water_damage_1.jpg', caption: 'Kondisi sebelum dibersihkan' },
-      { url: '/gallery/water_damage_2.jpg', caption: 'Proses ultrasonic cleaning' },
-      { url: '/gallery/water_damage_3.jpg', caption: 'Hasil setelah diperbaiki' }
+      { url: '/case-studies/water_damage_1.jpg', caption: 'Kondisi sebelum dibersihkan' },
+      { url: '/case-studies/water_damage_2.jpg', caption: 'Proses ultrasonic cleaning' },
+      { url: '/case-studies/water_damage_3.jpg', caption: 'Hasil setelah diperbaiki' }
     ],
     category: 'Water Damage',
     date: '12 Des 2023',
@@ -540,9 +540,9 @@ const allGalleryItems = ref([
     text: 'Proses BGA rework pada chip A12 Bionic.', 
     fullText: 'Chip A12 Bionic pada iPad Air 3 mengalami masalah akibat overheating. Kami melakukan BGA rework untuk melepas chip, mengganti thermal paste, dan memasang kembali dengan presisi tinggi menggunakan BGA rework station. Setelah proses, dilakukan stress test untuk memastikan chip bekerja optimal.',
     photos: [
-      { url: '/gallery/bga_rework_1.jpg', caption: 'Chip A12 sebelum rework' },
-      { url: '/gallery/bga_rework_2.jpg', caption: 'Proses BGA rework' },
-      { url: '/gallery/bga_rework_3.jpg', caption: 'Chip setelah dipasang kembali' }
+      { url: '/case-studies/bga_rework_1.jpg', caption: 'Chip A12 sebelum rework' },
+      { url: '/case-studies/bga_rework_2.jpg', caption: 'Proses BGA rework' },
+      { url: '/case-studies/bga_rework_3.jpg', caption: 'Chip setelah dipasang kembali' }
     ],
     category: 'BGA',
     date: '5 Des 2023',
@@ -555,9 +555,9 @@ const allGalleryItems = ref([
     text: 'Recovery data dari SSD yang tidak terdeteksi.', 
     fullText: 'SSD pada HP Envy tidak terdeteksi oleh sistem sehingga data penting tidak bisa diakses. Kami menggunakan alat khusus untuk membaca chip flash memory secara langsung, kemudian melakukan recovery data dengan software khusus. Berhasil menyelamatkan 95% data penting klien.',
     photos: [
-      { url: '/gallery/data_recovery_1.jpg', caption: 'SSD yang tidak terdeteksi' },
-      { url: '/gallery/data_recovery_2.jpg', caption: 'Proses recovery data' },
-      { url: '/gallery/data_recovery_3.jpg', caption: 'Data berhasil direcovery' }
+      { url: '/case-studies/data_recovery_1.jpg', caption: 'SSD yang tidak terdeteksi' },
+      { url: '/case-studies/data_recovery_2.jpg', caption: 'Proses recovery data' },
+      { url: '/case-studies/data_recovery_3.jpg', caption: 'Data berhasil direcovery' }
     ],
     category: 'Data Recovery',
     date: '30 Nov 2023',
@@ -568,7 +568,7 @@ const allGalleryItems = ref([
 // Fungsi untuk navigasi foto dalam card
 const nextPhoto = (itemId) => {
   const currentIndex = currentPhotoIndex.value[itemId] || 0
-  const item = allGalleryItems.value.find(i => i.id === itemId)
+  const item = allCaseStudiesItems.value.find(i => i.id === itemId)
   if (currentIndex < item.photos.length - 1) {
     currentPhotoIndex.value = {
       ...currentPhotoIndex.value,
@@ -608,7 +608,7 @@ const slugify = (text) => {
 
 // Categories
 const categories = computed(() => {
-  return [...new Set(allGalleryItems.value.map(item => item.category))]
+  return [...new Set(allCaseStudiesItems.value.map(item => item.category))]
 })
 
 // Filter state
@@ -618,7 +618,7 @@ const itemsPerPage = 8
 
 // Filtered items
 const filteredItems = computed(() => {
-  let items = allGalleryItems.value
+  let items = allCaseStudiesItems.value
   
   if (filterCategory.value) {
     items = items.filter(item => item.category === filterCategory.value)
@@ -635,9 +635,9 @@ const filteredItems = computed(() => {
 })
 
 // Pagination
-const totalItems = computed(() => allGalleryItems.value.length)
+const totalItems = computed(() => allCaseStudiesItems.value.length)
 const totalPhotos = computed(() => {
-  return allGalleryItems.value.reduce((total, item) => total + item.photos.length, 0)
+  return allCaseStudiesItems.value.reduce((total, item) => total + item.photos.length, 0)
 })
 const totalPages = computed(() => Math.ceil(filteredItems.value.length / itemsPerPage))
 const showPagination = computed(() => totalPages.value > 1)
@@ -659,7 +659,7 @@ const lightbox = ref({
 
 // Buka lightbox dengan semua foto dari item
 const openLightbox = (itemId, photoIndex = 0) => {
-  const item = allGalleryItems.value.find(i => i.id === itemId)
+  const item = allCaseStudiesItems.value.find(i => i.id === itemId)
   if (!item) return
   
   lightbox.value = {
@@ -693,7 +693,7 @@ const closeLightbox = () => {
 
 // Fungsi share item
 const shareItem = (item) => {
-  const itemUrl = `${window.location.origin}/gallery/${item.id}/${slugify(item.title)}`
+  const itemUrl = `${window.location.origin}/case-studies/${slugify(item.title)}`
   
   if (navigator.share) {
     navigator.share({
@@ -727,11 +727,11 @@ const scrollToTop = () => {
 }
 
 // Animations
-const galleryGrid = ref(null)
+const caseStudiesGrid = ref(null)
 
 onMounted(() => {
   // Animasi masuk untuk item galeri
-  gsap.fromTo('.gallery-item', 
+  gsap.fromTo('.caseStudies-item', 
     {
       opacity: 0,
       y: 30,
@@ -745,7 +745,7 @@ onMounted(() => {
       stagger: 0.1,
       ease: 'power3.out',
       scrollTrigger: {
-        trigger: galleryGrid.value,
+        trigger: caseStudiesGrid.value,
         start: 'top center+=100',
         toggleActions: 'play none none none'
       }
@@ -762,7 +762,7 @@ onMounted(() => {
   })
   
   // Inisialisasi currentPhotoIndex untuk semua item
-  allGalleryItems.value.forEach(item => {
+  allCaseStudiesItems.value.forEach(item => {
     if (currentPhotoIndex.value[item.id] === undefined) {
       currentPhotoIndex.value[item.id] = 0
     }
@@ -823,7 +823,7 @@ onMounted(() => {
 }
 
 /* Smooth transitions */
-.gallery-item {
+.caseStudies-item {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -872,7 +872,7 @@ onMounted(() => {
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
-  .gallery-item {
+  .caseStudies-item {
     margin-bottom: 1rem;
   }
   

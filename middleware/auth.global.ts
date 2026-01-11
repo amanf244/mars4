@@ -1,21 +1,30 @@
+// middleware/auth.global.ts
 import { useAuthStore } from '~/stores/auth'
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   const auth = useAuthStore()
+  const isLoginPage = to.path === '/login'
 
+  // Restore auth jika belum initialized
   if (!auth.initialized) {
     await auth.restore()
   }
 
+  // Check requiresAuth meta
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
     return navigateTo('/login')
   }
 
-  if (to.path === '/login' && auth.isAuthenticated) {
-    return navigateTo('/admin/dashboard')
-  }
-
+  // Check role-based access
   if (to.meta.role && auth.role !== to.meta.role) {
     return navigateTo('/403')
+  }
+
+  // Redirect authenticated user away from login
+  if (isLoginPage && auth.isAuthenticated) {
+    if (auth.isAdmin) {
+      return navigateTo('/dashboard')
+    }
+    return navigateTo('/')
   }
 })

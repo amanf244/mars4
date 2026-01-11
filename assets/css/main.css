@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "@nuxt/ui";
+
 /* Tambahkan di CSS global */
 nav {
     transition: 

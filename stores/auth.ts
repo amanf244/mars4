@@ -1,96 +1,222 @@
+// stores/auth.ts
 import { defineStore } from 'pinia'
+import type { User, LoginPayload, LoginResponse } from '~/types/auth'
 
-type Role = 'admin' | 'user'
+export const useAuthStore = defineStore('auth', () => {
+  // State
+  const user = ref<User | null>(null)
+  const token = ref<string | null>(null)
+  const refreshToken = ref<string | null>(null)
+  const initialized = ref(false)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
 
-interface User {
-  id: number
-  email: string
-  role: Role
-  name: string | null
-}
+  // Getters
+  const isAuthenticated = computed(() => !!user.value && !!token.value)
+  const isAdmin = computed(() => user.value?.role === 'admin')
+  const isUser = computed(() => user.value?.role === 'user')
+  const role = computed(() => user.value?.role)
+  const userName = computed(() => user.value?.name || 'Guest')
 
-export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    user: null as User | null,
-    token: null as string | null,
-    initialized: false as boolean,
-    restoring: false as boolean // untuk mencegah race condition
-  }),
+  // Actions
+  async function login(payload: LoginPayload) {
+    loading.value = true
+    error.value = null
 
-  getters: {
-    isAuthenticated: (s) => !!s.user && !!s.token,
-    role: (s) => s.user?.role,
-    isAdmin: (s) => s.user?.role === 'admin'
-  },
+    try {
+      const config = useRuntimeConfig()
 
-  actions: {
-    async login(payload: { email: string; password: string }) {
-      try {
-        const response = await $fetch<{
-          success: boolean
-          token: string
-          user: User
-        }>('http://localhost:3333/login', {
+      const response = await $fetch<LoginResponse>(
+        `${config.public.apiBase}${config.public.authEndpoint}/login`,
+        {
           method: 'POST',
-          body: payload
-        })
+          body: {
+            email: payload.email,
+            password: payload.password,
+            rememberMe: payload.rememberMe ?? true,
+            deviceName: payload.deviceName ?? 'web-nuxt-client'
+          }
+        }
+      )
 
-        if (!response.success) throw new Error('Login gagal')
-
-        this.user = response.user
-        this.token = response.token
-
-        // simpan token ke cookie
-        const tokenCookie = useCookie('token', {
-          sameSite: 'lax',
-          secure: process.env.NODE_ENV === 'production',
-          httpOnly: false // jika ingin bisa diakses client
-        })
-        tokenCookie.value = response.token
-      } catch (err: any) {
-        console.error('Login error:', err)
-        throw err
+      if (!response.success) {
+        throw new Error(response.message || 'Login gagal')
       }
-    },
 
-    async restore() {
-      if (this.initialized || this.restoring) return
-      this.restoring = true
+      // Set state
+      user.value = response.user
+      token.value = response.token
+      refreshToken.value = response.refreshToken
 
-      const tokenCookie = useCookie<string | null>('token')
-      const token = tokenCookie.value
+      // Save to cookies
+      _saveToCookies()
 
-      if (!token) {
-        this.initialized = true
-        this.restoring = false
+      console.log('✅ Login successful:', response.user.email)
+      return response
+    } catch (err: any) {
+      const errorMsg = err?.data?.message || err?.message || 'Login gagal'
+      error.value = errorMsg
+      console.error('❌ Login error:', errorMsg)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function restore() {
+    if (initialized.value) return
+
+    try {
+      const config = useRuntimeConfig()
+      const tokenCookie = useCookie<string | null>(config.public.tokenKey)
+      const refreshTokenCookie = useCookie<string | null>(config.public.refreshTokenKey)
+
+      const tokenValue = tokenCookie.value
+      const refreshTokenValue = refreshTokenCookie.value
+
+      if (!tokenValue) {
+        initialized.value = true
         return
       }
 
-      this.token = token
+      token.value = tokenValue
+      refreshToken.value = refreshTokenValue
 
       try {
-        const user = await $fetch<User>('http://localhost:3333/me', {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const userData = await $fetch<User>(
+          `${config.public.apiBase}${config.public.authEndpoint}/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenValue}`
+            }
           }
-        })
-        this.user = user
+        )
+        user.value = userData
+        console.log('✅ Auth restored:', userData.email)
       } catch (err) {
-        console.warn('Restore failed, logging out', err)
-        this.logout()
-      } finally {
-        this.initialized = true
-        this.restoring = false
+        console.warn('⚠️ Token invalid, attempting refresh...')
+        const refreshed = await refreshAccessToken()
+        if (!refreshed) {
+          clearAuth()
+        }
       }
-    },
-
-    logout() {
-      this.user = null
-      this.token = null
-      this.initialized = true
-
-      const tokenCookie = useCookie('token')
-      tokenCookie.value = null
+    } catch (err) {
+      console.warn('⚠️ Restore failed:', err)
+      clearAuth()
+    } finally {
+      initialized.value = true
     }
+  }
+
+  async function refreshAccessToken() {
+    if (!refreshToken.value) {
+      clearAuth()
+      return false
+    }
+
+    try {
+      const config = useRuntimeConfig()
+      const response = await $fetch<any>(
+        `${config.public.apiBase}${config.public.authEndpoint}/refresh`,
+        {
+          method: 'POST',
+          body: { refreshToken: refreshToken.value }
+        }
+      )
+
+      token.value = response.access_token
+      refreshToken.value = response.refresh_token
+
+      _saveToCookies()
+
+      console.log('✅ Token refreshed')
+      return true
+    } catch (err) {
+      console.warn('❌ Refresh token failed:', err)
+      clearAuth()
+      return false
+    }
+  }
+
+  async function logout() {
+    try {
+      const config = useRuntimeConfig()
+
+      if (token.value) {
+        await $fetch(
+          `${config.public.apiBase}${config.public.authEndpoint}/logout`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token.value}`
+            }
+          }
+        )
+      }
+    } catch (err) {
+      console.warn('⚠️ Logout request failed (proceeding anyway):', err)
+    } finally {
+      clearAuth()
+      await navigateTo('/login')
+    }
+  }
+
+  function clearAuth() {
+    user.value = null
+    token.value = null
+    refreshToken.value = null
+    error.value = null
+
+    const config = useRuntimeConfig()
+    const tokenCookie = useCookie(config.public.tokenKey)
+    const refreshTokenCookie = useCookie(config.public.refreshTokenKey)
+
+    tokenCookie.value = null
+    refreshTokenCookie.value = null
+
+    console.log('🧹 Auth cleared')
+  }
+
+  // Private helper
+  function _saveToCookies() {
+    const config = useRuntimeConfig()
+
+    const tokenCookie = useCookie(config.public.tokenKey, {
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 7
+    })
+
+    const refreshTokenCookie = useCookie(config.public.refreshTokenKey, {
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 30
+    })
+
+    tokenCookie.value = token.value
+    refreshTokenCookie.value = refreshToken.value
+  }
+
+  return {
+    // State
+    user,
+    token,
+    refreshToken,
+    initialized,
+    loading,
+    error,
+    // Getters
+    isAuthenticated,
+    isAdmin,
+    isUser,
+    role,
+    userName,
+    // Actions
+    login,
+    restore,
+    refreshAccessToken,
+    logout,
+    clearAuth
   }
 })

@@ -19,7 +19,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
         </svg>
-        <NuxtLink to="/gallery" class="hover:text-purple-400 transition-colors">Galeri</NuxtLink>
+        <NuxtLink to="/case-studies" class="hover:text-purple-400 transition-colors">Galeri</NuxtLink>
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
         </svg>
@@ -42,7 +42,7 @@
         <h2 class="text-2xl font-bold text-white mb-2">Item tidak ditemukan</h2>
         <p class="text-gray-400 mb-6">Pekerjaan yang Anda cari tidak ditemukan dalam galeri kami.</p>
         <NuxtLink 
-          to="/gallery"
+          to="/case-studies"
           class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -319,7 +319,7 @@
                 <NuxtLink
                   v-for="related in relatedItems"
                   :key="related.id"
-                  :to="`/gallery/${related.id}`"
+                  :to="`/case-studies/${slugify(related.title)}`"
                   class="flex items-center gap-3 p-3 bg-gray-800/30 hover:bg-gray-800/50 rounded-lg transition-colors group"
                 >
                   <div class="w-12 h-12 rounded overflow-hidden flex-shrink-0">
@@ -356,7 +356,7 @@
               Hubungi Kami
             </button>
             <NuxtLink
-              to="/gallery"
+              to="/case-studies"
               class="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl border border-gray-600 transition-all"
             >
               Lihat Galeri Lainnya
@@ -466,7 +466,7 @@ import { ref, computed, onMounted } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
-const { id } = route.params
+const slug = route.params.slug // Pakai slug, bukan id
 
 // State
 const loading = ref(false)
@@ -478,7 +478,7 @@ const lightbox = ref({
 })
 
 // Mock data (sama dengan di halaman galeri)
-const allGalleryItems = [
+const allCaseStudiesItems = [
   { 
     id: 1,
     title: 'Redmi 9', 
@@ -486,9 +486,9 @@ const allGalleryItems = [
     text: 'Upgrade kapasitas eMMC menjadi 128GB untuk performa lebih cepat dan penyimpanan lebih besar.', 
     fullText: 'Proses pergantian eMMC pada Redmi 9 membutuhkan keahlian khusus karena chip terintegrasi dengan board. Kami menggunakan hot air gun dengan suhu terkontrol untuk melepas chip lama dan memasang chip baru dengan kapasitas 128GB. Setelah pemasangan, dilakukan flashing firmware dan testing menyeluruh untuk memastikan semua fungsi berjalan normal.',
     photos: [
-      { url: '/gallery/redmi9_emmc_1.jpg', caption: 'Kondisi eMMC sebelum diganti' },
-      { url: '/gallery/redmi9_emmc_2.jpg', caption: 'Proses penggantian eMMC' },
-      { url: '/gallery/redmi9_emmc_3.jpg', caption: 'Hasil akhir setelah penggantian' }
+      { url: '/case-studies/redmi9_emmc_1.jpg', caption: 'Kondisi eMMC sebelum diganti' },
+      { url: '/case-studies/redmi9_emmc_2.jpg', caption: 'Proses penggantian eMMC' },
+      { url: '/case-studies/redmi9_emmc_3.jpg', caption: 'Hasil akhir setelah penggantian' }
     ],
     category: 'eMMC Repair',
     date: '15 Jan 2024',
@@ -501,8 +501,8 @@ const allGalleryItems = [
     text: 'Ganti eMMC yang sudah tidak terdeteksi dengan chip baru original.', 
     fullText: 'EMMC pada Vivo Y20 mengalami kerusakan total sehingga tidak terdeteksi oleh sistem. Kami melakukan penggantian dengan chip baru original yang memiliki kompatibilitas sempurna. Setelah penggantian, dilakukan flashing ulang sistem operasi dan testing semua fungsi hardware.',
     photos: [
-      { url: '/gallery/perbaikan_emmc_1.jpeg', caption: 'EMMC lama yang sudah mati' },
-      { url: '/gallery/perbaikan_emmc_2.jpeg', caption: 'Proses pemasangan eMMC baru' }
+      { url: '/case-studies/perbaikan_emmc_1.jpeg', caption: 'EMMC lama yang sudah mati' },
+      { url: '/case-studies/perbaikan_emmc_2.jpeg', caption: 'Proses pemasangan eMMC baru' }
     ],
     category: 'eMMC Repair',
     date: '10 Jan 2024',
@@ -515,9 +515,9 @@ const allGalleryItems = [
     text: 'Repair jalur flex cable LCD yang putus akibat benturan.', 
     fullText: 'Konektor LCD pada Oppo A5s mengalami kerusakan fisik akibat benturan. Kami melakukan perbaikan jalur dengan teknik microsoldering untuk menyambungkan kembali jalur yang putus. Setelah perbaikan, dilakukan testing tampilan LCD dengan berbagai warna untuk memastikan kualitas gambar.',
     photos: [
-      { url: '/gallery/perbaikan_konektor_lcd_1.jpeg', caption: 'Konektor LCD yang rusak' },
-      { url: '/gallery/perbaikan_konektor_lcd_2.jpeg', caption: 'Proses repair microsoldering' },
-      { url: '/gallery/perbaikan_konektor_lcd_3.jpeg', caption: 'Hasil setelah diperbaiki' }
+      { url: '/case-studies/perbaikan_konektor_lcd_1.jpeg', caption: 'Konektor LCD yang rusak' },
+      { url: '/case-studies/perbaikan_konektor_lcd_2.jpeg', caption: 'Proses repair microsoldering' },
+      { url: '/case-studies/perbaikan_konektor_lcd_3.jpeg', caption: 'Hasil setelah diperbaiki' }
     ],
     category: 'LCD Repair',
     date: '5 Jan 2024',
@@ -530,9 +530,9 @@ const allGalleryItems = [
     text: 'Proses reballing chipset utama untuk mengatasi masalah hang dan restart.', 
     fullText: 'Chipset Snapdragon pada Samsung A51 mengalami cold joint yang menyebabkan device sering hang dan restart. Kami melakukan proses reballing dengan menggunakan BGA rework station untuk melepas chipset, membersihkan bola solder, dan memasang kembali dengan solder baru berkualitas tinggi.',
     photos: [
-      { url: '/gallery/Reball_chipset_1.jpeg', caption: 'Chipset sebelum direball' },
-      { url: '/gallery/Reball_chipset_2.jpeg', caption: 'Proses reballing chipset' },
-      { url: '/gallery/Reball_chipset_3.jpeg', caption: 'Chipset setelah direball' }
+      { url: '/case-studies/Reball_chipset_1.jpeg', caption: 'Chipset sebelum direball' },
+      { url: '/case-studies/Reball_chipset_2.jpeg', caption: 'Proses reballing chipset' },
+      { url: '/case-studies/Reball_chipset_3.jpeg', caption: 'Chipset setelah direball' }
     ],
     category: 'Chipset',
     date: '28 Des 2023',
@@ -545,9 +545,9 @@ const allGalleryItems = [
     text: 'Microsoldering jalur pad IC power yang terkelupas.', 
     fullText: 'IC Power pada iPhone X mengalami kerusakan pad akibat percikan air. Kami melakukan perbaikan dengan teknik microsoldering untuk menyambungkan kembali jalur yang terkelupas menggunakan kabel jumper ultra tipis. Setelah perbaikan, dilakukan pengukuran voltase untuk memastikan semua jalur berfungsi normal.',
     photos: [
-      { url: '/gallery/perbaikkan_jalur_pad_1.jpeg', caption: 'Pad IC yang terkelupas' },
-      { url: '/gallery/perbaikkan_jalur_pad_2.jpeg', caption: 'Proses microsoldering' },
-      { url: '/gallery/perbaikkan_jalur_pad_3.jpeg', caption: 'Hasil perbaikan jalur' }
+      { url: '/case-studies/perbaikkan_jalur_pad_1.jpeg', caption: 'Pad IC yang terkelupas' },
+      { url: '/case-studies/perbaikkan_jalur_pad_2.jpeg', caption: 'Proses microsoldering' },
+      { url: '/case-studies/perbaikkan_jalur_pad_3.jpeg', caption: 'Hasil perbaikan jalur' }
     ],
     category: 'Microsoldering',
     date: '20 Des 2023',
@@ -560,9 +560,9 @@ const allGalleryItems = [
     text: 'Pembersihan korosi akibat air dan penggantian komponen yang rusak.', 
     fullText: 'iPhone 11 terkena air sehingga menyebabkan korosi pada beberapa komponen utama. Kami melakukan ultrasonic cleaning untuk membersihkan korosi, kemudian mengganti komponen yang sudah rusak seperti charging port dan speaker. Setelah perbaikan, device berfungsi normal kembali.',
     photos: [
-      { url: '/gallery/water_damage_1.jpg', caption: 'Kondisi sebelum dibersihkan' },
-      { url: '/gallery/water_damage_2.jpg', caption: 'Proses ultrasonic cleaning' },
-      { url: '/gallery/water_damage_3.jpg', caption: 'Hasil setelah diperbaiki' }
+      { url: '/case-studies/water_damage_1.jpg', caption: 'Kondisi sebelum dibersihkan' },
+      { url: '/case-studies/water_damage_2.jpg', caption: 'Proses ultrasonic cleaning' },
+      { url: '/case-studies/water_damage_3.jpg', caption: 'Hasil setelah diperbaiki' }
     ],
     category: 'Water Damage',
     date: '12 Des 2023',
@@ -575,9 +575,9 @@ const allGalleryItems = [
     text: 'Proses BGA rework pada chip A12 Bionic.', 
     fullText: 'Chip A12 Bionic pada iPad Air 3 mengalami masalah akibat overheating. Kami melakukan BGA rework untuk melepas chip, mengganti thermal paste, dan memasang kembali dengan presisi tinggi menggunakan BGA rework station. Setelah proses, dilakukan stress test untuk memastikan chip bekerja optimal.',
     photos: [
-      { url: '/gallery/bga_rework_1.jpg', caption: 'Chip A12 sebelum rework' },
-      { url: '/gallery/bga_rework_2.jpg', caption: 'Proses BGA rework' },
-      { url: '/gallery/bga_rework_3.jpg', caption: 'Chip setelah dipasang kembali' }
+      { url: '/case-studies/bga_rework_1.jpg', caption: 'Chip A12 sebelum rework' },
+      { url: '/case-studies/bga_rework_2.jpg', caption: 'Proses BGA rework' },
+      { url: '/case-studies/bga_rework_3.jpg', caption: 'Chip setelah dipasang kembali' }
     ],
     category: 'BGA',
     date: '5 Des 2023',
@@ -590,9 +590,9 @@ const allGalleryItems = [
     text: 'Recovery data dari SSD yang tidak terdeteksi.', 
     fullText: 'SSD pada HP Envy tidak terdeteksi oleh sistem sehingga data penting tidak bisa diakses. Kami menggunakan alat khusus untuk membaca chip flash memory secara langsung, kemudian melakukan recovery data dengan software khusus. Berhasil menyelamatkan 95% data penting klien.',
     photos: [
-      { url: '/gallery/data_recovery_1.jpg', caption: 'SSD yang tidak terdeteksi' },
-      { url: '/gallery/data_recovery_2.jpg', caption: 'Proses recovery data' },
-      { url: '/gallery/data_recovery_3.jpg', caption: 'Data berhasil direcovery' }
+      { url: '/case-studies/data_recovery_1.jpg', caption: 'SSD yang tidak terdeteksi' },
+      { url: '/case-studies/data_recovery_2.jpg', caption: 'Proses recovery data' },
+      { url: '/case-studies/data_recovery_3.jpg', caption: 'Data berhasil direcovery' }
     ],
     category: 'Data Recovery',
     date: '30 Nov 2023',
@@ -602,13 +602,16 @@ const allGalleryItems = [
 
 // Fetch item berdasarkan ID
 const item = computed(() => {
-  return allGalleryItems.find(item => item.id === parseInt(id))
+  // Cari berdasarkan slug yang di-generate dari title
+  return allCaseStudiesItems.find(item => 
+    slugify(item.title) === slug
+  )
 })
 
 // Related items (kategori yang sama)
 const relatedItems = computed(() => {
   if (!item.value) return []
-  return allGalleryItems
+  return allCaseStudiesItems
     .filter(i => i.id !== item.value.id && i.category === item.value.category)
     .slice(0, 3)
 })
@@ -744,6 +747,16 @@ onMounted(() => {
   return () => {
     window.removeEventListener('keydown', handleKeydown)
   }
+
+  console.log('Slug dari URL:', slug)
+  console.log('Item ditemukan:', item.value)
+  console.log('Semua slug yang ada:', 
+    allCaseStudiesItems.map(i => ({
+      id: i.id,
+      title: i.title,
+      slug: slugify(i.title)
+    }))
+  )
 })
 
 // Set head untuk SEO

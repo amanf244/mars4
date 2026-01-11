@@ -10,9 +10,9 @@ export default defineEventHandler(async (event) => {
       text: 'Upgrade kapasitas eMMC menjadi 128GB untuk performa lebih cepat dan penyimpanan lebih besar.', 
       fullText: 'Proses pergantian eMMC pada Redmi 9 membutuhkan keahlian khusus karena chip terintegrasi dengan board. Kami menggunakan hot air gun dengan suhu terkontrol untuk melepas chip lama dan memasang chip baru dengan kapasitas 128GB. Setelah pemasangan, dilakukan flashing firmware dan testing menyeluruh untuk memastikan semua fungsi berjalan normal.',
       photos: [
-        { url: '/gallery/redmi9_emmc_1.jpg', caption: 'Kondisi eMMC sebelum diganti' },
-        { url: '/gallery/redmi9_emmc_2.jpg', caption: 'Proses penggantian eMMC' },
-        { url: '/gallery/redmi9_emmc_3.jpg', caption: 'Hasil akhir setelah penggantian' }
+        { url: '/case-studies/redmi9_emmc_1.jpg', caption: 'Kondisi eMMC sebelum diganti' },
+        { url: '/case-studies/redmi9_emmc_2.jpg', caption: 'Proses penggantian eMMC' },
+        { url: '/case-studies/redmi9_emmc_3.jpg', caption: 'Hasil akhir setelah penggantian' }
       ],
       category: 'eMMC Repair',
       date: '15 Jan 2024',
