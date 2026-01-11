@@ -17,26 +17,26 @@ const navigation = computed(() => {
       {
         label: 'Dashboard',
         icon: 'i-heroicons-home',
-        to: '/dashboard',
+        to: '/dashboard/user',
         exactMatch: true
       },
       {
         label: 'My Services',
         icon: 'i-heroicons-wrench-screwdriver',
-        to: '/dashboard/services',
+        to: '/dashboard/user/services',
         badge: '2', // Pending services
         description: 'Track service requests'
       },
       {
         label: 'New Request',
         icon: 'i-heroicons-plus-circle',
-        to: '/dashboard/services/create',
+        to: '/dashboard/user/services/create',
         description: 'Submit new service'
       },
       {
         label: 'Profile',
         icon: 'i-heroicons-user-circle',
-        to: '/dashboard/profile'
+        to: '/dashboard/user/profile'
       }
     )
   }

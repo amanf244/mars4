@@ -4,6 +4,7 @@ const auth = useAuthStore()
 const toast = useToast()
 const colorMode = useColorMode()
 const route = useRoute()
+const isLoggingOut = ref(false)
 
 const isDark = computed({
   get() {
@@ -25,48 +26,57 @@ const pageTitle = computed(() => {
   return 'Dashboard'
 })
 
-const dropdownItems = computed(() => [
-  [
-    {
-      label: 'Profile',
-      icon: 'i-heroicons-user-circle',
-      click: () => navigateTo('/profile')
-    }
-  ],
-  [
-    {
-      label: 'Settings',
-      icon: 'i-heroicons-cog-6-tooth',
-      click: () => navigateTo('/settings')
-    }
-  ],
-  [
-    {
-      label: 'Logout',
-      icon: 'i-heroicons-arrow-left-on-rectangle',
-      click: handleLogout
-    }
-  ]
-])
-
+// ✅ Function untuk logout
 async function handleLogout() {
+  isLoggingOut.value = true
   try {
+    console.log('🔐 Logging out...')
     await auth.logout()
+    
     toast.add({
       title: 'Logged Out',
       description: 'You have been logged out successfully',
       color: 'success',
       icon: 'i-heroicons-check-circle'
     })
-  } catch (err) {
+  } catch (err: any) {
+    isLoggingOut.value = false
+    console.error('❌ Logout error:', err)
     toast.add({
       title: 'Error',
-      description: 'Failed to logout',
+      description: err?.message || 'Failed to logout',
       color: 'error',
       icon: 'i-heroicons-x-circle'
     })
   }
 }
+
+// ✅ Items dengan onSelect (bukan click!)
+const dropdownItems = computed(() => [
+  [
+    {
+      label: 'Profile',
+      icon: 'i-heroicons-user-circle',
+      onSelect: () => navigateTo('/profile')
+    }
+  ],
+  [
+    {
+      label: 'Settings',
+      icon: 'i-heroicons-cog-6-tooth',
+      onSelect: () => navigateTo('/dashboard/settings')
+    }
+  ],
+  [
+    {
+      label: isLoggingOut.value ? 'Logging out...' : 'Logout',
+      icon: 'i-heroicons-arrow-left-on-rectangle',
+      color: 'error',
+      onSelect: handleLogout,
+      disabled: isLoggingOut.value
+    }
+  ]
+])
 </script>
 
 <template>
@@ -82,22 +92,25 @@ async function handleLogout() {
         <!-- Actions -->
         <div class="flex items-center gap-3">
           <ClientOnly>
-          <!-- Dark Mode Toggle -->
-          <button
-            @click="toggleDarkMode"
-            class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
-            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-          >
-            <UIcon 
-              :name="isDark ? 'i-heroicons-sun' : 'i-heroicons-moon'" 
-              class="w-5 h-5"
-            />
-          </button>
+            <!-- Dark Mode Toggle -->
+            <button
+              @click="toggleDarkMode"
+              class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+              :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <UIcon 
+                :name="isDark ? 'i-heroicons-sun' : 'i-heroicons-moon'" 
+                class="w-5 h-5"
+              />
+            </button>
           </ClientOnly>
 
-          <!-- User Dropdown -->
+          <!-- User Dropdown - GUNAKAN onSelect BUKAN click -->
           <UDropdownMenu :items="dropdownItems">
-            <button class="flex items-center gap-3 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+            <button 
+              class="flex items-center gap-3 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-50"
+              :disabled="isLoggingOut"
+            >
               <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                 <span class="text-sm font-bold text-white">{{ auth.user?.name?.charAt(0).toUpperCase() }}</span>
               </div>

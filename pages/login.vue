@@ -60,9 +60,9 @@ const handleSubmit = async () => {
 
     setTimeout(async () => {
       if (auth.isAdmin) {
-        await navigateTo('/admin')
+        await navigateTo('/dashboard/admin')
       } else {
-        await navigateTo('/')
+        await navigateTo('/dashboard/user')
       }
     }, 500)
   } catch (err: any) {
@@ -85,7 +85,7 @@ const fillDemoAdmin = () => {
 
 const fillDemoUser = () => {
   state.email = 'user@example.com'
-  state.password = 'User123!'
+  state.password = 'Admin123!'
 }
 </script>
 
@@ -239,7 +239,7 @@ const fillDemoUser = () => {
       </div>
     </div>
 
-    <UNotifications />
+    <!-- <UNotifications /> -->
   </div>
 </template>
 

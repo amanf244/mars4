@@ -23,8 +23,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // Redirect authenticated user away from login
   if (isLoginPage && auth.isAuthenticated) {
     if (auth.isAdmin) {
-      return navigateTo('/dashboard')
+      return navigateTo('/dashboard/admin')
     }
-    return navigateTo('/')
+    return navigateTo('/dashboard/user')
   }
 })

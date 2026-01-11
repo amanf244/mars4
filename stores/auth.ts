@@ -157,8 +157,8 @@ export const useAuthStore = defineStore('auth', () => {
       console.warn('⚠️ Logout request failed (proceeding anyway):', err)
     } finally {
       clearAuth()
-      await navigateTo('/login')
     }
+    await navigateTo('/login')
   }
 
   function clearAuth() {
