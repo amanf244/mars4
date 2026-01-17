@@ -2,7 +2,8 @@
 <script setup lang="ts">
 definePageMeta({
   requiresAuth: true,
-  layout: 'dashboard'
+  layout: 'dashboard',
+  middleware: 'user'
 })
 
 const auth = useAuthStore()

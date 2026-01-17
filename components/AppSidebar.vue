@@ -186,7 +186,7 @@ watch(() => route.path, () => {
             to="/"
             :class="['flex items-center', ui.sidebarCollapsed ? 'justify-center' : 'gap-3']"
           >
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
+            <div class="w-10 h-10 rounded-lg bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
               <span class="text-xl font-bold text-white">M</span>
             </div>
             <Transition

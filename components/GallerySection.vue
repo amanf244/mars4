@@ -2,7 +2,7 @@
   <section id="gallery" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
     <div class="max-w-7xl mx-auto">
       <h2 class="text-3xl font-bold text-white mb-12 text-center">
-        <span class="bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
+        <span class="bg-linear-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
           Hasil Pekerjaan Kami
         </span>
       </h2>
@@ -24,7 +24,7 @@
               style="transform-origin: center center;"
             />
             <!-- Overlay dengan judul, caption dan teks deskripsi -->
-            <div class="overlay-text absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-4 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none">
+            <div class="overlay-text absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/80 via-transparent to-transparent p-4 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none">
               <h3 class="text-white text-xl font-bold mb-1">{{ item.title }}</h3>
               <p class="text-white text-lg mb-1">{{ item.caption }}</p>
               <p class="text-gray-300 text-sm">{{ item.text }}</p>
@@ -36,7 +36,7 @@
        <div class="text-center">
         <NuxtLink
           to="/gallery"
-          class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-2xl shadow-2xl hover:shadow-purple-500/40 transition-all duration-300 transform hover:scale-105 group"
+          class="inline-flex items-center gap-3 px-8 py-4 bg-linear-to-r from-purple-600 to-blue-600 text-white font-bold rounded-2xl shadow-2xl hover:shadow-purple-500/40 transition-all duration-300 transform hover:scale-105 group"
         >
           <span>Lihat Selengkapnya di Galeri</span>
           <svg 
