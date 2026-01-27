@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { validateLoginForm } from '~/utils/validators'
 
-definePageMeta({
-  layout: 'blank'
-})
+// definePageMeta({
+//   layout: 'blank'
+// })
 
 const auth = useAuthStore()
 const toast = useToast()

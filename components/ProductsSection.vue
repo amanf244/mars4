@@ -1,3 +1,4 @@
+<!-- components/ProductsSection.vue -->
 <template>
     <section id="products" class="py-20 px-6">
       <div class="container mx-auto">

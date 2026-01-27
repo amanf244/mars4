@@ -312,6 +312,8 @@ export default {
     const crackLaptop = ref<HTMLElement | null>(null)
     const particleCanvas = ref<HTMLCanvasElement | null>(null)
 
+      const router = useRouter()
+
     // State
     const repairParts = ref<RepairPart[]>([
       { id: 1, type: 'tools', position: { x: 15, y: 30 } },
@@ -634,12 +636,13 @@ export default {
     }
     
     const showPartsCatalog = () => {
-      notificationMessage.value = 'Parts catalog opened in new window!'
-      showNotification.value = true
+      // notificationMessage.value = 'Parts catalog opened in new window!'
+      // showNotification.value = true
       
-      setTimeout(() => {
-        showNotification.value = false
-      }, 2000)
+      // setTimeout(() => {
+      //   showNotification.value = false
+      // }, 2000)
+      router.push('/products')
     }
     
     // Component instance reference for accessing refs in loops
