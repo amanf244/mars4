@@ -191,6 +191,16 @@ export const useProductApi = () => {
     })
   }
 
+  const bulkDeleteProducts = async (productIds: number[]) => {
+  return await $fetch(`${apiUrl}/api/v1/products/bulk`, {
+    method: 'DELETE',
+    headers: {
+        Authorization: `Bearer ${auth.token}`
+      },
+    body: { productIds }
+  })
+}
+
   const updateStock = async (id: number, newStock: number): Promise<{productId: number, newStock: number, isLowStock: boolean}> => {
     const response = await $fetch<{productId: number, newStock: number, isLowStock: boolean}>(`${apiUrl}/api/v1/products/${id}/stock`, {
       method: 'PATCH',
@@ -439,6 +449,7 @@ const deleteQualityGrade = async (id: number): Promise<void> => {
   createProduct,
   updateProduct,
   deleteProduct,
+  bulkDeleteProducts,
   updateStock,
   updateStatus,
   // References

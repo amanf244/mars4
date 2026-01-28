@@ -19,7 +19,7 @@
     "@pinia/nuxt": "^0.11.3",
     "@tailwindcss/vite": "^4.0.9",
     "@types/gsap": "^1.20.2",
-    "@vueuse/core": "^14.1.0",
+    "@vueuse/nuxt": "^14.1.0",
     "aos": "^2.3.4",
     "gsap": "^3.12.7",
     "medium-zoom": "^1.1.0",

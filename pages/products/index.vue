@@ -111,6 +111,10 @@
                 >
                   Cari Sekarang
                 </button>
+
+                <button @click="resetFilters" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium">
+            Reset Filter
+          </button>
               </div>
             </div>
           </div>
