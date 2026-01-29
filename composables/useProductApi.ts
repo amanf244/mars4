@@ -29,7 +29,7 @@ export interface Product {
   id: number
   sku: string
   name: string
-  deviceModel: string
+  deviceModel: string           // string join, sudah ada
   productType: string
   partBrand: string
   qualityGrade: string
@@ -38,17 +38,31 @@ export interface Product {
   imageUrl?: string
   isActive: boolean
   lastUpdatedAt: string
+
+  deviceModels?: {              // optional untuk list, kalau mau pakai
+    id: number
+    fullName: string
+  }[]
+}
+
+
+export interface ProductImage {
+  id: number
+  imageUrl: string
+  displayOrder: number
+  isPrimary: boolean
 }
 
 export interface ProductDetail {
   id: number
   sku: string
   name: string
-  deviceModelId: number
+  deviceModelIds: number[]
   productTypeId: number
   partBrandId: number
   qualityGradeId: number
   deviceModel: string
+  deviceModels: { id: number; fullName: string }[]
   productType: string
   partBrand: string
   qualityGrade: string
@@ -59,14 +73,17 @@ export interface ProductDetail {
   technicianPrice: number
   retailPrice: number
   imageUrl?: string
+  images?: ProductImage[]        // ← tambahkan ini
   warrantyDays?: number
   isActive: boolean
   lastUpdatedAt: string
   createdAt: string
 }
 
+
+
 export interface CreateProductRequest {
-  deviceModelId: number
+  deviceModelIds: number[]      // ganti dari deviceModelId
   productTypeId: number
   partBrandId: number
   qualityGradeId: number
@@ -85,7 +102,8 @@ export interface UpdateProductRequest {
   sku?: string
   name?: string
   description?: string
-  deviceModelId?: number
+
+  deviceModelIds?: number[]     // baru, optional
   productTypeId?: number
   partBrandId?: number
   qualityGradeId?: number
@@ -93,7 +111,7 @@ export interface UpdateProductRequest {
   costPrice?: number
   technicianPrice?: number
   retailPrice?: number
-  imageUrl?: string
+  imageUrls?: string[]          // sesuaikan dengan backend
   warrantyDays?: number
   isActive?: boolean
 }

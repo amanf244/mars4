@@ -24,13 +24,31 @@ const fileUpload = useProductFileUpload()
 
 const productId = computed(() => parseInt(route.params.id as string, 10))
 
+
 // state utama
 const product = ref<ProductDetail | null>(null)
-const form = ref({
-  deviceModel: null as DeviceModel | null,
-  productType: null as ProductType | null,
-  partBrand: null as PartBrand | null,
-  qualityGrade: null as QualityGrade | null,
+type EditProductForm = {
+  deviceModels: DeviceModel[]
+  productType: ProductType | null | undefined,
+  partBrand: PartBrand | null | undefined
+  qualityGrade: QualityGrade | null | undefined
+  sku: string
+  name: string
+  description: string
+  stock: number
+  costPrice: number
+  technicianPrice: number
+  retailPrice: number
+  imageUrl: string
+  warrantyDays: number
+  isActive: boolean
+}
+
+const form = ref<EditProductForm>({
+  deviceModels: [],
+  productType: null,
+  partBrand: null,
+  qualityGrade: null,
   sku: '',
   name: '',
   description: '',
@@ -42,6 +60,8 @@ const form = ref({
   warrantyDays: 0,
   isActive: true
 })
+
+
 
 // multiple image (pakai fileName dari API upload)
 const imageUrls = ref<string[]>([])
@@ -156,15 +176,28 @@ const loadProduct = async () => {
     form.value.warrantyDays = data.warrantyDays ?? 0
     form.value.isActive = data.isActive
 
-    // mapping ke object untuk select
-    form.value.deviceModel =
-      deviceModels.value.find(m => m.id === data.deviceModelId) ?? null
-    form.value.productType =
-      productTypes.value.find(t => t.id === data.productTypeId) ?? null
-    form.value.partBrand =
-      partBrands.value.find(b => b.id === data.partBrandId) ?? null
-    form.value.qualityGrade =
-      qualityGrades.value.find(g => g.id === data.qualityGradeId) ?? null
+   // mapping ke object untuk select (multi)
+form.value.deviceModels = (data.deviceModels || [])
+  .map(dm => {
+    const existing = deviceModels.value.find(m => m.id === dm.id)
+    if (existing) return existing
+    // fallback kalau mis-match
+    return {
+      id: dm.id,
+      deviceBrand: dm.fullName.split(' ')[0] || '',
+      modelName: dm.fullName.split(' ').slice(1).join(' ') || '',
+      fullName: dm.fullName,
+      isActive: true
+    } as DeviceModel
+  })
+
+form.value.productType =
+  productTypes.value.find(t => t.id === data.productTypeId) ?? null
+form.value.partBrand =
+  partBrands.value.find(b => b.id === data.partBrandId) ?? null
+form.value.qualityGrade =
+  qualityGrades.value.find(g => g.id === data.qualityGradeId) ?? null
+
 
     // ambil semua gambar dari ProductDetail.images
     const images = (data.images ?? [])
@@ -253,9 +286,10 @@ const validateForm = () => {
   if (!form.value.name?.trim()) {
     errors.value.name = 'Nama produk wajib diisi'
   }
-  if (!form.value.deviceModel) {
-    errors.value.deviceModelId = 'Model perangkat wajib dipilih'
-  }
+ if (!form.value.deviceModels.length) {
+  errors.value.deviceModelId = 'Minimal satu model perangkat wajib dipilih'
+}
+
   if (!form.value.productType) {
     errors.value.productTypeId = 'Tipe produk wajib dipilih'
   }
@@ -280,23 +314,24 @@ const handleSubmit = async () => {
   errors.value.general = ''
 
   try {
-    const payload: UpdateProductRequest = {
-      sku: form.value.sku,
-      name: form.value.name,
-      description: form.value.description || undefined,
-      deviceModelId: form.value.deviceModel?.id,
-      productTypeId: form.value.productType?.id,
-      partBrandId: form.value.partBrand?.id,
-      qualityGradeId: form.value.qualityGrade?.id,
-      stock: form.value.stock,
-      costPrice: form.value.costPrice,
-      technicianPrice: form.value.technicianPrice,
-      retailPrice: form.value.retailPrice,
-      imageUrls: imageUrls.value,                // sumber kebenaran
-      imageUrl: imageUrls.value[0] ?? null,      // primary / backward compat
-      warrantyDays: form.value.warrantyDays,
-      isActive: form.value.isActive
-    }
+   const payload: UpdateProductRequest = {
+  sku: form.value.sku,
+  name: form.value.name,
+  description: form.value.description || undefined,
+  deviceModelIds: form.value.deviceModels.map(m => m.id),
+  productTypeId: form.value.productType?.id,
+  partBrandId: form.value.partBrand?.id,
+  qualityGradeId: form.value.qualityGrade?.id,
+  stock: form.value.stock,
+  costPrice: form.value.costPrice,
+  technicianPrice: form.value.technicianPrice,
+  retailPrice: form.value.retailPrice,
+  imageUrls: imageUrls.value,
+  warrantyDays: form.value.warrantyDays,
+  isActive: form.value.isActive
+}
+
+
 
     await productStore.updateProduct(productId.value, payload)
     router.push('/dashboard/admin/products')
@@ -343,17 +378,20 @@ const handleCreateDeviceModel = async () => {
   if (!deviceBrand.trim() || !modelName.trim()) return
 
   const created = await productStore.createDeviceModel(deviceBrand, modelName)
-  form.value.deviceModel = created
+
+  // tambahkan ke list terpilih
+  form.value.deviceModels.push(created)
 
   isCreateModelModalOpen.value = false
   newDeviceModel.value = { deviceBrand: '', modelName: '' }
 }
 
 const openEditModelModal = () => {
-  if (!form.value.deviceModel) return
-  const dm = deviceModels.value.find(m => m.id === form.value.deviceModel?.id)
-  if (!dm) return
+  if (!form.value.deviceModels.length) return
 
+  // untuk sekarang, edit model pertama di list
+  const dm = form.value.deviceModels[0]
+   if (!dm) return
   editDeviceModel.value = {
     id: dm.id,
     deviceBrand: dm.deviceBrand,
@@ -362,28 +400,52 @@ const openEditModelModal = () => {
   isEditModelModalOpen.value = true
 }
 
+// const handleUpdateModel = async () => {
+//   if (!editDeviceModel.value.id) return
+//   const api = useProductApi()
+//   const updated = await api.updateDeviceModel(editDeviceModel.value.id, {
+//     deviceBrand: editDeviceModel.value.deviceBrand,
+//     modelName: editDeviceModel.value.modelName
+//   })
+
+//   // update di store
+//   const idxStore = productStore.deviceModels.findIndex(m => m.id === updated.id)
+//   if (idxStore !== -1) productStore.deviceModels[idxStore] = updated
+
+//   // update di form (semua yang id‑nya sama)
+//   form.value.deviceModels = form.value.deviceModels.map(m =>
+//     m.id === updated.id ? updated : m
+//   )
+
+//   isEditModelModalOpen.value = false
+// }
+
+// edit.vue: Ganti direct API → store
 const handleUpdateModel = async () => {
   if (!editDeviceModel.value.id) return
-  const api = useProductApi()
-  const updated = await api.updateDeviceModel(editDeviceModel.value.id, {
-    deviceBrand: editDeviceModel.value.deviceBrand,
-    modelName: editDeviceModel.value.modelName
-  })
 
-  const idx = productStore.deviceModels.findIndex(m => m.id === updated.id)
-  if (idx !== -1) productStore.deviceModels[idx] = updated
+  const updated = await productStore.updateDeviceModel(
+    editDeviceModel.value.id,
+    {
+      deviceBrand: editDeviceModel.value.deviceBrand,
+      modelName: editDeviceModel.value.modelName
+    }
+  )
 
-  if (form.value.deviceModel?.id === updated.id) {
-    form.value.deviceModel = updated
-  }
+  // Cukup map form (store sudah auto-sync)
+  form.value.deviceModels = form.value.deviceModels.map(m =>
+    m.id === updated.id ? updated : m
+  )
 
   isEditModelModalOpen.value = false
 }
 
+
 const openDeleteModelModal = () => {
-  if (!form.value.deviceModel) return
-  const dm = deviceModels.value.find(m => m.id === form.value.deviceModel?.id)
-  if (!dm) return
+  if (!form.value.deviceModels.length) return
+
+  const dm = form.value.deviceModels[0]
+   if (!dm) return
   editDeviceModel.value = {
     id: dm.id,
     deviceBrand: dm.deviceBrand,
@@ -396,15 +458,22 @@ const handleDeleteModel = async () => {
   if (!editDeviceModel.value.id) return
 
   await productStore.deleteDeviceModel(editDeviceModel.value.id)
-  productStore.deviceModels = productStore.deviceModels
-    .filter(m => m.id !== editDeviceModel.value.id)
+productStore.deviceModels = productStore.deviceModels
+  .filter(m => m.id !== editDeviceModel.value.id)
 
-  if (form.value.deviceModel?.id === editDeviceModel.value.id) {
-    form.value.deviceModel = null
-  }
+form.value.deviceModels = form.value.deviceModels.filter(
+  m => m.id !== editDeviceModel.value.id
+)
+
+
+  // buang dari list terpilih
+  form.value.deviceModels = form.value.deviceModels.filter(
+    m => m.id !== editDeviceModel.value.id
+  )
 
   isDeleteModelModalOpen.value = false
 }
+
 
 // TYPE
 const handleCreateProductType = async () => {
@@ -435,8 +504,7 @@ const openEditTypeModal = () => {
 
 const handleUpdateType = async () => {
   if (!editProductType.value.id) return
-  const api = useProductApi()
-  const updated = await api.updateProductType(editProductType.value.id, {
+  const updated = await productStore.updateProductType(editProductType.value.id, {
     name: editProductType.value.name,
     description: editProductType.value.description
   })
@@ -466,8 +534,8 @@ const openDeleteTypeModal = () => {
 
 const handleDeleteType = async () => {
   if (!editProductType.value.id) return
-  const api = useProductApi()
-  await api.deleteProductType(editProductType.value.id)
+  
+  await productStore.deleteProductType(editProductType.value.id)
 
   productStore.productTypes = productStore.productTypes
     .filter(t => t.id !== editProductType.value.id)
@@ -509,11 +577,11 @@ const openEditBrandModal = () => {
 const handleUpdateBrand = async () => {
   if (!editBrand.value.id || !editBrand.value.name.trim()) return
 
-  const updated = await productStore.updatePartBrand(
-    editBrand.value.id,
-    editBrand.value.name,
-    editBrand.value.description
-  )
+  const updated = await productStore.updatePartBrand(editBrand.value.id, {
+  name: editBrand.value.name,
+  description: editBrand.value.description
+})
+
 
   const idx = productStore.partBrands.findIndex(b => b.id === updated.id)
   if (idx !== -1) productStore.partBrands[idx] = updated
@@ -581,8 +649,7 @@ const openEditGradeModal = () => {
 
 const handleUpdateGrade = async () => {
   if (!editQualityGrade.value.id) return
-  const api = useProductApi()
-  const updated = await api.updateQualityGrade(editQualityGrade.value.id, {
+  const updated = await productStore.updateQualityGrade(editQualityGrade.value.id, {
     name: editQualityGrade.value.name,
     description: editQualityGrade.value.description
   })
@@ -612,8 +679,7 @@ const openDeleteGradeModal = () => {
 
 const handleDeleteGrade = async () => {
   if (!editQualityGrade.value.id) return
-  const api = useProductApi()
-  await api.deleteQualityGrade(editQualityGrade.value.id)
+  await productStore.deleteQualityGrade(editQualityGrade.value.id)
 
   productStore.qualityGrades = productStore.qualityGrades
     .filter(g => g.id !== editQualityGrade.value.id)
@@ -656,7 +722,7 @@ onMounted(async () => {
       </div>
 
       <UButton
-        :color="form.isActive ? 'green' : 'gray'"
+        :color="form.isActive ? 'success' : 'neutral'"
         :icon="form.isActive ? 'i-heroicons-check-circle' : 'i-heroicons-x-circle'"
         @click="toggleStatus"
       >
@@ -679,7 +745,7 @@ onMounted(async () => {
       <!-- Error -->
       <UAlert
         v-if="errors.general"
-        color="red"
+        color="error"
         variant="soft"
         :title="errors.general"
         close-button
@@ -699,7 +765,7 @@ onMounted(async () => {
             </p>
             <UBadge
               v-if="product.isLowStock"
-              color="orange"
+              color="warning"
               variant="soft"
               class="mt-2"
             >
@@ -761,7 +827,6 @@ onMounted(async () => {
               <UTextarea
                 v-model="form.description"
                 placeholder="Product description..."
-                rows="3"
               />
             </UFormGroup>
           </div>
@@ -842,35 +907,38 @@ onMounted(async () => {
                   <span class="text-red-500">*</span>
                 </label>
                 <div class="flex gap-2">
-                <USelectMenu
-  v-model="form.deviceModel"
+              <USelectMenu
+  v-model="form.deviceModels"
   :items="deviceModels"
   placeholder="Pilih model perangkat"
   label-key="fullName"
+  size="md"
   searchable
-  size="lg"
+  multiple
   class="flex-1"
 />
-                  <UButton
-                    icon="i-heroicons-plus"
-                    variant="outline"
-                    color="primary"
-                    @click="isCreateModelModalOpen = true"
-                  />
-                  <UButton
-                    icon="i-heroicons-pencil-square"
-                    variant="outline"
-                    color="neutral"
-                    :disabled="!form.deviceModelId"
-                    @click="openEditModelModal"
-                  />
-                  <UButton
-                    icon="i-heroicons-trash"
-                    variant="outline"
-                    color="error"
-                    :disabled="!form.deviceModelId"
-                    @click="openDeleteModelModal"
-                  />
+
+<UButton
+  icon="i-heroicons-plus"
+  variant="outline"
+  color="primary"
+  @click="isCreateModelModalOpen = true"
+/>
+<UButton
+  icon="i-heroicons-pencil-square"
+  variant="outline"
+  color="neutral"
+  :disabled="!form.deviceModels.length"
+  @click="openEditModelModal"
+/>
+<UButton
+  icon="i-heroicons-trash"
+  variant="outline"
+  color="error"
+  :disabled="!form.deviceModels.length"
+  @click="openDeleteModelModal"
+/>
+
                 </div>
                 <p v-if="errors.deviceModelId" class="text-xs text-red-500">
                   {{ errors.deviceModelId }}
@@ -906,14 +974,14 @@ onMounted(async () => {
                     icon="i-heroicons-pencil-square"
                     variant="outline"
                     color="neutral"
-                    :disabled="!form.productTypeId"
+                    :disabled="!form.productType"
                     @click="openEditTypeModal"
                   />
                   <UButton
                     icon="i-heroicons-trash"
                     variant="outline"
                     color="error"
-                    :disabled="!form.productTypeId"
+                    :disabled="!form.productType"
                     @click="openDeleteTypeModal"
                   />
                 </div>
@@ -951,14 +1019,14 @@ onMounted(async () => {
                     icon="i-heroicons-pencil-square"
                     variant="outline"
                     color="neutral"
-                    :disabled="!form.partBrandId"
+                    :disabled="!form.partBrand"
                     @click="openEditBrandModal"
                   />
                   <UButton
                     icon="i-heroicons-trash"
                     variant="outline"
                     color="error"
-                    :disabled="!form.partBrandId"
+                    :disabled="!form.partBrand"
                     @click="openDeleteBrandModal"
                   />
                 </div>
@@ -996,14 +1064,14 @@ onMounted(async () => {
                     icon="i-heroicons-pencil-square"
                     variant="outline"
                     color="neutral"
-                    :disabled="!form.qualityGradeId"
+                    :disabled="!form.qualityGrade"
                     @click="openEditGradeModal"
                   />
                   <UButton
                     icon="i-heroicons-trash"
                     variant="outline"
                     color="error"
-                    :disabled="!form.qualityGradeId"
+                    :disabled="!form.qualityGrade"
                     @click="openDeleteGradeModal"
                   />
                 </div>
@@ -1126,7 +1194,7 @@ onMounted(async () => {
           <!-- Actions -->
           <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
             <UButton
-              color="gray"
+              color="neutral  "
               variant="soft"
               size="lg"
               :disabled="loading"

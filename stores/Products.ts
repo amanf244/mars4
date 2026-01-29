@@ -268,45 +268,45 @@ export const useProductStore = defineStore('product', {
 
     // ===== UPDATE PRODUCT =====
     async updateProduct(id: number, data: UpdateProductRequest) {
-      this.loading.action = true
-      this.error = null
+  this.loading.action = true
+  this.error = null
 
-      try {
-        const productApi = useProductApi()
-        const product = await productApi.updateProduct(id, data)
+  try {
+    const productApi = useProductApi()
+    const product = await productApi.updateProduct(id, data) // ProductDetail
 
-        const index = this.products.findIndex(p => p.id === id)
-        if (index !== -1) {
-          this.products[index] = {
-            ...this.products[index],
-            id: product.id,
-            name: product.name,
-            sku: product.sku,
-            deviceModel: product.deviceModel,
-            productType: product.productType,
-            partBrand: product.partBrand,
-            qualityGrade: product.qualityGrade,
-            stock: product.stock,
-            price: product.retailPrice,
-            imageUrl: product.imageUrl,
-            isActive: product.isActive,
-            lastUpdatedAt: product.lastUpdatedAt
-          }
-        }
-
-        if (this.currentProduct?.id === id) {
-          this.currentProduct = product
-        }
-
-        return product
-      } catch (error: any) {
-        this.error = error.data?.message || 'Gagal mengupdate produk'
-        console.error('Error updating product:', error)
-        throw error
-      } finally {
-        this.loading.action = false
+    const index = this.products.findIndex(p => p.id === id)
+    if (index !== -1) {
+      this.products[index] = {
+        ...this.products[index],
+        id: product.id,
+        name: product.name,
+        sku: product.sku,
+        deviceModel: product.deviceModel,      // string join dari backend
+        productType: product.productType,
+        partBrand: product.partBrand,
+        qualityGrade: product.qualityGrade,
+        stock: product.stock,
+        price: product.retailPrice,
+        imageUrl: product.imageUrl,
+        isActive: product.isActive,
+        lastUpdatedAt: product.lastUpdatedAt
       }
-    },
+    }
+
+    if (this.currentProduct?.id === id) {
+      this.currentProduct = product
+    }
+
+    return product
+  } catch (error: any) {
+    this.error = error.data?.message || 'Gagal mengupdate produk'
+    console.error('Error updating product:', error)
+    throw error
+  } finally {
+    this.loading.action = false
+  }
+},
 
     // ===== DELETE PRODUCT =====
     async deleteProduct(id: number) {
@@ -441,6 +441,52 @@ export const useProductStore = defineStore('product', {
       }
     },
 
+    async deleteDeviceModel(id: number) {
+  this.loading.action = true
+  this.error = null
+
+  try {
+    const api = useProductApi()
+    await api.deleteDeviceModel(id)
+
+    this.deviceModels = this.deviceModels.filter(m => m.id !== id)
+
+    // optional: kalau currentProduct pakai deviceModels, nanti di-edit.vue sudah di-handle
+  } catch (error: any) {
+    this.error = error.message || 'Gagal menghapus model perangkat'
+    throw error
+  } finally {
+    this.loading.action = false
+  }
+},
+
+// Contoh untuk DeviceModel:
+async updateDeviceModel(id: number, data: { deviceBrand: string; modelName: string }) {
+  this.loading.action = true
+  this.error = null
+
+  try {
+    const api = useProductApi()
+    const updated = await api.updateDeviceModel(id, data)
+
+    const index = this.deviceModels.findIndex(m => m.id === id)
+    if (index !== -1) {
+      this.deviceModels[index] = {
+        ...updated,
+        fullName: (updated as any).fullName ?? `${data.deviceBrand} ${data.modelName}`
+      }
+    }
+    return updated
+  } catch (error: any) {
+    this.error = error.data?.message || 'Gagal update model'
+    throw error
+  } finally {
+    this.loading.action = false
+  }
+}
+,
+
+
     async createProductType(name: string, description?: string) {
       this.loading.action = true
       this.error = null
@@ -457,6 +503,45 @@ export const useProductStore = defineStore('product', {
         this.loading.action = false
       }
     },
+    async updateProductType(id: number, data: { name?: string; description?: string }) {
+  this.loading.action = true
+  this.error = null
+
+  try {
+    const api = useProductApi()
+    const updated = await api.updateProductType(id, data)
+
+    const index = this.productTypes.findIndex(pt => pt.id === id)
+    if (index !== -1) {
+      this.productTypes[index] = updated
+    }
+
+    return updated
+  } catch (error: any) {
+    this.error = error.data?.message || 'Gagal mengupdate tipe produk'
+    throw error
+  } finally {
+    this.loading.action = false
+  }
+}
+,
+async deleteProductType(id: number) {
+  this.loading.action = true
+  this.error = null
+
+  try {
+    const api = useProductApi()
+    await api.deleteProductType(id)
+
+    this.productTypes = this.productTypes.filter(pt => pt.id !== id)
+  } catch (error: any) {
+    this.error = error.data?.message || 'Gagal menghapus tipe produk'
+    throw error
+  } finally {
+    this.loading.action = false
+  }
+}
+,
 
     async createPartBrand(name: string, description?: string) {
       this.loading.action = true
@@ -491,6 +576,47 @@ export const useProductStore = defineStore('product', {
         this.loading.action = false
       }
     },
+
+    async updateQualityGrade(id: number, data: { name?: string; description?: string }) {
+  this.loading.action = true
+  this.error = null
+
+  try {
+    const api = useProductApi()
+    const updated = await api.updateQualityGrade(id, data)
+
+    const index = this.qualityGrades.findIndex(g => g.id === id)
+    if (index !== -1) {
+      this.qualityGrades[index] = updated
+    }
+
+    return updated
+  } catch (error: any) {
+    this.error = error.data?.message || 'Gagal mengupdate kualitas'
+    throw error
+  } finally {
+    this.loading.action = false
+  }
+}
+,
+
+async deleteQualityGrade(id: number) {
+  this.loading.action = true
+  this.error = null
+
+  try {
+    const api = useProductApi()
+    await api.deleteQualityGrade(id)
+
+    this.qualityGrades = this.qualityGrades.filter(g => g.id !== id)
+  } catch (error: any) {
+    this.error = error.data?.message || 'Gagal menghapus kualitas'
+    throw error
+  } finally {
+    this.loading.action = false
+  }
+}
+,
 
     async updatePartBrand(id: number, data: { name?: string; description?: string }) {
       this.loading.action = true
