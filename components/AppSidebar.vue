@@ -122,6 +122,27 @@ const navigation = computed<NavItem[]>(() => {
         to: '/dashboard/admin',
         exactMatch: true
       },
+
+       // User Management Module
+      {
+        type: 'separator',
+        label: 'User Management'
+      },
+      {
+        id: 'user-all',
+        label: 'Users',
+        icon: 'i-heroicons-users',
+        to: '/dashboard/admin/users',
+        badge: '5',
+        badgeColor: 'warning',
+      },
+      {
+        id: '',
+        label: 'Buat user baru',
+        icon: 'i-heroicons-queue-list',
+        to: '/dashboard/admin/users/create',
+        description: 'Create new user'
+      },
       
       // Service Management Module
       {
