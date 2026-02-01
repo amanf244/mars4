@@ -1,4 +1,4 @@
-<!-- pages/products/index.vue -->
+<!-- pages/products/index.vue - FULL CODE -->
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header Marketplace -->
@@ -34,15 +34,28 @@
 
           <!-- User Actions -->
           <div class="flex items-center gap-4">
-            <!-- <button class="p-2 hover:bg-gray-100 rounded-full relative">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              <span v-if="cartCount > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                {{ cartCount }}
-              </span>
-            </button> -->
-            <NuxtLink to="/login" class="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-full font-medium">
+            <!-- Logged In State -->
+            <UDropdownMenu v-if="auth.isAuthenticated" :items="userMenuItems" :popper="{ placement: 'bottom-end' }">
+              <button class="flex items-center gap-3 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 rounded-full transition-colors">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                    <span class="text-white text-sm font-medium">
+                      {{ auth.user?.email?.charAt(0).toUpperCase() || 'U' }}
+                    </span>
+                  </div>
+                  <div class="text-left hidden md:block">
+                    <div class="text-sm font-medium text-gray-900">{{ auth.user?.name || 'User' }}</div>
+                    <div class="text-xs text-gray-500">{{ auth.user?.email }}</div>
+                  </div>
+                </div>
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </UDropdownMenu>
+
+            <!-- Not Logged In State -->
+            <NuxtLink v-else to="/login" class="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-full font-medium transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
@@ -112,9 +125,9 @@
                   Cari Sekarang
                 </button>
 
-                <button @click="resetFilters" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium">
-            Reset Filter
-          </button>
+                <button @click="resetFilters" class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium">
+                  Reset Filter
+                </button>
               </div>
             </div>
           </div>
@@ -205,7 +218,7 @@
           />
         </div>
 
-        <!-- ===== INFINITY SCROLL TRIGGER ===== -->
+        <!-- Infinity Scroll Trigger -->
         <div 
           ref="loadMoreTrigger" 
           class="py-8 flex justify-center"
@@ -220,7 +233,7 @@
           <div v-else-if="!hasMore && store.products.length > 0" 
                class="text-center">
             <div class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full text-sm text-gray-600">
-              <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
               Semua produk telah ditampilkan ({{ pagination.total }} produk)
@@ -228,7 +241,7 @@
           </div>
         </div>
 
-                <!-- Empty State -->
+        <!-- Empty State -->
         <div v-if="!store.loading.products && store.products.length === 0" class="text-center py-12">
           <div class="mx-auto w-24 h-24 text-gray-300 mb-4">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -347,7 +360,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
               </div>
-              <span class="text-xl font-bold">SparePart<span class="text-primary-400">Mart</span></span>
+              <span class="text-xl font-bold">Mars4<span class="text-primary-400">Mart</span></span>
             </div>
             <p class="text-gray-400">Tempat terpercaya untuk sparepart handphone original dengan harga terbaik.</p>
           </div>
@@ -396,6 +409,7 @@ declare global {
 
 const store = useProductStore()
 const router = useRouter()
+const auth = useAuthStore()
 const { connect, disconnect } = useSignalR()
 
 type CartItem = Product & { quantity: number }
@@ -465,12 +479,9 @@ const cartTotal = computed(() => {
   return cartItems.value.reduce((total, item) => total + (item.price * item.quantity), 0)
 })
 
-// ===== UPDATED: Use store's hasMorePages =====
 const hasMore = computed(() => store.hasMorePages())
 
-// ===== UPDATED: Use uniqueProducts from store =====
 const sortedProducts = computed<Product[]>(() => {
-  // Gunakan uniqueProducts dari getter untuk avoid duplicate keys
   if (!store.uniqueProducts || store.uniqueProducts.length === 0) return []
 
   let products = [...store.uniqueProducts].filter(p => p.isActive)
@@ -503,7 +514,7 @@ const popularCategories = computed(() => {
   })
 
   return Object.entries(counts)
-    .map(([name, count]) => ({ id: name, name, count }))
+        .map(([name, count]) => ({ id: name, name, count }))
     .slice(0, 4)
 })
 
@@ -522,6 +533,36 @@ const popularBrands = computed(() => {
   return Object.values(brandMap).slice(0, 8)
 })
 
+// ===== USER MENU DROPDOWN =====
+const userMenuItems = computed(() => [
+  [
+    {
+      label: auth.user?.email || 'User',
+      slot: 'account',
+      disabled: true
+    }
+  ],
+  [
+    {
+      label: 'Dashboard',
+      icon: 'i-heroicons-squares-2x2',
+      onSelect: navigateToSettings
+    },
+    {
+      label: 'Settings',
+      icon: 'i-heroicons-cog-6-tooth',
+      onSelect: navigateToSettings
+    }
+  ],
+  [
+    {
+      label: 'Logout',
+      icon: 'i-heroicons-arrow-right-on-rectangle',
+       onSelect: handleLogout
+    }
+  ]
+])
+
 // ===== METHODS =====
 const debouncedSearch = () => {
   if (window.searchTimeout) {
@@ -533,10 +574,8 @@ const debouncedSearch = () => {
   }, 500)
 }
 
-// ===== UPDATED: Simplified applyFilters =====
 const applyFilters = async (loadMore = false) => {
   if (!loadMore) {
-    // Clear products dan reset ke page 1
     store.clearProducts()
   }
   
@@ -549,7 +588,6 @@ const applyFilters = async (loadMore = false) => {
       pageSize: pagination.value.pageSize
     })
     
-    // Update local pagination dari store
     if (response?.pagination) {
       pagination.value = { ...response.pagination }
     }
@@ -559,7 +597,6 @@ const applyFilters = async (loadMore = false) => {
   }
 }
 
-// ===== UPDATED: Simplified loadMoreProducts with debounce =====
 let loadMoreTimeout: NodeJS.Timeout | null = null
 
 const loadMoreProducts = async () => {
@@ -572,7 +609,6 @@ const loadMoreProducts = async () => {
     return
   }
   
-  // Debounce to prevent rapid calls
   if (loadMoreTimeout) {
     clearTimeout(loadMoreTimeout)
   }
@@ -670,12 +706,24 @@ const showNotification = (type: string, title: string, message: string) => {
   }, 3000)
 }
 
-// ===== SIGNALR HANDLERS - Updated with duplicate prevention =====
+const handleLogout = async () => {
+  await auth.logout()
+  showNotification('info', 'Logged Out', 'Anda telah keluar dari akun')
+}
+
+const navigateToSettings = () => {
+  if (auth.isAdmin) {
+    router.push('/dashboard/admin')
+  } else {
+    router.push('/dashboard/user')
+  }
+}
+
+// ===== SIGNALR HANDLERS =====
 const registerSignalREvents = (connection: any) => {
   connection.on('ProductCreated', (product: any) => {
     console.log('[SignalR] ProductCreated:', product)
     
-    // Check if already exists (prevent duplicate)
     const exists = store.products.some(p => p.id === product.id)
     if (!exists) {
       store.products.unshift(product)
@@ -735,14 +783,13 @@ const registerSignalREvents = (connection: any) => {
     console.log('[SignalR] ProductUpdated:', product)
     const index = store.products.findIndex(p => p.id === product.id)
     if (index !== -1) {
-      // Proper reactive update
       store.products[index] = { ...product }
       showNotification('info', 'Produk Diperbarui', `${product.name} telah diperbarui`)
     }
   })
 }
 
-// ===== INFINITY SCROLL SETUP - Optimized =====
+// ===== INFINITY SCROLL SETUP =====
 useIntersectionObserver(
   loadMoreTrigger,
   ([{ isIntersecting }]) => {
@@ -798,7 +845,6 @@ onUnmounted(() => {
 })
 </script>
 
-
 <style scoped>
 .slide-down-enter-active,
 .slide-down-leave-active {
@@ -829,4 +875,5 @@ onUnmounted(() => {
   overflow: hidden;
 }
 </style>
+
 

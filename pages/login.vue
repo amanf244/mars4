@@ -62,7 +62,7 @@ const handleSubmit = async () => {
       if (auth.isAdmin) {
         await navigateTo('/dashboard/admin')
       } else {
-        await navigateTo('/dashboard/user')
+        await navigateTo('/products')
       }
     }, 500)
   } catch (err: any) {
