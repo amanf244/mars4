@@ -635,14 +635,14 @@ export default {
       }, 1000)
     }
     
-    const showPartsCatalog = () => {
+    const showPartsCatalog = async() => {
       // notificationMessage.value = 'Parts catalog opened in new window!'
       // showNotification.value = true
       
       // setTimeout(() => {
       //   showNotification.value = false
       // }, 2000)
-      router.push('/products')
+     await navigateTo('/dashboard/admin/products')
     }
     
     // Component instance reference for accessing refs in loops

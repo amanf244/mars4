@@ -83,13 +83,13 @@ const handleSearch = useDebounceFn(() => {
 
 const handleAdd = () => {
   // nanti buka modal / navigate ke /dashboard/users/create
-  router.push('/dashboard/admin/users/create')
+  navigateTo('/dashboard/admin/users/create')
 }
 
 const handleEdit = (user: User) => {
   usersStore.selectedUser = user
   // buka modal edit / navigate ke detail
-  router.push(`/dashboard/admin/users/${user.id}`)
+  navigateTo(`/dashboard/admin/users/${user.id}`)
 }
 
 const handleDelete = async (user: User) => {

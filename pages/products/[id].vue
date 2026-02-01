@@ -330,13 +330,18 @@
         </div>
       </div>
 
-      <!-- Error State -->
-      <div v-else class="bg-white rounded-xl shadow-sm p-8 text-center">
-        <div class="text-red-500 mb-4">Produk tidak ditemukan</div>
-        <button @click="$router.push('/')" class="text-primary-600 hover:text-primary-800 font-medium">
-          ← Kembali ke beranda
-        </button>
-      </div>
+     <!-- Error State -->
+<div v-else class="bg-white rounded-xl shadow-sm p-8 text-center">
+  <div class="text-red-500 mb-4">Produk tidak ditemukan</div>
+
+  <NuxtLink
+    to="/"
+    class="inline-block text-primary-600 hover:text-primary-800 font-medium"
+  >
+    ← Kembali ke beranda
+  </NuxtLink>
+</div>
+
 
       <!-- Related Products -->
       <div v-if="product && relatedProducts.length > 0" class="mt-8">
@@ -477,7 +482,7 @@ const registerSignalREvents = (connection: any) => {
   connection.on('ProductDeleted', (data: any) => {
     const id = currentId()
     if (!id || data.productId !== id) return
-    router.push('/')
+    navigateTo('/')
   })
 
   connection.on('ProductUpdated', (updated: any) => {

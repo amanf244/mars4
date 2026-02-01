@@ -286,7 +286,7 @@ const handleSubmit = async () => {
 
   try {
     await productStore.createProduct(payload)
-    router.push('/dashboard/admin/products')
+    await navigateTo('/dashboard/admin/products')
   } catch (error: any) {
     console.error('Gagal membuat produk:', error)
     if (error.data?.message) {

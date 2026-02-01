@@ -103,7 +103,7 @@ const getComplexityColor = (level: string) => {
 }
 
 const goToEdit = (id: number) => {
-  router.push(`/dashboard/admin/case-studies/${id}/edit`)
+  navigateTo(`/dashboard/admin/case-studies/${id}/edit`)
 }
 
 const rows = computed<CaseStudiesItem[]>(() => {
@@ -120,8 +120,9 @@ const columns = [
 
 
 const goToCreate = () => {
-  router.push('/dashboard/admin/case-studies/create')
+  navigateTo('/dashboard/admin/case-studies/create')
 }
+
 
 watch([currentPage, selectedCategory, searchQuery], () => {
   fetchData()

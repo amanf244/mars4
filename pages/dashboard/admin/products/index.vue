@@ -151,7 +151,7 @@ const handleActionClick = async (action: string) => {
       await openDetailModal(selectedRow.value)
       break
     case 'update':
-      await router.push(`/dashboard/admin/products/${selectedRow.value.id}/edit`)
+      await navigateTo(`/dashboard/admin/products/${selectedRow.value.id}/edit`)
       break
     case 'delete':
       openDeleteModal(selectedRow.value)
@@ -356,7 +356,7 @@ function onSelect(e: Event, row: TableRow<Product>) {
 
 // Navigate to create page
 const goToCreateProduct = () => {
-  router.push('/dashboard/admin/products/create')
+  navigateTo('/dashboard/admin/products/create')
 }
 </script>
 

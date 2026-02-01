@@ -1,14 +1,9 @@
 // middleware/auth.global.ts
-import { useAuthStore } from '~/stores/auth'
-
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware((to) => {
   const auth = useAuthStore()
   const isLoginPage = to.path === '/login'
 
-  // Restore auth jika belum initialized
-  if (!auth.initialized) {
-    await auth.restore()
-  }
+  // Plugin sudah handle restore, kita cuma cek state
 
   // Check requiresAuth meta
   if (to.meta.requiresAuth && !auth.isAuthenticated) {

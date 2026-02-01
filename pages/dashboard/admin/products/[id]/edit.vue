@@ -213,7 +213,7 @@ form.value.qualityGrade =
     form.value.imageUrl = data.imageUrl || primaryFromImages || ''
   } catch (error) {
     console.error('Failed to load product:', error)
-    router.push('/dashboard/admin/products')
+    await navigateTo('/dashboard/admin/products')
   } finally {
     loadingData.value = false
   }
@@ -334,7 +334,7 @@ const handleSubmit = async () => {
 
 
     await productStore.updateProduct(productId.value, payload)
-    router.push('/dashboard/admin/products')
+    await navigateTo('/dashboard/admin/products')
   } catch (error: any) {
     errors.value.general = error.data?.message || 'Gagal mengupdate produk'
   } finally {

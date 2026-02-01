@@ -27,7 +27,7 @@ const handleSubmit = async (payload: CreateCaseStudiesPayload) => {
     
     // Redirect ke list setelah 1 detik
     setTimeout(() => {
-      router.push('/dashboard/admin/case-studies')
+      navigateTo('/dashboard/admin/case-studies')
     }, 1000)
   } catch (err: any) {
     toast.add({

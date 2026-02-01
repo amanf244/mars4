@@ -35,7 +35,7 @@ const handleSubmit = async () => {
   try {
     await usersStore.createUser(form)
     await usersStore.fetchUsers(1)
-    router.push('/dashboard/users')
+    await navigateTo('/dashboard/users')
   } catch {
     // error sudah di-store
   }

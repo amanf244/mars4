@@ -52,7 +52,7 @@ const loadUser = async () => {
     form.isActive = user.isActive
   } catch {
     // kalau gagal, kembali ke list
-    router.push('/dashboard/users')
+    await navigateTo('/dashboard/users')
   } finally {
     loadingInitial.value = false
   }
@@ -64,7 +64,7 @@ const handleSubmit = async () => {
   try {
     await usersStore.updateUser(userId.value, form)
     await usersStore.fetchUsers(usersStore.filters.page, usersStore.filters.search)
-    router.push('/dashboard/users')
+   await navigateTo('/dashboard/users')
   } catch {
     // error sudah di-store
   }
