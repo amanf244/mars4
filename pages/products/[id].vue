@@ -1,42 +1,39 @@
 <!-- pages/products/[id].vue -->
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <button
-              type="button"
-              @click="$router.back()"
-              class="p-2 rounded-lg text-gray-600 bg-gray-100
-                     hover:bg-amber-500 hover:text-white
-                     transition"
-              aria-label="Kembali"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-            </button>
-            <div>
-              <h1 class="text-xl font-bold text-gray-900">{{ product?.name || 'Loading...' }}</h1>
-              <p class="text-gray-500 text-sm">{{ product?.sku }}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3">
-            <button class="p-2 hover:bg-gray-100 rounded-lg">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </button>
+  <!-- Main Content -->
+  <div class="bg-gray-50">
+    <main class="max-w-7xl mx-auto px-4 py-6">
+      <!-- Top bar: back + title (ganti header lama) -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4">
+          <button
+            type="button"
+            @click="$router.back()"
+            class="p-2 rounded-lg text-gray-600 bg-gray-100
+                   hover:bg-amber-500 hover:text-white
+                   transition"
+            aria-label="Kembali"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          </button>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">{{ product?.name || 'Loading...' }}</h1>
+            <p class="text-gray-500 text-sm">{{ product?.sku }}</p>
           </div>
         </div>
+        <div class="flex items-center gap-3">
+          <button class="p-2 hover:bg-gray-100 rounded-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </button>
+        </div>
       </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 py-6">
       <!-- Loading State -->
       <div v-if="store.loading.detail" class="bg-white rounded-xl shadow-sm p-8">
         <div class="animate-pulse space-y-6">
@@ -60,7 +57,6 @@
 
       <!-- Product Detail -->
       <div v-else-if="product" class="bg-white rounded-xl shadow-sm overflow-hidden">
-
         <!-- Inactive banner -->
         <div
           v-if="!product.isActive"
@@ -107,9 +103,7 @@
                 @click="activeImageIndex = index"
                 :class="[
                   'w-16 h-16 rounded-lg overflow-hidden border',
-                  index === activeImageIndex
-                    ? 'border-primary-500'
-                    : 'border-gray-200'
+                  index === activeImageIndex ? 'border-primary-500' : 'border-gray-200'
                 ]"
               >
                 <img
@@ -123,7 +117,7 @@
             <!-- Stock Alert -->
             <div
               v-if="product.stock <= 5 && product.stock > 0"
-              class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"
+              class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 mt-6"
             >
               <div class="flex items-center gap-3">
                 <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +132,7 @@
             </div>
             <div
               v-else-if="product.stock === 0"
-              class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
+              class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 mt-6"
             >
               <div class="flex items-center gap-3">
                 <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,9 +226,11 @@
                 <div
                   :class="[
                     'font-medium',
-                    product.stock === 0 ? 'text-red-600' :
-                    product.stock <= 5 ? 'text-yellow-600' :
-                    'text-green-600'
+                    product.stock === 0
+                      ? 'text-red-600'
+                      : product.stock <= 5
+                      ? 'text-yellow-600'
+                      : 'text-green-600'
                   ]"
                 >
                   {{ product.stock }} unit
@@ -242,14 +238,18 @@
               </div>
               <div v-if="product.warrantyDays" class="flex">
                 <div class="w-32 text-gray-700">Garansi</div>
-                <div class="font-medium text-gray-900">{{ product.warrantyDays }} hari</div>
+                <div class="font-medium text-gray-900">
+                  {{ product.warrantyDays }} hari
+                </div>
               </div>
             </div>
 
             <!-- Description -->
             <div v-if="product.description" class="mb-8">
               <h3 class="font-bold text-gray-900 mb-4">Deskripsi Produk</h3>
-              <div class="text-gray-600 whitespace-pre-line">{{ product.description }}</div>
+              <div class="text-gray-600 whitespace-pre-line">
+                {{ product.description }}
+              </div>
             </div>
 
             <!-- Add to Cart -->
@@ -264,7 +264,8 @@
                       class="px-4 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M20 12H4" />
                       </svg>
                     </button>
                     <input
@@ -330,18 +331,17 @@
         </div>
       </div>
 
-     <!-- Error State -->
-<div v-else class="bg-white rounded-xl shadow-sm p-8 text-center">
-  <div class="text-red-500 mb-4">Produk tidak ditemukan</div>
+      <!-- Error State -->
+      <div v-else class="bg-white rounded-xl shadow-sm p-8 text-center">
+        <div class="text-red-500 mb-4">Produk tidak ditemukan</div>
 
-  <NuxtLink
-    to="/"
-    class="inline-block text-primary-600 hover:text-primary-800 font-medium"
-  >
-    ← Kembali ke beranda
-  </NuxtLink>
-</div>
-
+        <NuxtLink
+          to="/"
+          class="inline-block text-primary-600 hover:text-primary-800 font-medium"
+        >
+          ← Kembali ke beranda
+        </NuxtLink>
+      </div>
 
       <!-- Related Products -->
       <div v-if="product && relatedProducts.length > 0" class="mt-8">
@@ -360,20 +360,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
 import type { ProductDetail, Product } from '~/composables/useProductApi'
 import { useSignalR } from '~/composables/useSignalR'
+import { useSeoMeta } from '#imports'
+
+definePageMeta({
+  layout: 'marketplace'
+})
 
 const route = useRoute()
 const router = useRouter()
 const store = useProductStore()
 const { connect, disconnect } = useSignalR()
 
-// State
 const quantity = ref(1)
 const activeImageIndex = ref(0)
 
-// Computed
 const product = computed<ProductDetail | null>(() => store.currentProduct)
 
 const relatedProducts = computed<Product[]>(() => {
@@ -409,7 +412,6 @@ const getImageUrl = (fileName: string | null | undefined) => {
   return `http://localhost:5084/uploads/products/${fileName}`
 }
 
-// Helper format price
 const formatPrice = (price: number | null | undefined): string => {
   if (!price && price !== 0) return '0'
   try {
@@ -420,7 +422,6 @@ const formatPrice = (price: number | null | undefined): string => {
   }
 }
 
-// Methods
 const loadProduct = async () => {
   try {
     const id = parseInt(route.params.id as string)
@@ -449,7 +450,6 @@ const buyNow = () => {
   window.alert(`Beli sekarang: ${product.value.name} (${quantity.value}x)`)
 }
 
-// SignalR handlers khusus halaman detail
 const registerSignalREvents = (connection: any) => {
   const currentId = () => {
     const id = parseInt(route.params.id as string)
@@ -472,11 +472,6 @@ const registerSignalREvents = (connection: any) => {
     const id = currentId()
     if (!id || !product.value || data.productId !== id) return
     product.value.isActive = data.isActive
-
-    // kalau mau auto redirect saat nonaktif, bisa aktifkan:
-    // if (!data.isActive) {
-    //   router.push('/')
-    // }
   })
 
   connection.on('ProductDeleted', (data: any) => {
@@ -489,7 +484,6 @@ const registerSignalREvents = (connection: any) => {
     const id = currentId()
     if (!id || !product.value || updated.id !== id) return
 
-    // sinkron info dasar
     product.value.name = updated.name
     product.value.deviceModel = updated.deviceModel
     product.value.productType = updated.productType
@@ -515,7 +509,41 @@ const registerSignalREvents = (connection: any) => {
   })
 }
 
-// Initialize
+watchEffect(() => {
+  const p = product.value
+  if (!p) return
+
+  useSeoMeta({
+    title: `${p.name} ${p.deviceModel} | Sparepart HP Serang Banten`,
+    description: p.description
+      ? p.description.slice(0, 160)
+      : `${p.name} untuk ${p.deviceModel}, ready stok di Serang Banten.`,
+
+    ogTitle: `${p.name} - Sparepart HP Serang`,
+    ogDescription: p.description
+      ? p.description.slice(0, 160)
+      : `${p.name} stok tersedia di Serang`,
+
+    ogImage: p.imageUrl
+      ? getImageUrl(p.imageUrl)
+      : '/default-product.jpg',
+
+    twitterCard: 'summary_large_image'
+  })
+})
+
+const url = useRequestURL()
+console.log('Request URL:', url)
+
+useHead(() => ({
+  link: [
+    {
+      rel: 'canonical',
+      href: `${url.origin}/products/${route.params.id}`
+    }
+  ]
+}))
+
 onMounted(async () => {
   await loadProduct()
   const connection = await connect()
@@ -524,7 +552,6 @@ onMounted(async () => {
   }
 })
 
-// Reset product when leaving page
 onUnmounted(() => {
   store.clearCurrentProduct()
   disconnect()

@@ -19,7 +19,8 @@ export interface CreateUserRequest {
   password: string
   fullName: string
   phoneNumber?: string
-  address?: string
+  address?: string,
+  isTechnician?: boolean
   role: 'Admin' | 'User'
 }
 

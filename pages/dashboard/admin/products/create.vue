@@ -1069,12 +1069,12 @@ const handleDeleteGrade = async () => {
     <UModal v-model:open="isCreateModelModalOpen" title="Tambah Model Perangkat">
       <template #body>
         <div class="space-y-3">
-          <UFormGroup label="Brand HP" required>
+          <UFieldGroup label="Brand HP" required>
             <UInput v-model="newDeviceModel.deviceBrand" placeholder="Samsung, Oppo, Xiaomi..." />
-          </UFormGroup>
-          <UFormGroup label="Nama Model" required>
+          </UFieldGroup>
+          <UFieldGroup label="Nama Model" required>
             <UInput v-model="newDeviceModel.modelName" placeholder="A10s, A12, Note 8, dll" />
-          </UFormGroup>
+          </UFieldGroup>
         </div>
       </template>
       <template #footer="{ close }">
@@ -1093,12 +1093,12 @@ const handleDeleteGrade = async () => {
     <UModal v-model:open="isEditModelModalOpen" title="Edit Model Perangkat">
       <template #body>
         <div class="space-y-3">
-          <UFormGroup label="Brand HP" required>
+          <UFieldGroup label="Brand HP" required>
             <UInput v-model="editDeviceModel.deviceBrand" />
-          </UFormGroup>
-          <UFormGroup label="Nama Model" required>
+          </UFieldGroup>
+          <UFieldGroup label="Nama Model" required>
             <UInput v-model="editDeviceModel.modelName" />
-          </UFormGroup>
+          </UFieldGroup>
         </div>
       </template>
       <template #footer="{ close }">
@@ -1153,12 +1153,12 @@ const handleDeleteGrade = async () => {
     <UModal v-model:open="isCreateTypeModalOpen" title="Tambah Tipe Produk">
       <template #body>
         <div class="space-y-3">
-          <UFormGroup label="Nama Tipe" required>
+          <UFieldGroup label="Nama Tipe" required>
             <UInput v-model="newProductType.name" placeholder="LCD, Baterai, Charger..." />
-          </UFormGroup>
-          <UFormGroup label="Deskripsi">
+          </UFieldGroup>
+          <UFieldGroup label="Deskripsi">
             <UTextarea v-model="newProductType.description" />
-          </UFormGroup>
+          </UFieldGroup>
         </div>
       </template>
       <template #footer="{ close }">
@@ -1177,12 +1177,12 @@ const handleDeleteGrade = async () => {
     <UModal v-model:open="isEditTypeModalOpen" title="Edit Tipe Produk">
       <template #body>
         <div class="space-y-3">
-          <UFormGroup label="Nama Tipe" required>
+          <UFieldGroup label="Nama Tipe" required>
             <UInput v-model="editProductType.name" />
-          </UFormGroup>
-          <UFormGroup label="Deskripsi">
+          </UFieldGroup>
+          <UFieldGroup label="Deskripsi">
             <UTextarea v-model="editProductType.description" />
-          </UFormGroup>
+          </UFieldGroup>
         </div>
       </template>
       <template #footer="{ close }">
@@ -1235,12 +1235,12 @@ const handleDeleteGrade = async () => {
     <UModal v-model:open="isCreateBrandModalOpen" title="Tambah Merek Spare Part">
       <template #body>
         <div class="space-y-3">
-          <UFormGroup label="Nama Merek" required>
+          <UFieldGroup label="Nama Merek" required>
             <UInput v-model="newPartBrand.name" placeholder="Shinstar, LF, OG, dll" />
-          </UFormGroup>
-          <UFormGroup label="Deskripsi">
+          </UFieldGroup>
+          <UFieldGroup label="Deskripsi">
             <UTextarea v-model="newPartBrand.description" />
-          </UFormGroup>
+          </UFieldGroup>
         </div>
       </template>
       <template #footer="{ close }">
@@ -1259,12 +1259,12 @@ const handleDeleteGrade = async () => {
     <UModal v-model:open="isEditBrandModalOpen" title="Edit Merek Spare Part">
       <template #body>
         <div class="space-y-3">
-          <UFormGroup label="Nama Merek" required>
+          <UFieldGroup label="Nama Merek" required>
             <UInput v-model="editBrand.name" />
-          </UFormGroup>
-          <UFormGroup label="Deskripsi">
+          </UFieldGroup>
+          <UFieldGroup label="Deskripsi">
             <UTextarea v-model="editBrand.description" />
-          </UFormGroup>
+          </UFieldGroup>
         </div>
       </template>
       <template #footer="{ close }">
@@ -1317,12 +1317,12 @@ const handleDeleteGrade = async () => {
     <UModal v-model:open="isCreateGradeModalOpen" title="Tambah Kualitas">
       <template #body>
         <div class="space-y-3">
-          <UFormGroup label="Nama Kualitas" required>
+          <UFieldGroup label="Nama Kualitas" required>
             <UInput v-model="newQualityGrade.name" placeholder="Original, OEM, High Copy, KW" />
-          </UFormGroup>
-          <UFormGroup label="Deskripsi">
+          </UFieldGroup>
+          <UFieldGroup label="Deskripsi">
             <UTextarea v-model="newQualityGrade.description" />
-          </UFormGroup>
+          </UFieldGroup>
         </div>
       </template>
       <template #footer="{ close }">
@@ -1341,12 +1341,12 @@ const handleDeleteGrade = async () => {
     <UModal v-model:open="isEditGradeModalOpen" title="Edit Kualitas">
       <template #body>
         <div class="space-y-3">
-          <UFormGroup label="Nama Kualitas" required>
+          <UFieldGroup label="Nama Kualitas" required>
             <UInput v-model="editQualityGrade.name" />
-          </UFormGroup>
-          <UFormGroup label="Deskripsi">
+          </UFieldGroup>
+          <UFieldGroup label="Deskripsi">
             <UTextarea v-model="editQualityGrade.description" />
-          </UFormGroup>
+          </UFieldGroup>
         </div>
       </template>
       <template #footer="{ close }">

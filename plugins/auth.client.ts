@@ -1,8 +1,8 @@
 // plugins/auth.client.ts
-export default defineNuxtPlugin(async () => {
-  const auth = useAuthStore()
+// export default defineNuxtPlugin(async () => {
+//   const auth = useAuthStore()
   
-  if (!auth.initialized) {
-    await auth.restore()
-  }
-})
+//   if (!auth.initialized) {
+//     await auth.restore()
+//   }
+// })
