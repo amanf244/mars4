@@ -9,6 +9,7 @@ export interface User {
   isEmailVerified: boolean
   role: string
   isActive: boolean
+  isTechnician: boolean
   lastLoginAt: string | null
   createdAt: string
   lastPasswordChangedAt: string | null
@@ -31,6 +32,7 @@ export interface UpdateUserRequest {
   phoneNumber?: string
   address?: string
   role?: 'Admin' | 'User'
+  isTechnician?: boolean
   isActive?: boolean
 }
 
