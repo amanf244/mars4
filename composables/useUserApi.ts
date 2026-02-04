@@ -54,7 +54,7 @@ export const useUserApi = () => {
     if (page) query.append('page', page.toString())
     if (search) query.append('search', search)
 
-    const response = await $fetch<User[]>(`${apiBase}/api/v1/users?${query}`, {
+    const response = await $fetch<User[]>(`${apiBase}/users?${query}`, {
       headers: {
         Authorization: `Bearer ${auth.token}`
       }
@@ -63,7 +63,7 @@ export const useUserApi = () => {
   }
 
   const fetchUser = async (id: number): Promise<User> => {
-    const response = await $fetch<User>(`${apiBase}/api/v1/users/${id}`, {
+    const response = await $fetch<User>(`${apiBase}/users/${id}`, {
       headers: {
         Authorization: `Bearer ${auth.token}`
       }
@@ -73,7 +73,7 @@ export const useUserApi = () => {
 
   const searchTechnicians = async (q: string): Promise<User[]> => {
     const response = await $fetch<User[]>(
-      `${apiBase}/api/v1/users/search/technicians?q=${encodeURIComponent(q)}`,
+      `${apiBase}/users/search/technicians?q=${encodeURIComponent(q)}`,
       {
         headers: {
           Authorization: `Bearer ${auth.token}`
@@ -84,7 +84,7 @@ export const useUserApi = () => {
   }
 
   const createUser = async (data: CreateUserRequest): Promise<User> => {
-    const response = await $fetch<User>(`${apiBase}/api/v1/users`, {
+    const response = await $fetch<User>(`${apiBase}/users`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -96,7 +96,7 @@ export const useUserApi = () => {
   }
 
   const updateUser = async (id: number, data: UpdateUserRequest): Promise<User> => {
-    const response = await $fetch<User>(`${apiBase}/api/v1/users/${id}`, {
+    const response = await $fetch<User>(`${apiBase}/users/${id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -108,7 +108,7 @@ export const useUserApi = () => {
   }
 
   const deleteUser = async (id: number): Promise<void> => {
-    await $fetch(`${apiBase}/api/v1/users/${id}`, {
+    await $fetch(`${apiBase}/users/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${auth.token}`
@@ -118,7 +118,7 @@ export const useUserApi = () => {
 
   // ===== PROFILE =====
   const getMyProfile = async (): Promise<User> => {
-    const response = await $fetch<User>(`${apiBase}/api/v1/users/profile/me`, {
+    const response = await $fetch<User>(`${apiBase}/users/profile/me`, {
       headers: {
         Authorization: `Bearer ${auth.token}`
       }
@@ -127,7 +127,7 @@ export const useUserApi = () => {
   }
 
   const updateMyProfile = async (data: UpdateMyProfileRequest): Promise<User> => {
-    const response = await $fetch<User>(`${apiBase}/api/v1/users/profile/me`, {
+    const response = await $fetch<User>(`${apiBase}/users/profile/me`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${auth.token}`,

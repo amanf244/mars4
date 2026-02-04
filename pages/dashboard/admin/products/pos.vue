@@ -83,7 +83,7 @@ const searchTechnicians = async () => {
     const apiBase  = useRuntimeConfig().public.apiBase  || 'http://localhost:5084'
     const auth = useAuthStore()
 
-    const res = await $fetch<Technician[]>(`${apiBase }/api/v1/users/search/technicians`, {
+    const res = await $fetch<Technician[]>(`${apiBase }/users/search/technicians`, {
       params: { q },
       headers: {
         Authorization: `Bearer ${auth.token}`
@@ -141,7 +141,7 @@ const refreshPricing = async () => {
 
     console.log('Pricing body:', body)
 
-    const res = await $fetch<CartPriceResponse>(`${apiBase }/api/v1/products/cart/price`, {
+    const res = await $fetch<CartPriceResponse>(`${apiBase }/products/cart/price`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -183,7 +183,7 @@ const processSale = async () => {
       technicianName: selectedTechnician.value?.fullName
     }
 
-    const res = await $fetch<SaleResponse>(`${apiBase }/api/v1/sales`, {
+    const res = await $fetch<SaleResponse>(`${apiBase }/sales`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${auth.token}`,

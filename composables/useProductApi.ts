@@ -149,7 +149,7 @@ export const useProductApi = () => {
     if (params.brandId) query.append('brandId', params.brandId.toString())
     if (params.deviceId) query.append('deviceId', params.deviceId.toString())
 
-    const response = await $fetch<ProductListResponse>(`${apiBase}/api/v1/products?${query}`, {
+    const response = await $fetch<ProductListResponse>(`${apiBase}/products?${query}`, {
       headers: {
         Authorization: `Bearer ${auth.token}`
       }
@@ -158,7 +158,7 @@ export const useProductApi = () => {
   }
 
   const fetchProductById = async (id: number): Promise<ProductDetail> => {
-    const response = await $fetch<ProductDetail>(`${apiBase}/api/v1/products/${id}`, {
+    const response = await $fetch<ProductDetail>(`${apiBase}/products/${id}`, {
       headers: {
         Authorization: `Bearer ${auth.token}`
       }
@@ -167,7 +167,7 @@ export const useProductApi = () => {
   }
 
   const fetchProductBySku = async (sku: string): Promise<ProductDetail> => {
-  const response = await $fetch<ProductDetail>(`${apiBase}/api/v1/products/by-sku/${encodeURIComponent(sku)}`, {
+  const response = await $fetch<ProductDetail>(`${apiBase}/products/by-sku/${encodeURIComponent(sku)}`, {
     headers: {
       Authorization: `Bearer ${auth.token}`
     }
@@ -177,7 +177,7 @@ export const useProductApi = () => {
 
 
   const createProduct = async (data: CreateProductRequest): Promise<ProductDetail> => {
-    const response = await $fetch<ProductDetail>(`${apiBase}/api/v1/products`, {
+    const response = await $fetch<ProductDetail>(`${apiBase}/products`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -189,7 +189,7 @@ export const useProductApi = () => {
   }
 
   const updateProduct = async (id: number, data: UpdateProductRequest): Promise<ProductDetail> => {
-    const response = await $fetch<ProductDetail>(`${apiBase}/api/v1/products/${id}`, {
+    const response = await $fetch<ProductDetail>(`${apiBase}/products/${id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -201,7 +201,7 @@ export const useProductApi = () => {
   }
 
   const deleteProduct = async (id: number): Promise<void> => {
-    await $fetch(`${apiBase}/api/v1/products/${id}`, {
+    await $fetch(`${apiBase}/products/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${auth.token}`
@@ -210,7 +210,7 @@ export const useProductApi = () => {
   }
 
   const bulkDeleteProducts = async (productIds: number[]) => {
-  return await $fetch(`${apiBase}/api/v1/products/bulk`, {
+  return await $fetch(`${apiBase}/products/bulk`, {
     method: 'DELETE',
     headers: {
         Authorization: `Bearer ${auth.token}`
@@ -220,7 +220,7 @@ export const useProductApi = () => {
 }
 
   const updateStock = async (id: number, newStock: number): Promise<{productId: number, newStock: number, isLowStock: boolean}> => {
-    const response = await $fetch<{productId: number, newStock: number, isLowStock: boolean}>(`${apiBase}/api/v1/products/${id}/stock`, {
+    const response = await $fetch<{productId: number, newStock: number, isLowStock: boolean}>(`${apiBase}/products/${id}/stock`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -232,7 +232,7 @@ export const useProductApi = () => {
   }
 
   const updateStatus = async (id: number, isActive: boolean): Promise<{productId: number, isActive: boolean}> => {
-    const response = await $fetch<{productId: number, isActive: boolean}>(`${apiBase}/api/v1/products/${id}/status`, {
+    const response = await $fetch<{productId: number, isActive: boolean}>(`${apiBase}/products/${id}/status`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -245,7 +245,7 @@ export const useProductApi = () => {
 
   // Device Models
   const fetchDeviceModels = async (): Promise<DeviceModel[]> => {
-    const response = await $fetch<DeviceModel[]>(`${apiBase}/api/v1/device-models`, {
+    const response = await $fetch<DeviceModel[]>(`${apiBase}/device-models`, {
       headers: {
         Authorization: `Bearer ${auth.token}`
       }
@@ -255,7 +255,7 @@ export const useProductApi = () => {
 
   // Product Types
   const fetchProductTypes = async (): Promise<ProductType[]> => {
-    const response = await $fetch<ProductType[]>(`${apiBase}/api/v1/product-types`, {
+    const response = await $fetch<ProductType[]>(`${apiBase}/product-types`, {
       headers: {
         Authorization: `Bearer ${auth.token}`
       }
@@ -265,7 +265,7 @@ export const useProductApi = () => {
 
   // Part Brands
   const fetchPartBrands = async (): Promise<PartBrand[]> => {
-    const response = await $fetch<PartBrand[]>(`${apiBase}/api/v1/part-brands`, {
+    const response = await $fetch<PartBrand[]>(`${apiBase}/part-brands`, {
       headers: {
         Authorization: `Bearer ${auth.token}`
       }
@@ -275,7 +275,7 @@ export const useProductApi = () => {
 
   // Quality Grades
   const fetchQualityGrades = async (): Promise<QualityGrade[]> => {
-    const response = await $fetch<QualityGrade[]>(`${apiBase}/api/v1/quality-grades`, {
+    const response = await $fetch<QualityGrade[]>(`${apiBase}/quality-grades`, {
       headers: {
         Authorization: `Bearer ${auth.token}`
       }
@@ -288,7 +288,7 @@ const createDeviceModel = async (data: {
   deviceBrand: string
   modelName: string
 }): Promise<DeviceModel> => {
-  const response = await $fetch<DeviceModel>(`${apiBase}/api/v1/device-models`, {
+  const response = await $fetch<DeviceModel>(`${apiBase}/device-models`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${auth.token}`,
@@ -303,7 +303,7 @@ const updateDeviceModel = async (
   id: number,
   data: { deviceBrand?: string; modelName?: string; isActive?: boolean }
 ): Promise<DeviceModel> => {
-  const response = await $fetch<DeviceModel>(`${apiBase}/api/v1/device-models/${id}`, {
+  const response = await $fetch<DeviceModel>(`${apiBase}/device-models/${id}`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${auth.token}`,
@@ -315,7 +315,7 @@ const updateDeviceModel = async (
 }
 
 const deleteDeviceModel = async (id: number): Promise<void> => {
-  await $fetch(`${apiBase}/api/v1/device-models/${id}`, {
+  await $fetch(`${apiBase}/device-models/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${auth.token}`
@@ -329,7 +329,7 @@ const createProductType = async (data: {
   description?: string
   icon?: string
 }): Promise<ProductType> => {
-  const response = await $fetch<ProductType>(`${apiBase}/api/v1/product-types`, {
+  const response = await $fetch<ProductType>(`${apiBase}/product-types`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${auth.token}`,
@@ -344,7 +344,7 @@ const updateProductType = async (
   id: number,
   data: { name?: string; description?: string; icon?: string; isActive?: boolean }
 ): Promise<ProductType> => {
-  const response = await $fetch<ProductType>(`${apiBase}/api/v1/product-types/${id}`, {
+  const response = await $fetch<ProductType>(`${apiBase}/product-types/${id}`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${auth.token}`,
@@ -356,7 +356,7 @@ const updateProductType = async (
 }
 
 const deleteProductType = async (id: number): Promise<void> => {
-  await $fetch(`${apiBase}/api/v1/product-types/${id}`, {
+  await $fetch(`${apiBase}/product-types/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${auth.token}`
@@ -371,7 +371,7 @@ const createPartBrand = async (data: {
   notes?: string
   logoUrl?: string
 }): Promise<PartBrand> => {
-  const response = await $fetch<PartBrand>(`${apiBase}/api/v1/part-brands`, {
+  const response = await $fetch<PartBrand>(`${apiBase}/part-brands`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${auth.token}`,
@@ -392,7 +392,7 @@ const updatePartBrand = async (
     isActive?: boolean
   }
 ): Promise<PartBrand> => {
-  const response = await $fetch<PartBrand>(`${apiBase}/api/v1/part-brands/${id}`, {
+  const response = await $fetch<PartBrand>(`${apiBase}/part-brands/${id}`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${auth.token}`,
@@ -404,7 +404,7 @@ const updatePartBrand = async (
 }
 
 const deletePartBrand = async (id: number): Promise<void> => {
-  await $fetch(`${apiBase}/api/v1/part-brands/${id}`, {
+  await $fetch(`${apiBase}/part-brands/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${auth.token}`
@@ -418,7 +418,7 @@ const createQualityGrade = async (data: {
   description?: string
   sortOrder?: number
 }): Promise<QualityGrade> => {
-  const response = await $fetch<QualityGrade>(`${apiBase}/api/v1/quality-grades`, {
+  const response = await $fetch<QualityGrade>(`${apiBase}/quality-grades`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${auth.token}`,
@@ -438,7 +438,7 @@ const updateQualityGrade = async (
     isActive?: boolean
   }
 ): Promise<QualityGrade> => {
-  const response = await $fetch<QualityGrade>(`${apiBase}/api/v1/quality-grades/${id}`, {
+  const response = await $fetch<QualityGrade>(`${apiBase}/quality-grades/${id}`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${auth.token}`,
@@ -450,7 +450,7 @@ const updateQualityGrade = async (
 }
 
 const deleteQualityGrade = async (id: number): Promise<void> => {
-  await $fetch(`${apiBase}/api/v1/quality-grades/${id}`, {
+  await $fetch(`${apiBase}/quality-grades/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${auth.token}`
