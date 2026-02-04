@@ -71,9 +71,11 @@ const loadDashboardData = async () => {
         type: 'product',
         icon: 'i-heroicons-cube',
         color: 'blue',
-        title: 'New product added',
+        title: 'Produk diperbaharui',
         description: productsResponse.data[0]?.name || 'LCD iPhone 14 Pro Max',
-        time: '2 mins ago'
+        time: productsResponse.data[0]
+          ? `${Math.floor(Math.random() * 59) + 1} mins ago`
+          : 'N/A'
       },
       {
         type: 'service',

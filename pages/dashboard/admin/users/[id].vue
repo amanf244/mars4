@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import type { UpdateUserRequest, User } from '~/composables/useUserApi'
 import { useUsersStore } from '~/stores/users'
+// import ConfirmModal from '~/components/ConfirmModal.vue'
 
 definePageMeta({
   requiresAuth: true,
@@ -34,8 +35,8 @@ const localError = ref<string | null>(null)
 const hasUnsavedChanges = ref(false)
 
 const roleOptions = [
-  { label: 'User (Akses Terbatas)', value: 'User' },
-  { label: 'Admin (Akses Penuh)', value: 'Admin' }
+  { label: 'User (Akses Terbatas)', value: 'User' as User['role'] },
+  { label: 'Admin (Akses Penuh)', value: 'Admin' as User['role'] }
 ]
 
 const statusOptions = [
@@ -44,28 +45,32 @@ const statusOptions = [
 ]
 
 // Watch form changes
-watch(() => ({ ...form }), () => {
-  hasUnsavedChanges.value = true
-}, { deep: true })
+watch(
+  () => ({ ...form }),
+  () => {
+    hasUnsavedChanges.value = true
+  },
+  { deep: true }
+)
 
 // Load user data
 const loadUser = async () => {
   try {
     const user = await usersStore.fetchUserById(userId.value)
-    form.email = user.email
-    form.fullName = user.fullName
-    form.phoneNumber = user.phoneNumber || ''
-    form.address = user.address || ''
-    form.role = user.role as any || 'User'
+    form.email = user.email ?? ''
+    form.fullName = user.fullName ?? ''
+    form.phoneNumber = user.phoneNumber ?? ''
+    form.address = user.address ?? ''
+    form.role = user.role === 'Admin' ? 'Admin' : 'User'
     form.isActive = user.isActive
-    form.isTechnician = user.isTechnician || false
+    form.isTechnician = user.isTechnician ?? false
     hasUnsavedChanges.value = false
   } catch (error: any) {
     toast.add({
       title: 'Error',
       description: 'Gagal memuat data user',
       icon: 'i-heroicons-x-circle',
-      color: 'error',
+      color: 'error'
     })
     await navigateTo('/dashboard/users')
   } finally {
@@ -78,27 +83,27 @@ onMounted(loadUser)
 // Form validation
 const validateForm = () => {
   const errors: string[] = []
-  
-  if (!form.email.trim()) {
+
+  if (!form.email?.trim()) {
     errors.push('Email wajib diisi')
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
     errors.push('Format email tidak valid')
   }
-  
-  if (!form.fullName.trim()) {
+
+  if (!form.fullName?.trim()) {
     errors.push('Nama lengkap wajib diisi')
   } else if (form.fullName.length < 2) {
     errors.push('Nama minimal 2 karakter')
   }
-  
+
   if (form.phoneNumber && !/^[0-9+\-\s()]+$/.test(form.phoneNumber)) {
     errors.push('Format nomor telepon tidak valid')
   }
-  
+
   if (form.password && form.password.length < 8) {
     errors.push('Password minimal 8 karakter')
   }
-  
+
   return errors
 }
 
@@ -108,15 +113,15 @@ const handleSubmit = async () => {
   if (usersStore.error) {
     usersStore.error = null
   }
-  
+
   const validationErrors = validateForm()
-  
+
   if (validationErrors.length > 0) {
     toast.add({
       title: 'Validasi Gagal',
       description: validationErrors[0],
       icon: 'i-heroicons-exclamation-circle',
-      color: 'error',
+      color: 'error'
     })
     return
   }
@@ -125,38 +130,43 @@ const handleSubmit = async () => {
 
   try {
     // Create update payload, exclude password if empty
-    const updatePayload = { ...form }
-    if (!updatePayload.password.trim()) {
-      delete updatePayload.password
+    const updatePayload: UpdateUserRequest = { ...form }
+    if (!updatePayload.password?.trim()) {
+      delete (updatePayload as any).password
     }
 
     await usersStore.updateUser(userId.value, updatePayload)
-    
+
     toast.add({
       title: 'Berhasil',
       description: 'Data user berhasil diperbarui',
       icon: 'i-heroicons-check-circle',
-      color: 'success',
+      color: 'success'
     })
-    
+
     hasUnsavedChanges.value = false
-    
+
     setTimeout(async () => {
-      await usersStore.fetchUsers(usersStore.filters.page || 1, usersStore.filters.search || '')
-      await navigateTo('/dashboard/users')
+      await usersStore.fetchUsers(
+        usersStore.filters.page || 1,
+        usersStore.filters.search || ''
+      )
+      await navigateTo('/dashboard/admin/users')
     }, 1500)
   } catch (error: any) {
     console.error('Error updating user:', error)
-    
-    const errorMessage = usersStore.error || error.message || 'Gagal memperbarui user'
+
+    const errorMessage =
+      usersStore.error || error.message || 'Gagal memperbarui user'
     localError.value = errorMessage
-    
+
     toast.add({
       title: 'Error',
       description: errorMessage,
       icon: 'i-heroicons-x-circle',
       color: 'error',
-      timeout: 5000
+      // Nuxt UI Toast tidak punya `timeout`, gunakan `duration`
+      duration: 5000
     })
   } finally {
     isSubmitting.value = false
@@ -171,26 +181,11 @@ const handleReset = () => {
     title: 'Reset',
     description: 'Perubahan telah dibatalkan',
     icon: 'i-heroicons-arrow-path',
-    color: 'gray',
+    color: 'neutral'
   })
 }
 
-// Navigate back with confirmation
-const handleBack = async () => {
-  if (hasUnsavedChanges.value) {
-    const confirmed = await confirmDialog(
-      'Ada perubahan yang belum disimpan',
-      'Yakin ingin meninggalkan halaman ini? Perubahan yang belum disimpan akan hilang.'
-    )
-    if (confirmed) {
-      router.back()
-    }
-  } else {
-    router.back()
-  }
-}
-
-// Confirm dialog helper
+// Confirm dialog helper (Nuxt UI modal)
 const confirmDialog = (title: string, message: string): Promise<boolean> => {
   return new Promise((resolve) => {
     const modal = useModal()
@@ -209,6 +204,21 @@ const confirmDialog = (title: string, message: string): Promise<boolean> => {
   })
 }
 
+// Navigate back with confirmation
+const handleBack = async () => {
+  if (hasUnsavedChanges.value) {
+    const confirmed = await confirmDialog(
+      'Ada perubahan yang belum disimpan',
+      'Yakin ingin meninggalkan halaman ini? Perubahan yang belum disimpan akan hilang.'
+    )
+    if (confirmed) {
+      router.back()
+    }
+  } else {
+    router.back()
+  }
+}
+
 // Clean up
 onBeforeUnmount(() => {
   if (usersStore.error) {
@@ -219,14 +229,13 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
-    <!-- Header Section -->
     <div class="max-w-7xl mx-auto">
       <!-- Breadcrumb Navigation -->
       <nav class="mb-6">
         <ol class="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
           <li>
-            <NuxtLink 
-              to="/dashboard" 
+            <NuxtLink
+              to="/dashboard/admin"
               class="inline-flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
             >
               <i class="i-heroicons-home h-4 w-4" />
@@ -235,8 +244,8 @@ onBeforeUnmount(() => {
           </li>
           <li class="flex items-center">
             <i class="i-heroicons-chevron-right h-4 w-4 mx-1" />
-            <NuxtLink 
-              to="/dashboard/users" 
+            <NuxtLink
+              to="/dashboard/admin/users"
               class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
             >
               Users
@@ -269,27 +278,41 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div class="flex flex-wrap items-center gap-2 mt-4">
-              <UBadge 
-                :color="form.isActive ? 'green' : 'red'" 
-                variant="subtle" 
-                class="inline-flex items-center gap-1"
-              >
-                <i class="i-heroicons-check-circle h-3 w-3" v-if="form.isActive" />
-                <i class="i-heroicons-x-circle h-3 w-3" v-else />
-                {{ form.isActive ? 'Aktif' : 'Nonaktif' }}
-              </UBadge>
-              <UBadge 
-                :color="form.role === 'Admin' ? 'purple' : 'blue'" 
+              <UBadge
+                :color="form.isActive ? 'success' : 'error'"
                 variant="subtle"
                 class="inline-flex items-center gap-1"
               >
-                <i class="i-heroicons-shield-check h-3 w-3" v-if="form.role === 'Admin'" />
-                <i class="i-heroicons-user h-3 w-3" v-else />
+                <i
+                  v-if="form.isActive"
+                  class="i-heroicons-check-circle h-3 w-3"
+                />
+                <i
+                  v-else
+                  class="i-heroicons-x-circle h-3 w-3"
+                />
+                {{ form.isActive ? 'Aktif' : 'Nonaktif' }}
+              </UBadge>
+
+              <UBadge
+                :color="form.role === 'Admin' ? 'primary' : 'secondary'"
+                variant="subtle"
+                class="inline-flex items-center gap-1"
+              >
+                <i
+                  v-if="form.role === 'Admin'"
+                  class="i-heroicons-shield-check h-3 w-3"
+                />
+                <i
+                  v-else
+                  class="i-heroicons-user h-3 w-3"
+                />
                 {{ form.role }}
               </UBadge>
-              <UBadge 
+
+              <UBadge
                 v-if="form.isTechnician"
-                color="amber"
+                color="warning"
                 variant="subtle"
                 class="inline-flex items-center gap-1"
               >
@@ -298,11 +321,11 @@ onBeforeUnmount(() => {
               </UBadge>
             </div>
           </div>
-          
+
           <!-- Action Buttons -->
           <div class="flex flex-wrap items-center gap-2">
             <UButton
-              color="gray"
+              color="neutral"
               variant="ghost"
               icon="i-heroicons-arrow-left"
               @click="handleBack"
@@ -313,7 +336,7 @@ onBeforeUnmount(() => {
             </UButton>
             <UButton
               v-if="hasUnsavedChanges"
-              color="amber"
+              color="warning"
               variant="soft"
               icon="i-heroicons-arrow-path"
               @click="handleReset"
@@ -330,9 +353,9 @@ onBeforeUnmount(() => {
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Left Column - Form -->
         <div class="lg:col-span-2">
-          <UCard 
+          <UCard
             class="h-full shadow-lg border border-gray-200 dark:border-gray-800"
-            :ui="{ 
+            :ui="{
               body: { padding: 'p-0 sm:p-0' },
               ring: 'ring-0'
             }"
@@ -341,15 +364,21 @@ onBeforeUnmount(() => {
             <div v-if="loadingInitial" class="p-8">
               <div class="flex flex-col items-center justify-center py-12 space-y-4">
                 <div class="relative">
-                  <div class="h-16 w-16 rounded-full border-4 border-gray-200 dark:border-gray-700"></div>
-                  <div class="absolute inset-0 h-16 w-16 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+                  <div class="h-16 w-16 rounded-full border-4 border-gray-200 dark:border-gray-700" />
+                  <div class="absolute inset-0 h-16 w-16 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
                 </div>
-                <p class="text-gray-600 dark:text-gray-400 font-medium">Memuat data user...</p>
+                <p class="text-gray-600 dark:text-gray-400 font-medium">
+                  Memuat data user...
+                </p>
               </div>
             </div>
 
             <!-- User Form -->
-            <UForm v-else class="divide-y divide-gray-200 dark:divide-gray-800" @submit.prevent="handleSubmit">
+            <UForm
+              v-else
+              class="divide-y divide-gray-200 dark:divide-gray-800"
+              @submit.prevent="handleSubmit"
+            >
               <!-- Personal Information Section -->
               <div class="p-6 space-y-6">
                 <div class="flex items-center justify-between">
@@ -374,8 +403,8 @@ onBeforeUnmount(() => {
                       placeholder="Masukkan nama lengkap"
                       icon="i-heroicons-user"
                       size="lg"
-                      :ui="{ 
-                        icon: { trailing: { pointer: '' } },
+                      :ui="{
+                        leadingIcon: 'i-heroicons-user',
                         base: 'pl-10'
                       }"
                     />
@@ -391,11 +420,10 @@ onBeforeUnmount(() => {
                     <UInput
                       v-model="form.email"
                       placeholder="user@example.com"
-                      icon="i-heroicons-envelope"
                       type="email"
                       size="lg"
-                      :ui="{ 
-                        icon: { trailing: { pointer: '' } },
+                      :ui="{
+                        leadingIcon: 'i-heroicons-envelope',
                         base: 'pl-10'
                       }"
                     />
@@ -411,10 +439,9 @@ onBeforeUnmount(() => {
                     <UInput
                       v-model="form.phoneNumber"
                       placeholder="+62 812 3456 7890"
-                      icon="i-heroicons-phone"
                       size="lg"
-                      :ui="{ 
-                        icon: { trailing: { pointer: '' } },
+                      :ui="{
+                        leadingIcon: 'i-heroicons-phone',
                         base: 'pl-10'
                       }"
                     />
@@ -428,29 +455,36 @@ onBeforeUnmount(() => {
                   <!-- Role -->
                   <UFormField label="Role" name="role" required>
                     <USelectMenu
-                      v-model="form.role"
-                      :options="roleOptions"
-                      placeholder="Pilih role"
-                      size="lg"
-                      class="w-full"
-                      :ui="{ 
-                        base: 'w-full'
-                      }"
-                    >
-                      <template #label>
-                        <div class="flex items-center gap-2">
-                          <i 
-                            :class="form.role === 'Admin' ? 'i-heroicons-shield-check' : 'i-heroicons-user'" 
-                            class="h-4 w-4"
-                          />
-                          <span>{{ form.role === 'Admin' ? 'Admin' : 'User' }}</span>
-                        </div>
-                      </template>
-                    </USelectMenu>
+  v-model="form.role"
+  :options="roleOptions"
+  option-attribute="label"
+  value-attribute="value"
+  placeholder="Pilih role"
+  size="lg"
+  class="w-full"
+>
+  <template #leading>
+    <i
+      :class="form.role === 'Admin'
+        ? 'i-heroicons-shield-check'
+        : 'i-heroicons-user'"
+      class="h-4 w-4"
+    />
+  </template>
+</USelectMenu>
+
                     <template #help>
-                      <div class="text-xs mt-1" :class="form.role === 'Admin' ? 'text-purple-600 dark:text-purple-400' : 'text-blue-600 dark:text-blue-400'">
+                      <div
+                        class="text-xs mt-1"
+                        :class="form.role === 'Admin'
+                          ? 'text-purple-600 dark:text-purple-400'
+                          : 'text-blue-600 dark:text-blue-400'"
+                      >
                         <i class="i-heroicons-information-circle h-3 w-3 inline mr-1" />
-                        {{ form.role === 'Admin' ? 'Akses penuh ke semua fitur' : 'Akses terbatas' }}
+                        {{ form.role === 'Admin'
+                          ? 'Akses penuh ke semua fitur'
+                          : 'Akses terbatas'
+                        }}
                       </div>
                     </template>
                   </UFormField>
@@ -462,10 +496,7 @@ onBeforeUnmount(() => {
                     v-model="form.address"
                     placeholder="Masukkan alamat lengkap..."
                     :rows="3"
-                    :ui="{ 
-                      base: 'resize-none',
-                      padding: 'px-3 py-2'
-                    }"
+                    :ui="{ base: 'resize-none px-3 py-2' }"
                   />
                 </UFormField>
               </div>
@@ -490,26 +521,36 @@ onBeforeUnmount(() => {
                   <!-- Status Akun -->
                   <div class="flex items-center justify-between p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors">
                     <div class="flex items-start gap-3">
-                      <div class="p-2 rounded-lg" :class="form.isActive ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'">
-                        <i :class="form.isActive ? 'i-heroicons-check-circle text-green-600 dark:text-green-400' : 'i-heroicons-x-circle text-red-600 dark:text-red-400'" class="h-5 w-5" />
+                      <div
+                        class="p-2 rounded-lg"
+                        :class="form.isActive
+                          ? 'bg-green-100 dark:bg-green-900/30'
+                          : 'bg-red-100 dark:bg-red-900/30'"
+                      >
+                        <i
+                          :class="form.isActive
+                            ? 'i-heroicons-check-circle text-green-600 dark:text-green-400'
+                            : 'i-heroicons-x-circle text-red-600 dark:text-red-400'"
+                          class="h-5 w-5"
+                        />
                       </div>
                       <div>
                         <label class="block font-medium text-gray-900 dark:text-white mb-1">
                           Status Akun
                         </label>
                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                          {{ form.isActive ? 'User dapat login ke sistem' : 'User tidak dapat login' }}
+                          {{ form.isActive
+                            ? 'User dapat login ke sistem'
+                            : 'User tidak dapat login'
+                          }}
                         </p>
                       </div>
                     </div>
                     <USelect
                       v-model="form.isActive"
-                      :options="statusOptions"
+                      :items="statusOptions"
                       size="md"
-                      :ui="{ 
-                        base: 'w-32',
-                        padding: 'px-3 py-2'
-                      }"
+                      :ui="{ base: 'w-32 px-3 py-2' }"
                     />
                   </div>
 
@@ -528,7 +569,7 @@ onBeforeUnmount(() => {
                         </p>
                       </div>
                     </div>
-                    <USwitch v-model="form.isTechnician" color="amber" />
+                    <USwitch v-model="form.isTechnician" color="warning" />
                   </div>
                 </div>
               </div>
@@ -558,10 +599,9 @@ onBeforeUnmount(() => {
                           v-model="form.password"
                           :type="showPassword ? 'text' : 'password'"
                           placeholder="Masukkan password baru"
-                          icon="i-heroicons-key"
                           size="lg"
-                          :ui="{ 
-                            icon: { trailing: { pointer: '' } },
+                          :ui="{
+                            leadingIcon: 'i-heroicons-key',
                             base: 'pl-10 pr-20'
                           }"
                         />
@@ -570,51 +610,86 @@ onBeforeUnmount(() => {
                           @click="showPassword = !showPassword"
                           class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                         >
-                          <i :class="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" class="h-5 w-5" />
+                          <i
+                            :class="showPassword
+                              ? 'i-heroicons-eye-slash'
+                              : 'i-heroicons-eye'"
+                            class="h-5 w-5"
+                          />
                         </button>
                       </div>
-                      
+
                       <!-- Password Strength Indicator -->
-                      <div v-if="form.password" class="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
+                      <div
+                        v-if="form.password"
+                        class="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30"
+                      >
                         <div class="flex items-center justify-between mb-3">
-                          <span class="text-sm font-medium text-gray-900 dark:text-white">Kekuatan Password</span>
-                          <span class="text-sm font-semibold" :class="{
-                            'text-red-500': form.password.length < 8,
-                            'text-amber-500': form.password.length >= 8 && form.password.length < 12,
-                            'text-green-500': form.password.length >= 12
-                          }">
+                          <span class="text-sm font-medium text-gray-900 dark:text-white">
+                            Kekuatan Password
+                          </span>
+                          <span
+                            class="text-sm font-semibold"
+                            :class="{
+                              'text-red-500': form.password.length < 8,
+                              'text-amber-500':
+                                form.password.length >= 8 &&
+                                form.password.length < 12,
+                              'text-green-500': form.password.length >= 12
+                            }"
+                          >
                             {{
-                              form.password.length < 8 ? 'Lemah' :
-                              form.password.length < 12 ? 'Sedang' : 'Kuat'
+                              form.password.length < 8
+                                ? 'Lemah'
+                                : form.password.length < 12
+                                  ? 'Sedang'
+                                  : 'Kuat'
                             }}
                           </span>
                         </div>
                         <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-2">
-                          <div 
+                          <div
                             class="h-full transition-all duration-500"
                             :class="{
                               'w-1/4 bg-red-500': form.password.length < 8,
-                              'w-2/4 bg-amber-500': form.password.length >= 8 && form.password.length < 12,
+                              'w-2/4 bg-amber-500':
+                                form.password.length >= 8 &&
+                                form.password.length < 12,
                               'w-full bg-green-500': form.password.length >= 12
                             }"
                           />
                         </div>
                         <div class="text-xs text-gray-600 dark:text-gray-400 space-y-1">
                           <div class="flex items-center gap-2">
-                            <i class="i-heroicons-check-circle h-3 w-3" :class="form.password.length >= 8 ? 'text-green-500' : 'text-gray-400'" />
+                            <i
+                              class="i-heroicons-check-circle h-3 w-3"
+                              :class="form.password.length >= 8
+                                ? 'text-green-500'
+                                : 'text-gray-400'"
+                            />
                             <span>Minimal 8 karakter</span>
                           </div>
                           <div class="flex items-center gap-2">
-                            <i class="i-heroicons-check-circle h-3 w-3" :class="/(?=.*[A-Z])/.test(form.password) ? 'text-green-500' : 'text-gray-400'" />
+                            <i
+                              class="i-heroicons-check-circle h-3 w-3"
+                              :class="/(?=.*[A-Z])/.test(form.password)
+                                ? 'text-green-500'
+                                : 'text-gray-400'"
+                            />
                             <span>Minimal 1 huruf besar</span>
                           </div>
                           <div class="flex items-center gap-2">
-                            <i class="i-heroicons-check-circle h-3 w-3" :class="/(?=.*[0-9])/.test(form.password) ? 'text-green-500' : 'text-gray-400'" />
+                            <i
+                              class="i-heroicons-check-circle h-3 w-3"
+                              :class="/(?=.*[0-9])/.test(form.password)
+                                ? 'text-green-500'
+                                : 'text-gray-400'"
+                            />
                             <span>Minimal 1 angka</span>
                           </div>
                         </div>
                       </div>
-                      
+
                       <p class="text-xs text-gray-500 dark:text-gray-400">
                         <i class="i-heroicons-information-circle h-3 w-3 inline mr-1" />
                         Kosongkan jika tidak ingin mengubah password
@@ -630,8 +705,12 @@ onBeforeUnmount(() => {
                   <div class="flex items-start gap-3">
                     <i class="i-heroicons-exclamation-triangle h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
                     <div class="text-sm">
-                      <p class="font-semibold text-red-700 dark:text-red-300 mb-1">Gagal memperbarui user</p>
-                      <p class="text-red-600 dark:text-red-400">{{ localError || usersStore.error }}</p>
+                      <p class="font-semibold text-red-700 dark:text-red-300 mb-1">
+                        Gagal memperbarui user
+                      </p>
+                      <p class="text-red-600 dark:text-red-400">
+                        {{ localError || usersStore.error }}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -646,11 +725,11 @@ onBeforeUnmount(() => {
                       <span>Tekan Ctrl+S untuk menyimpan</span>
                     </div>
                   </div>
-                  
+
                   <div class="flex items-center gap-3 w-full sm:w-auto">
                     <UButton
                       type="button"
-                      color="gray"
+                      color="neutral"
                       variant="soft"
                       @click="handleBack"
                       :disabled="isSubmitting"
@@ -694,7 +773,7 @@ onBeforeUnmount(() => {
                 <h3 class="font-semibold text-gray-900 dark:text-white">Ringkasan User</h3>
               </div>
             </template>
-            
+
             <div class="space-y-4">
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-600 dark:text-gray-400">ID Pengguna</span>
@@ -702,25 +781,30 @@ onBeforeUnmount(() => {
                   #{{ userId }}
                 </code>
               </div>
-              
+
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-600 dark:text-gray-400">Tanggal Dibuat</span>
                 <span class="text-sm font-medium">-</span>
               </div>
-              
+
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-600 dark:text-gray-400">Terakhir Diupdate</span>
                 <span class="text-sm font-medium">-</span>
               </div>
-              
+
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-600 dark:text-gray-400">Status</span>
-                <UBadge 
-                  :color="form.isActive ? 'green' : 'red'" 
+                <UBadge
+                  :color="form.isActive ? 'success' : 'error'"
                   size="sm"
                   class="inline-flex items-center gap-1"
                 >
-                  <i :class="form.isActive ? 'i-heroicons-check-circle' : 'i-heroicons-x-circle'" class="h-3 w-3" />
+                  <i
+                    :class="form.isActive
+                      ? 'i-heroicons-check-circle'
+                      : 'i-heroicons-x-circle'"
+                    class="h-3 w-3"
+                  />
                   {{ form.isActive ? 'Aktif' : 'Nonaktif' }}
                 </UBadge>
               </div>
@@ -737,31 +821,31 @@ onBeforeUnmount(() => {
                 <h3 class="font-semibold text-gray-900 dark:text-white">Aksi Cepat</h3>
               </div>
             </template>
-            
+
             <div class="space-y-3">
               <UButton
                 block
-                color="gray"
+                color="neutral"
                 variant="soft"
                 icon="i-heroicons-envelope"
                 :disabled="!form.email"
               >
                 Kirim Email
               </UButton>
-              
+
               <UButton
                 block
-                color="gray"
+                color="neutral"
                 variant="soft"
                 icon="i-heroicons-key"
                 @click="form.password = Math.random().toString(36).slice(-12)"
               >
                 Generate Password
               </UButton>
-              
+
               <UButton
                 block
-                :color="form.isActive ? 'red' : 'green'"
+                :color="form.isActive ? 'error' : 'success'"
                 variant="soft"
                 :icon="form.isActive ? 'i-heroicons-lock-closed' : 'i-heroicons-lock-open'"
                 @click="form.isActive = !form.isActive"
@@ -772,7 +856,10 @@ onBeforeUnmount(() => {
           </UCard>
 
           <!-- Unsaved Changes Warning -->
-          <div v-if="hasUnsavedChanges" class="p-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+          <div
+            v-if="hasUnsavedChanges"
+            class="p-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20"
+          >
             <div class="flex items-start gap-3">
               <i class="i-heroicons-exclamation-triangle h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
               <div class="text-sm">
@@ -792,7 +879,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* Custom scrollbar for textarea */
 textarea::-webkit-scrollbar {
   width: 6px;
 }

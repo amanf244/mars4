@@ -8,11 +8,18 @@ import { validateLoginForm } from '~/utils/validators'
 const auth = useAuthStore()
 const toast = useToast()
 
+// const form = reactive({
+//   email: 'admin@example.com',
+//   password: 'Admin123!',
+//   rememberMe: true,
+//   deviceName: 'web-nuxt-client'
+// })
+
 const form = reactive({
-  email: 'admin@example.com',
-  password: 'Admin123!',
+  email: '',
+  password: '',
   rememberMe: true,
-  deviceName: 'web-nuxt-client'
+  deviceName: ''
 })
 
 const state = reactive({
@@ -78,15 +85,15 @@ const handleSubmit = async () => {
   }
 }
 
-const fillDemoAdmin = () => {
-  state.email = 'admin@example.com'
-  state.password = 'Admin123!'
-}
+// const fillDemoAdmin = () => {
+//   state.email = 'admin@example.com'
+//   state.password = 'Admin123!'
+// }
 
-const fillDemoUser = () => {
-  state.email = 'user@example.com'
-  state.password = 'Admin123!'
-}
+// const fillDemoUser = () => {
+//   state.email = 'user@example.com'
+//   state.password = 'Admin123!'
+// }
 </script>
 
 <template>
@@ -133,7 +140,7 @@ const fillDemoUser = () => {
                 <input
                   v-model="state.email"
                   type="email"
-                  placeholder="admin@example.com"
+                  placeholder="email@example.com"
                   :disabled="isSubmitting"
                   class="w-full pl-11 pr-4 py-3 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 />
@@ -192,17 +199,17 @@ const fillDemoUser = () => {
           </form>
 
           <!-- Divider -->
-          <div class="relative my-6">
+          <!-- <div class="relative my-6">
             <div class="absolute inset-0 flex items-center">
               <div class="w-full border-t border-slate-800"></div>
             </div>
             <div class="relative flex justify-center text-xs">
               <span class="px-3 text-slate-500 bg-slate-900/50">Demo credentials</span>
             </div>
-          </div>
+          </div> -->
 
           <!-- Demo Buttons -->
-          <div class="grid grid-cols-2 gap-3">
+          <!-- <div class="grid grid-cols-2 gap-3">
             <button
               @click="fillDemoAdmin"
               :disabled="isSubmitting"
@@ -219,7 +226,7 @@ const fillDemoUser = () => {
               <UIcon name="i-heroicons-user" class="w-4 h-4" />
               <span>User</span>
             </button>
-          </div>
+          </div> -->
         </div>
 
         <!-- Footer -->
