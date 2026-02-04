@@ -3,14 +3,14 @@ import * as signalR from '@microsoft/signalr'
 let connection: signalR.HubConnection | null = null
 
 export const useSignalR = () => {
-  const config = useRuntimeConfig()
-  const apiBase = config.public.apiBase || 'http://localhost:5084/api/v1'
-
-  // root = https://api.mars4.my.id
-  const apiRoot = apiBase.replace(/\/api\/v1\/?$/, '')
-
   const connect = async () => {
+    // jangan jalan di server (SSR)
+    if (import.meta.server) return null
     if (connection) return connection
+
+    const config = useRuntimeConfig()
+    const apiBase = config.public.apiBase || 'http://localhost:5084/api/v1'
+    const apiRoot = apiBase.replace(/\/api\/v1\/?$/, '')
 
     connection = new signalR.HubConnectionBuilder()
       .withUrl(`${apiRoot}/hubs/products`)
