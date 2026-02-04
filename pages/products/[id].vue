@@ -409,7 +409,7 @@ const activeImageUrl = computed(() => {
 
 const getImageUrl = (fileName: string | null | undefined) => {
   if (!fileName) return ''
-  return `http://localhost:5084/uploads/products/${fileName}`
+  return `${useRuntimeConfig().public.apiBase.replace(/\/api\/v1\/?$/, '')}/uploads/products/${fileName}`
 }
 
 const formatPrice = (price: number | null | undefined): string => {
