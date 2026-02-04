@@ -5,13 +5,13 @@ let connection: signalR.HubConnection | null = null
 
 export const useSignalR = () => {
   const config = useRuntimeConfig()
-  const apiUrl = config.public.apiUrl || 'http://localhost:5084'
+  const apiBase = config.public.apiBase || 'http://localhost:5084/api/v1'
 
   const connect = async () => {
     if (connection) return connection
 
     connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${apiUrl}/hubs/products`)
+      .withUrl(`${apiBase}/hubs/products`)
       .withAutomaticReconnect()
       .build()
 

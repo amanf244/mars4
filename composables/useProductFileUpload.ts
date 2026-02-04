@@ -14,13 +14,13 @@ export const useProductFileUpload = () => {
   const config = useRuntimeConfig()
   const auth = useAuthStore()
 
-  const apiUrl = config.public.apiUrl || 'http://localhost:5084'
+  const apiBase = config.public.apiBase || 'http://localhost:5084/api/v1'
 
   const uploadFile = async (file: File): Promise<FileUploadResponse> => {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await $fetch<FileUploadResponse>(`${apiUrl}/api/v1/files/upload`, {
+    const response = await $fetch<FileUploadResponse>(`${apiBase}/api/v1/files/upload`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${auth.token}`
@@ -40,7 +40,7 @@ export const useProductFileUpload = () => {
     })
 
     return await $fetch<FileUploadResponse>(
-      `${apiUrl}/api/v1/files/upload-multiple`,
+      `${apiBase}/api/v1/files/upload-multiple`,
       {
         method: 'POST',
         headers: {
@@ -53,7 +53,7 @@ export const useProductFileUpload = () => {
 
   // Delete berdasarkan NAMA FILE (bukan URL)
   const deleteFile = async (fileName: string): Promise<void> => {
-    await $fetch(`${apiUrl}/api/v1/files/images/${fileName}`, {
+    await $fetch(`${apiBase}/api/v1/files/images/${fileName}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${auth.token}`
@@ -65,8 +65,8 @@ export const useProductFileUpload = () => {
   const getFileUrl = (fileName: string | undefined): string => {
     if (!fileName) return ''
 
-    // URL final: {apiUrl}/api/v1/files/images/{fileName}
-    return `${apiUrl}/api/v1/files/images/${fileName}`
+    // URL final: {apiBase}/api/v1/files/images/{fileName}
+    return `${apiBase}/api/v1/files/images/${fileName}`
   }
 
   return {

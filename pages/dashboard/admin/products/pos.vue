@@ -80,10 +80,10 @@ const searchTechnicians = async () => {
 
   try {
     searchingTechnician.value = true
-    const apiUrl = useRuntimeConfig().public.apiUrl || 'http://localhost:5084'
+    const apiBase  = useRuntimeConfig().public.apiBase  || 'http://localhost:5084'
     const auth = useAuthStore()
 
-    const res = await $fetch<Technician[]>(`${apiUrl}/api/v1/users/search/technicians`, {
+    const res = await $fetch<Technician[]>(`${apiBase }/api/v1/users/search/technicians`, {
       params: { q },
       headers: {
         Authorization: `Bearer ${auth.token}`
@@ -128,7 +128,7 @@ const refreshPricing = async () => {
   }
 
   try {
-    const apiUrl = useRuntimeConfig().public.apiUrl || 'http://localhost:5084'
+    const apiBase  = useRuntimeConfig().public.apiBase  || 'http://localhost:5084'
     const auth = useAuthStore()
 
     const body = {
@@ -141,7 +141,7 @@ const refreshPricing = async () => {
 
     console.log('Pricing body:', body)
 
-    const res = await $fetch<CartPriceResponse>(`${apiUrl}/api/v1/products/cart/price`, {
+    const res = await $fetch<CartPriceResponse>(`${apiBase }/api/v1/products/cart/price`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${auth.token}`,
@@ -173,7 +173,7 @@ const processSale = async () => {
     error.value = null
     saleResult.value = null
 
-    const apiUrl = useRuntimeConfig().public.apiUrl || 'http://localhost:5084'
+    const apiBase  = useRuntimeConfig().public.apiBase  || 'http://localhost:5084'
     const auth = useAuthStore()
 
     const body = {
@@ -183,7 +183,7 @@ const processSale = async () => {
       technicianName: selectedTechnician.value?.fullName
     }
 
-    const res = await $fetch<SaleResponse>(`${apiUrl}/api/v1/sales`, {
+    const res = await $fetch<SaleResponse>(`${apiBase }/api/v1/sales`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${auth.token}`,
