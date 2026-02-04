@@ -1,4 +1,3 @@
-// composables/useSignalR.ts
 import * as signalR from '@microsoft/signalr'
 
 let connection: signalR.HubConnection | null = null
@@ -7,11 +6,14 @@ export const useSignalR = () => {
   const config = useRuntimeConfig()
   const apiBase = config.public.apiBase || 'http://localhost:5084/api/v1'
 
+  // root = https://api.mars4.my.id
+  const apiRoot = apiBase.replace(/\/api\/v1\/?$/, '')
+
   const connect = async () => {
     if (connection) return connection
 
     connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${apiBase}/hubs/products`)
+      .withUrl(`${apiRoot}/hubs/products`)
       .withAutomaticReconnect()
       .build()
 
