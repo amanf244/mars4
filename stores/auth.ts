@@ -1,8 +1,12 @@
-// stores/auth.ts
 import { defineStore } from 'pinia'
 import type { User, LoginPayload, LoginResponse } from '~/types/auth'
 
 export const useAuthStore = defineStore('auth', () => {
+  // Nuxt context (aman di sini)
+  const config = useRuntimeConfig()
+  const tokenCookie = useCookie<string | null>(config.public.tokenKey)
+  const refreshTokenCookie = useCookie<string | null>(config.public.refreshTokenKey)
+
   // State
   const user = ref<User | null>(null)
   const token = ref<string | null>(null)
@@ -24,8 +28,6 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
 
     try {
-      const config = useRuntimeConfig()
-
       const response = await $fetch<LoginResponse>(
         `${config.public.apiBase}${config.public.authEndpoint}/login`,
         {
@@ -43,15 +45,11 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error(response.message || 'Login gagal')
       }
 
-      // Set state
       user.value = response.user
       token.value = response.token
       refreshToken.value = response.refreshToken
 
-      // Save to cookies
       _saveToCookies()
-
-      console.log('✅ Login successful:', response.user.email)
       return response
     } catch (err: any) {
       const errorMsg = err?.data?.message || err?.message || 'Login gagal'
@@ -67,10 +65,6 @@ export const useAuthStore = defineStore('auth', () => {
     if (initialized.value) return
 
     try {
-      const config = useRuntimeConfig()
-      const tokenCookie = useCookie<string | null>(config.public.tokenKey)
-      const refreshTokenCookie = useCookie<string | null>(config.public.refreshTokenKey)
-
       const tokenValue = tokenCookie.value
       const refreshTokenValue = refreshTokenCookie.value
 
@@ -115,7 +109,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     try {
-      const config = useRuntimeConfig()
       const response = await $fetch<any>(
         `${config.public.apiBase}${config.public.authEndpoint}/refresh`,
         {
@@ -128,7 +121,6 @@ export const useAuthStore = defineStore('auth', () => {
       refreshToken.value = response.refresh_token
 
       _saveToCookies()
-
       console.log('✅ Token refreshed')
       return true
     } catch (err) {
@@ -140,8 +132,6 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function logout() {
     try {
-      const config = useRuntimeConfig()
-
       if (token.value) {
         await $fetch(
           `${config.public.apiBase}${config.public.authEndpoint}/logout`,
@@ -167,52 +157,29 @@ export const useAuthStore = defineStore('auth', () => {
     refreshToken.value = null
     error.value = null
 
-    const config = useRuntimeConfig()
-    const tokenCookie = useCookie(config.public.tokenKey)
-    const refreshTokenCookie = useCookie(config.public.refreshTokenKey)
-
     tokenCookie.value = null
     refreshTokenCookie.value = null
 
     console.log('🧹 Auth cleared')
   }
 
-  // Private helper
   function _saveToCookies() {
-    const config = useRuntimeConfig()
-
-    const tokenCookie = useCookie(config.public.tokenKey, {
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7
-    })
-
-    const refreshTokenCookie = useCookie(config.public.refreshTokenKey, {
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 30
-    })
-
     tokenCookie.value = token.value
     refreshTokenCookie.value = refreshToken.value
   }
 
   return {
-    // State
     user,
     token,
     refreshToken,
     initialized,
     loading,
     error,
-    // Getters
     isAuthenticated,
     isAdmin,
     isUser,
     role,
     userName,
-    // Actions
     login,
     restore,
     refreshAccessToken,
