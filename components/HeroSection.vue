@@ -642,7 +642,7 @@ export default {
       // setTimeout(() => {
       //   showNotification.value = false
       // }, 2000)
-     await navigateTo('/dashboard/products')
+     await navigateTo('/products')
     }
     
     // Component instance reference for accessing refs in loops
