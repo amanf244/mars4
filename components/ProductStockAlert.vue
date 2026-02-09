@@ -14,7 +14,7 @@ const loadLowStockProducts = async () => {
     })
     lowStockProducts.value = response.data.filter(p => p.stock <= 5)
   } catch (error) {
-    console.error('Failed to load low stock products:', error)
+    
   } finally {
     loading.value = false
   }

@@ -172,7 +172,6 @@ const services = servicesData
 // Pilih paket
 const selectPlan = (service, plan) => {
   selectedPlan.value = plan
-  console.log(`Memilih ${plan.name} untuk ${service.title}: ${plan.price}`)
   
   // Animasi kecil saat memilih plan
   gsap.to(`.plan-${service.title.replace(/\s+/g, '-')}`, {

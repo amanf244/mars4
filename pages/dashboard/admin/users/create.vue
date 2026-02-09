@@ -95,7 +95,7 @@ const handleSubmit = async () => {
       await navigateTo('/dashboard/admin/users')
     }, 1500)
   } catch (error: any) {
-    console.error('Error creating user:', error)
+    
     
     // Tampilkan error dari store jika ada, atau dari exception
     const errorMessage = usersStore.error || error.message || 'Failed to create user'

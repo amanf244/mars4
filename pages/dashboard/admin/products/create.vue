@@ -214,7 +214,7 @@ const handleFileChange = async (event: Event) => {
 
     target.value = ''
   } catch (error: any) {
-    console.error(error)
+    
     errors.value.image = error.data?.message || 'Gagal upload gambar'
   } finally {
     isUploading.value = false
@@ -232,7 +232,7 @@ const removeImage = async (index: number) => {
     // create mode → pakai temp delete
     await fileUpload.deleteTempFile(fileName)
   } catch (e) {
-    console.error(e)
+    
     form.value.imageUrls.splice(index, 0, fileName)
   }
 }
@@ -289,7 +289,6 @@ const handleSubmit = async () => {
     await productStore.createProduct(payload)
     await navigateTo('/dashboard/admin/products')
   } catch (error: any) {
-    console.error('Gagal membuat produk:', error)
     if (error.data?.message) {
       errors.value.general = error.data.message
     } else {

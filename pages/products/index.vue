@@ -552,7 +552,7 @@ const loadMoreProducts = async () => {
         pagination.value = { ...store.pagination }
       }
     } catch (error) {
-      console.error('[Component] Error loading more:', error)
+      
     } finally {
       isLoadingMore.value = false
     }

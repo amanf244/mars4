@@ -35,7 +35,7 @@ export const useCaseStudies = () => {
       return response.data
     } catch (err: any) {
       const errorMsg = err?.data?.message || err?.message || 'Failed to fetch case studies'
-      console.error('❌ List case studies error:', errorMsg)
+      
       throw err
     }
   }
@@ -50,7 +50,7 @@ export const useCaseStudies = () => {
       return response.data?.item
     } catch (err: any) {
       const errorMsg = err?.data?.message || err?.message || 'Failed to fetch case study'
-      console.error('❌ Get case study error:', errorMsg)
+      
       throw err
     }
   }
@@ -69,12 +69,10 @@ export const useCaseStudies = () => {
         },
         body: payload
       })
-
-      console.log('✅ Case study created:', response.data?.id)
       return response.data
     } catch (err: any) {
       const errorMsg = err?.data?.message || err?.message || 'Failed to create case study'
-      console.error('❌ Create case study error:', errorMsg)
+      
       throw err
     }
   }
@@ -93,12 +91,9 @@ export const useCaseStudies = () => {
         },
         body: payload
       })
-
-      console.log('✅ Case study updated:', response.data?.id)
       return response.data
     } catch (err: any) {
       const errorMsg = err?.data?.message || err?.message || 'Failed to update case study'
-      console.error('❌ Update case study error:', errorMsg)
       throw err
     }
   }
@@ -117,11 +112,10 @@ export const useCaseStudies = () => {
         }
       })
 
-      console.log('✅ Case study deleted:', id)
       return true
     } catch (err: any) {
       const errorMsg = err?.data?.message || err?.message || 'Failed to delete case study'
-      console.error('❌ Delete case study error:', errorMsg)
+      
       throw err
     }
   }

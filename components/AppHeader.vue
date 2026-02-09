@@ -31,7 +31,6 @@ const pageTitle = computed(() => {
 async function handleLogout() {
   isLoggingOut.value = true
   try {
-    console.log('🔐 Logging out...')
     await auth.logout()
     
     toast.add({
@@ -42,7 +41,7 @@ async function handleLogout() {
     })
   } catch (err: any) {
     isLoggingOut.value = false
-    console.error('❌ Logout error:', err)
+    
     toast.add({
       title: 'Error',
       description: err?.message || 'Failed to logout',

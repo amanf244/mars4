@@ -96,7 +96,7 @@ export const useProductStore = defineStore('product', {
       const seen = new Set<number>()
       return state.products.filter(product => {
         if (seen.has(product.id)) {
-          console.warn(`[Store] Duplicate product ID removed: ${product.id}`)
+         
           return false
         }
         seen.add(product.id)
@@ -158,7 +158,7 @@ export const useProductStore = defineStore('product', {
           deviceId: params?.deviceId ?? this.filters.deviceId ?? undefined
         }
 
-        console.log('[Store] Fetching products with params:', queryParams)
+       
 
         const response: ProductListResponse = await productApi.fetchProducts(queryParams)
 
@@ -166,17 +166,17 @@ export const useProductStore = defineStore('product', {
 
         if (!shouldAppend) {
           // NORMAL PAGINATION (admin) -> replace
-          console.log('[Store] Replace products (normal pagination)')
+        
           this.products = response.data
         } else {
           // INFINITY SCROLL (user) -> append + filter duplikat
-          console.log('[Store] Append products (infinity scroll)')
+        
           const existingIds = new Set(this.products.map(p => p.id))
           const newProducts = response.data.filter(p => !existingIds.has(p.id))
 
           const duplicateCount = response.data.length - newProducts.length
           if (duplicateCount > 0) {
-            console.warn(`[Store] Filtered ${duplicateCount} duplicate products`)
+           
           }
 
           this.products = [...this.products, ...newProducts]
@@ -189,12 +189,12 @@ export const useProductStore = defineStore('product', {
           pages: response.pagination.pages
         }
 
-        console.log('[Store] Pagination updated:', this.pagination)
+      
 
         return response
       } catch (error: any) {
         this.error = error.message || 'Gagal memuat daftar produk'
-        console.error('[Store] Error fetching products:', error)
+        
         throw error
       } finally {
         this.loading.products = false
@@ -205,7 +205,7 @@ export const useProductStore = defineStore('product', {
     async loadNextPage() {
       if (this.pagination.page < this.pagination.pages) {
         const nextPage = this.pagination.page + 1
-        console.log(`[Store] Loading next page (frontend): ${nextPage}`)
+      
 
         await this.fetchProducts({
           page: nextPage,
@@ -215,7 +215,7 @@ export const useProductStore = defineStore('product', {
         return true
       }
 
-      console.log('[Store] No more pages to load (frontend)')
+    
       return false
     },
 
@@ -237,7 +237,7 @@ export const useProductStore = defineStore('product', {
         return product
       } catch (error: any) {
         this.error = error.message || 'Gagal memuat detail produk'
-        console.error('Error fetching product detail:', error)
+       
         throw error
       } finally {
         this.loading.detail = false
@@ -259,7 +259,7 @@ export const useProductStore = defineStore('product', {
         return product
       } catch (error: any) {
         this.error = error.data?.message || 'Gagal membuat produk'
-        console.error('Error creating product:', error)
+       
         throw error
       } finally {
         this.loading.action = false
@@ -301,7 +301,7 @@ export const useProductStore = defineStore('product', {
     return product
   } catch (error: any) {
     this.error = error.data?.message || 'Gagal mengupdate produk'
-    console.error('Error updating product:', error)
+   
     throw error
   } finally {
     this.loading.action = false
@@ -330,7 +330,7 @@ export const useProductStore = defineStore('product', {
         }
       } catch (error: any) {
         this.error = error.data?.message || 'Gagal menghapus produk'
-        console.error('Error deleting product:', error)
+     
         throw error
       } finally {
         this.loading.action = false
@@ -381,7 +381,7 @@ export const useProductStore = defineStore('product', {
         return result
       } catch (error: any) {
         this.error = error.data?.message || 'Gagal mengupdate stok'
-        console.error('Error updating stock:', error)
+       
         throw error
       } finally {
         this.loading.action = false
@@ -409,7 +409,7 @@ export const useProductStore = defineStore('product', {
         return result
       } catch (error: any) {
         this.error = error.data?.message || 'Gagal mengupdate status'
-        console.error('Error updating status:', error)
+     
         throw error
       } finally {
         this.loading.action = false
@@ -672,7 +672,7 @@ async deleteQualityGrade(id: number) {
       try {
         const productApi = useProductApi()
 
-        console.log('[Store] Fetching references...')
+     
 
         const [devices, types, brands, grades] = await Promise.all([
           productApi.fetchDeviceModels(),
@@ -680,19 +680,13 @@ async deleteQualityGrade(id: number) {
           productApi.fetchPartBrands(),
           productApi.fetchQualityGrades()
         ])
-
-        console.log('[Store] Device Models:', devices.length)
-        console.log('[Store] Product Types:', types.length)
-        console.log('[Store] Part Brands:', brands.length)
-        console.log('[Store] Quality Grades:', grades.length)
-
         this.deviceModels = devices
         this.productTypes = types
         this.partBrands = brands
         this.qualityGrades = grades
 
       } catch (error: any) {
-        console.error('[Store] Error fetching references:', error)
+       
         this.error = error.message || 'Gagal memuat data referensi'
         throw error
       } finally {

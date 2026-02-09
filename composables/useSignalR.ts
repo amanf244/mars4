@@ -19,10 +19,8 @@ export const useSignalR = () => {
 
     try {
       await connection.start()
-      console.log('SignalR Connected')
       return connection
     } catch (err) {
-      console.error('SignalR Connection Error:', err)
       return null
     }
   }

@@ -153,7 +153,7 @@ const loadReferences = async () => {
       await productStore.fetchReferences()
     }
   } catch (error) {
-    console.error('Error fetching references:', error)
+    
   }
 }
 
@@ -212,7 +212,7 @@ form.value.qualityGrade =
 
     form.value.imageUrl = data.imageUrl || primaryFromImages || ''
   } catch (error) {
-    console.error('Failed to load product:', error)
+    
     await navigateTo('/dashboard/admin/products')
   } finally {
     loadingData.value = false
@@ -253,7 +253,7 @@ const handleFileChange = async (event: Event) => {
     form.value.imageUrl = imageUrls.value[0] ?? ''
     target.value = ''
   } catch (error: any) {
-    console.error(error)
+    
     errors.value.image = error.data?.message || 'Gagal upload gambar'
   } finally {
     isUploading.value = false
@@ -352,7 +352,7 @@ const handleStockUpdate = async (newStock: number) => {
       form.value.stock = result.newStock
     }
   } catch (error) {
-    console.error('Failed to update stock:', error)
+    
   }
 }
 
@@ -366,7 +366,7 @@ const toggleStatus = async () => {
       product.value.isActive = result.isActive
     }
   } catch (error) {
-    console.error('Failed to toggle status:', error)
+    
   }
 }
 

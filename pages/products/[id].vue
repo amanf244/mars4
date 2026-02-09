@@ -417,7 +417,7 @@ const formatPrice = (price: number | null | undefined): string => {
   try {
     return price.toLocaleString('id-ID')
   } catch (error) {
-    console.error('Error formatting price:', price, error)
+    
     return '0'
   }
 }
@@ -431,7 +431,7 @@ const loadProduct = async () => {
     await store.fetchProductById(id)
     activeImageIndex.value = 0
   } catch (error) {
-    console.error('Error loading product:', error)
+    
   }
 }
 
@@ -533,7 +533,7 @@ watchEffect(() => {
 })
 
 const url = useRequestURL()
-console.log('Request URL:', url)
+
 
 useHead(() => ({
   link: [

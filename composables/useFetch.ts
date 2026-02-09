@@ -38,7 +38,7 @@ export const useAuthFetch = async <T = any>(
   } catch (err: any) {
     // If 401, try refresh
     if (err?.status === 401 && auth.token && auth.refreshToken) {
-      console.warn('⚠️ Token expired, refreshing...')
+      
 
       const refreshed = await auth.refreshAccessToken()
 

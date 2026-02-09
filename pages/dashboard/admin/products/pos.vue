@@ -92,7 +92,7 @@ const searchTechnicians = async () => {
 
     technicianResults.value = res
   } catch (err) {
-    console.error('Failed to search technicians', err)
+    
   } finally {
     searchingTechnician.value = false
   }
@@ -139,7 +139,7 @@ const refreshPricing = async () => {
       useTechnicianPrice: posCart.useTechnicianPrice
     }
 
-    console.log('Pricing body:', body)
+   
 
     const res = await $fetch<CartPriceResponse>(`${apiBase }/products/cart/price`, {
       method: 'POST',
@@ -152,7 +152,7 @@ const refreshPricing = async () => {
 
     pricing.value = res
   } catch (err: any) {
-    console.error('Failed to price cart', err)
+    
     // kalau backend kirim {message: "..."}
     if (err?.data?.message) {
       error.value = err.data.message

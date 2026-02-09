@@ -55,7 +55,7 @@ export const useUsersStore = defineStore('users', () => {
       users.value = data
     } catch (err: any) {
       error.value = err?.data?.message || err?.message || 'Gagal memuat data user'
-      console.error('fetchUsers error:', err)
+   
       throw err
     } finally {
       loading.list = false
@@ -72,7 +72,7 @@ export const useUsersStore = defineStore('users', () => {
       return data
     } catch (err: any) {
       error.value = err?.data?.message || err?.message || 'Gagal memuat detail user'
-      console.error('fetchUserById error:', err)
+     
       throw err
     } finally {
       loading.detail = false
@@ -91,7 +91,7 @@ export const useUsersStore = defineStore('users', () => {
       return created
     } catch (err: any) {
       error.value = err?.data?.message || err?.message || 'Gagal membuat user'
-      console.error('createUser error:', err)
+    
       throw err
     } finally {
       loading.action = false
@@ -113,7 +113,7 @@ export const useUsersStore = defineStore('users', () => {
       return updated
     } catch (err: any) {
       error.value = err?.data?.message || err?.message || 'Gagal mengupdate user'
-      console.error('updateUser error:', err)
+    
       throw err
     } finally {
       loading.action = false
@@ -131,7 +131,7 @@ export const useUsersStore = defineStore('users', () => {
       }
     } catch (err: any) {
       error.value = err?.data?.message || err?.message || 'Gagal menghapus user'
-      console.error('deleteUser error:', err)
+  
       throw err
     } finally {
       loading.action = false
@@ -156,7 +156,7 @@ export const useUsersStore = defineStore('users', () => {
       return data
     } catch (err: any) {
       error.value = err?.data?.message || err?.message || 'Gagal memuat profil'
-      console.error('fetchMyProfile error:', err)
+     
       throw err
     } finally {
       loading.detail = false
@@ -182,7 +182,7 @@ export const useUsersStore = defineStore('users', () => {
       return updated
     } catch (err: any) {
       error.value = err?.data?.message || err?.message || 'Gagal mengupdate profil'
-      console.error('updateMyProfile error:', err)
+   
       throw err
     } finally {
       loading.action = false
@@ -205,7 +205,7 @@ export const useUsersStore = defineStore('users', () => {
       return result
     } catch (err: any) {
       error.value = err?.data?.message || err?.message || 'Gagal mencari teknisi'
-      console.error('searchTechnicians error:', err)
+   
       throw err
     } finally {
       loading.list = false

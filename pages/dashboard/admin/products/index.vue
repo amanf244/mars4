@@ -107,7 +107,7 @@ const handlePageChange = async (page: number) => {
   const maxPage = productStore.pagination.pages
   
   if (page > maxPage) {
-    console.warn(`[Page] Requested page ${page} exceeds max ${maxPage}, redirecting to ${maxPage}`)
+    
     page = maxPage
   }
   if (page < 1) {
@@ -175,7 +175,7 @@ const openDeleteModal = (product: Product) => {
 
 const handleDelete = async () => {
   if (!deleteProductId.value) {
-    console.error('No product ID for deletion')
+    
     return
   }
 
@@ -188,7 +188,7 @@ const handleDelete = async () => {
     // Reload page
     await productStore.fetchProducts({ page: productStore.pagination.page })
   } catch (error) {
-    console.error('Failed to delete product:', error)
+    
   }
 }
 
@@ -203,7 +203,7 @@ const selectedProductIds = computed(() => {
 
 const openBulkDeleteModal = () => {
   if (selectedProductIds.value.length === 0) {
-    console.warn('No products selected for bulk delete')
+    
     return
   }
   isBulkDeleteModalOpen.value = true
@@ -211,7 +211,7 @@ const openBulkDeleteModal = () => {
 
 const handleBulkDelete = async () => {
   if (selectedProductIds.value.length === 0) {
-    console.error('No products selected for bulk deletion')
+    
     return
   }
 
@@ -243,12 +243,12 @@ const handleBulkDelete = async () => {
     // Reset selection
     table.value?.tableApi?.resetRowSelection()
 
-    console.log(`Successfully deleted ${bulkDeleteTotal.value} products`)
+    
 
     // Reload data
     await productStore.fetchProducts({ page: productStore.pagination.page })
   } catch (error) {
-    console.error('Failed to bulk delete products:', error)
+    
     isBulkDeleting.value = false
   } finally {
     bulkDeleteProgress.value = 0

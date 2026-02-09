@@ -154,7 +154,7 @@ const handleSubmit = async () => {
       await navigateTo('/dashboard/admin/users')
     }, 1500)
   } catch (error: any) {
-    console.error('Error updating user:', error)
+    
 
     const errorMessage =
       usersStore.error || error.message || 'Gagal memperbarui user'

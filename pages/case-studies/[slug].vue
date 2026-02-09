@@ -748,15 +748,15 @@ onMounted(() => {
     window.removeEventListener('keydown', handleKeydown)
   }
 
-  console.log('Slug dari URL:', slug)
-  console.log('Item ditemukan:', item.value)
-  console.log('Semua slug yang ada:', 
-    allCaseStudiesItems.map(i => ({
-      id: i.id,
-      title: i.title,
-      slug: slugify(i.title)
-    }))
-  )
+  // console.log('Slug dari URL:', slug)
+  // console.log('Item ditemukan:', item.value)
+  // console.log('Semua slug yang ada:', 
+  //   allCaseStudiesItems.map(i => ({
+  //     id: i.id,
+  //     title: i.title,
+  //     slug: slugify(i.title)
+  //   }))
+  // )
 })
 
 // Set head untuk SEO

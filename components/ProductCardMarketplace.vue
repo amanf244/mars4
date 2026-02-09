@@ -171,7 +171,7 @@ const formatPrice = (price: number) => {
   try {
     return price.toLocaleString('id-ID')
   } catch (error) {
-    console.error('Error formatting price:', price, error)
+    
     return '0'
   }
 }

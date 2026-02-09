@@ -373,7 +373,7 @@ const createDefaultPhoneModel = () => {
     phoneGroup.userData.animate = animateRotation
     
   } catch (error) {
-    console.error('Error creating default model:', error)
+    
     errorMessage.value = 'Gagal membuat model default: ' + error.message
     loadError.value = true
     isLoading.value = false
@@ -479,14 +479,13 @@ const loadModel = () => {
         loadingInterval = null
       }
       
-      console.error('Error loading model:', error)
+      
       errorMessage.value = error.message || 'Tidak dapat memuat model 3D'
       loadError.value = true
       isLoading.value = false
       
       // If we've tried too many times, fall back to default model
       if (retryCount >= 2) {
-        console.log('Max retries reached, falling back to default model...')
         setTimeout(() => {
           loadDefaultModel()
         }, 500)
@@ -580,7 +579,7 @@ const initThreeJS = () => {
     animate()
     
   } catch (error) {
-    console.error('Gagal menginisialisasi Three.js:', error)
+    
     errorMessage.value = 'Gagal menginisialisasi 3D engine: ' + error.message
     loadError.value = true
     isLoading.value = false

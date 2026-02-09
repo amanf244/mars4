@@ -54,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (err: any) {
       const errorMsg = err?.data?.message || err?.message || 'Login gagal'
       error.value = errorMsg
-      console.error('❌ Login error:', errorMsg)
+      
       throw err
     } finally {
       loading.value = false
@@ -86,16 +86,15 @@ export const useAuthStore = defineStore('auth', () => {
           }
         )
         user.value = userData
-        console.log('✅ Auth restored:', userData.email)
       } catch (err) {
-        console.warn('⚠️ Token invalid, attempting refresh...')
+        
         const refreshed = await refreshAccessToken()
         if (!refreshed) {
           clearAuth()
         }
       }
     } catch (err) {
-      console.warn('⚠️ Restore failed:', err)
+      
       clearAuth()
     } finally {
       initialized.value = true
@@ -121,10 +120,8 @@ export const useAuthStore = defineStore('auth', () => {
       refreshToken.value = response.refresh_token
 
       _saveToCookies()
-      console.log('✅ Token refreshed')
       return true
     } catch (err) {
-      console.warn('❌ Refresh token failed:', err)
       clearAuth()
       return false
     }
@@ -144,7 +141,7 @@ export const useAuthStore = defineStore('auth', () => {
         )
       }
     } catch (err) {
-      console.warn('⚠️ Logout request failed (proceeding anyway):', err)
+      
     } finally {
       clearAuth()
     }
@@ -160,7 +157,7 @@ export const useAuthStore = defineStore('auth', () => {
     tokenCookie.value = null
     refreshTokenCookie.value = null
 
-    console.log('🧹 Auth cleared')
+    
   }
 
   function _saveToCookies() {
