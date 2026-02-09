@@ -229,7 +229,8 @@ const removeImage = async (index: number) => {
   form.value.imageUrls.splice(index, 1)
 
   try {
-    await fileUpload.deleteFile(fileName)
+    // create mode → pakai temp delete
+    await fileUpload.deleteTempFile(fileName)
   } catch (e) {
     console.error(e)
     form.value.imageUrls.splice(index, 0, fileName)

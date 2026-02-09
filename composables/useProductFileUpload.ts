@@ -16,56 +16,54 @@ export const useProductFileUpload = () => {
 
   const apiBase = config.public.apiBase || 'http://localhost:5084/api/v1'
 
+  const authHeader = () => ({
+    Authorization: `Bearer ${auth.token}`,
+  })
+
   const uploadFile = async (file: File): Promise<FileUploadResponse> => {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await $fetch<FileUploadResponse>(`${apiBase}/files/upload`, {
+    return await $fetch<FileUploadResponse>(`${apiBase}/files/upload`, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${auth.token}`
-      },
-      body: formData
+      headers: authHeader(),
+      body: formData,
     })
-
-    return response
   }
 
   const uploadMultipleFile = async (
-    files: File[]
+    files: File[],
   ): Promise<FileUploadResponse> => {
     const formData = new FormData()
-    files.forEach(file => {
-      formData.append('files', file)
-    })
+    files.forEach(file => formData.append('files', file))
 
-    return await $fetch<FileUploadResponse>(
-      `${apiBase}/files/upload-multiple`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${auth.token}`
-        },
-        body: formData
-      }
-    )
+    return await $fetch<FileUploadResponse>(`${apiBase}/files/upload-multiple`, {
+      method: 'POST',
+      headers: authHeader(),
+      body: formData,
+    })
   }
 
-  // Delete berdasarkan NAMA FILE (bukan URL)
+  // Hapus image yang SUDAH tersimpan di DB (dipakai di halaman edit)
   const deleteFile = async (fileName: string): Promise<void> => {
     await $fetch(`${apiBase}/files/images/${fileName}`, {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${auth.token}`
-      }
+      headers: authHeader(),
+    })
+  }
+
+  // Hapus image TEMP (baru upload, product belum disubmit)
+  const deleteTempFile = async (fileName: string): Promise<void> => {
+    await $fetch(`${apiBase}/files/temp-images/${fileName}`, {
+      method: 'DELETE',
+      headers: authHeader(),
     })
   }
 
   // Terima fileName, kembalikan URL lengkap untuk img src
   const getFileUrl = (fileName: string | undefined): string => {
     if (!fileName) return ''
-
-    // URL final: {apiBase}/files/images/{fileName}
+    // Untuk sekarang, kita tetap pakai endpoint GET, boleh juga langsung /uploads/products
     return `${apiBase}/files/images/${fileName}`
   }
 
@@ -73,6 +71,7 @@ export const useProductFileUpload = () => {
     uploadFile,
     uploadMultipleFile,
     deleteFile,
-    getFileUrl
+    deleteTempFile,
+    getFileUrl,
   }
 }
