@@ -1,17 +1,14 @@
-<!-- pages/products/[id].vue -->
+<!-- pages/products/[id]/[slug].vue -->
 <template>
-  <!-- Main Content -->
   <div class="bg-gray-50">
     <main class="max-w-7xl mx-auto px-4 py-6">
-      <!-- Top bar: back + title (ganti header lama) -->
+      <!-- Top bar -->
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-4">
           <button
             type="button"
             @click="$router.back()"
-            class="p-2 rounded-lg text-gray-600 bg-gray-100
-                   hover:bg-amber-500 hover:text-white
-                   transition"
+            class="p-2 rounded-lg text-gray-600 bg-gray-100 hover:bg-amber-500 hover:text-white transition"
             aria-label="Kembali"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,11 +35,9 @@
       <div v-if="store.loading.detail" class="bg-white rounded-xl shadow-sm p-8">
         <div class="animate-pulse space-y-6">
           <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Image Skeleton -->
             <div class="lg:w-1/2">
               <div class="aspect-square bg-gray-200 rounded-xl"></div>
             </div>
-            <!-- Details Skeleton -->
             <div class="lg:w-1/2 space-y-4">
               <div class="h-8 bg-gray-200 rounded w-3/4"></div>
               <div class="h-4 bg-gray-200 rounded w-1/2"></div>
@@ -77,7 +72,6 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
           <!-- Left Column - Images -->
           <div>
-            <!-- Main Image -->
             <div class="relative bg-gray-100 rounded-xl overflow-hidden mb-4">
               <div class="aspect-square">
                 <img
@@ -95,7 +89,6 @@
               </div>
             </div>
 
-            <!-- Thumbnails -->
             <div v-if="imageUrls.length > 1" class="flex gap-2 mt-2 overflow-x-auto">
               <button
                 v-for="(img, index) in imageUrls"
@@ -162,10 +155,7 @@
               <span>{{ product.deviceModel }}</span>
             </div>
 
-            <!-- Product Name -->
             <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ product.name }}</h1>
-
-            <!-- SKU -->
             <div class="text-gray-500 font-mono mb-4">{{ product.sku }}</div>
 
             <!-- Rating & Sold -->
@@ -334,7 +324,6 @@
       <!-- Error State -->
       <div v-else class="bg-white rounded-xl shadow-sm p-8 text-center">
         <div class="text-red-500 mb-4">Produk tidak ditemukan</div>
-
         <NuxtLink
           to="/"
           class="inline-block text-primary-600 hover:text-primary-800 font-medium"
@@ -360,38 +349,65 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import type { ProductDetail, Product } from '~/composables/useProductApi'
 import { useSignalR } from '~/composables/useSignalR'
-import { useSeoMeta } from '#imports'
+import {
+  useSeoMeta,
+  useSiteConfig,
+  useSchemaOrg,
+  defineProduct,
+  defineOffer,
+  defineOgImageComponent
+} from '#imports'
 
-definePageMeta({
-  layout: 'marketplace'
-})
+definePageMeta({ layout: 'marketplace' })
 
+// --- 0. PANGGIL COMPOSABLE DI TOP-LEVEL (AMAN) ---
+const { public: { apiBase } } = useRuntimeConfig()
+const siteConfig = useSiteConfig()
+
+// Ekstrak base URL untuk gambar SEKALI
+const imageBaseUrl = apiBase.replace(/\/api\/v1\/?$/, '')
+
+// --- 1. AMBIL ID DAN SLUG ---
 const route = useRoute()
-const router = useRouter()
+const productId = parseInt(route.params.id as string)
+const slug = route.params.slug as string
+
+// --- 2. FETCH PRODUK DI SSR (TOP-LEVEL AWAIT) ---
 const store = useProductStore()
-const { connect, disconnect } = useSignalR()
+let initialActiveImageIndex = 0
+if (!isNaN(productId)) {
+  await store.fetchProductById(productId)
+  const p = store.currentProduct
+  if (p?.images?.length) {
+    const primaryIndex = p.images.findIndex(img => img.isPrimary)
+    if (primaryIndex !== -1) initialActiveImageIndex = primaryIndex
+  }
+}
 
+// --- 3. REACTIVE STATE ---
 const quantity = ref(1)
-const activeImageIndex = ref(0)
-
+const activeImageIndex = ref(initialActiveImageIndex)
 const product = computed<ProductDetail | null>(() => store.currentProduct)
 
-const relatedProducts = computed<Product[]>(() => {
-  const current = product.value
-  if (!current || !store.products.length) return []
+// --- 4. HELPER FUNCTIONS (TANPA COMPOSABLE) ---
+const getImageUrl = (fileName: string | null | undefined) => {
+  if (!fileName) return ''
+  return `${imageBaseUrl}/uploads/products/${fileName}`
+}
 
-  return store.products
-    .filter(p =>
-      p.id !== current.id &&
-      p.deviceModel === current.deviceModel &&
-      p.isActive
-    )
-    .slice(0, 5)
-})
+const formatPrice = (price: number | null | undefined): string => {
+  if (!price && price !== 0) return '0'
+  try {
+    return price.toLocaleString('id-ID')
+  } catch {
+    return '0'
+  }
+}
 
+// --- 5. IMAGE HANDLING ---
 const imageUrls = computed(() => {
   const imgs = product.value?.images ?? []
   if (!imgs.length && product.value?.imageUrl) {
@@ -407,34 +423,81 @@ const activeImageUrl = computed(() => {
   return imageUrls.value[activeImageIndex.value] ?? product.value?.imageUrl ?? null
 })
 
-const getImageUrl = (fileName: string | null | undefined) => {
-  if (!fileName) return ''
-  return `${useRuntimeConfig().public.apiBase.replace(/\/api\/v1\/?$/, '')}/uploads/products/${fileName}`
-}
+// --- 6. RELATED PRODUCTS ---
+const relatedProducts = computed<Product[]>(() => {
+  const current = product.value
+  if (!current || !store.products.length) return []
+  return store.products
+    .filter(p =>
+      p.id !== current.id &&
+      p.deviceModel === current.deviceModel &&
+      p.isActive
+    )
+    .slice(0, 5)
+})
 
-const formatPrice = (price: number | null | undefined): string => {
-  if (!price && price !== 0) return '0'
-  try {
-    return price.toLocaleString('id-ID')
-  } catch (error) {
-    
-    return '0'
-  }
-}
+// --- 7. DEFAULT OG IMAGE ---
+const DEFAULT_OG_IMAGE = 'https://mars4.my.id/default-og-product.jpg'
 
-const loadProduct = async () => {
-  try {
-    const id = parseInt(route.params.id as string)
-    if (isNaN(id)) {
-      throw new Error('ID produk tidak valid')
+// --- 8. OG IMAGE (SSR FRIENDLY) ---
+defineOgImageComponent('ProductOg', {
+  title: product.value?.name,
+  price: product.value?.retailPrice,
+  image: product.value?.imageUrl
+    ? getImageUrl(product.value.imageUrl)
+    : DEFAULT_OG_IMAGE
+})
+
+// --- 9. SEO META (REACTIVE) ---
+useSeoMeta({
+  title: () => product.value?.name
+    ? `${product.value.name} - Mars4`
+    : 'Produk',
+  description: () => product.value?.description?.slice(0, 160)
+    || `Beli ${product.value?.name || 'sparepart'} untuk ${product.value?.deviceModel || 'HP'} di Serang.`,
+  ogTitle: () => product.value?.name,
+  ogDescription: () => product.value?.description?.slice(0, 160),
+  ogImage: () => product.value?.imageUrl
+    ? getImageUrl(product.value.imageUrl)
+    : DEFAULT_OG_IMAGE,
+  twitterCard: 'summary_large_image'
+})
+
+// --- 10. SCHEMA.ORG (PAKAI siteConfig DARI TOP-LEVEL) ---
+useSchemaOrg(() => {
+  if (!product.value) return []
+  return [
+    defineProduct({
+      name: product.value.name,
+      description: product.value.description || '',
+      image: getImageUrl(product.value.imageUrl) || DEFAULT_OG_IMAGE,
+      sku: product.value.sku,
+      brand: {
+        name: product.value.partBrand || 'Mars4'
+      },
+      offers: defineOffer({
+        price: product.value.retailPrice,
+        priceCurrency: 'IDR',
+        availability: product.value.stock > 0
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+        url: `${siteConfig.url}/products/${productId}/${slug}`
+      })
+    })
+  ]
+})
+
+// --- 11. CANONICAL URL (PAKAI siteConfig DARI TOP-LEVEL) ---
+useHead({
+  link: () => [
+    {
+      rel: 'canonical',
+      href: `${siteConfig.url}/products/${productId}/${slug}`
     }
-    await store.fetchProductById(id)
-    activeImageIndex.value = 0
-  } catch (error) {
-    
-  }
-}
+  ]
+})
 
+// --- 12. CART ACTIONS ---
 const addProductToCart = (item: Product | ProductDetail, qty: number) => {
   if (!item || item.stock === 0 || !item.isActive) return
   window.alert(`Ditambahkan ke keranjang: ${item.name} (${qty}x)`)
@@ -449,6 +512,9 @@ const buyNow = () => {
   if (!product.value || product.value.stock === 0 || !product.value.isActive) return
   window.alert(`Beli sekarang: ${product.value.name} (${quantity.value}x)`)
 }
+
+// --- 13. SIGNALR (CLIENT ONLY) ---
+const { connect, disconnect } = useSignalR()
 
 const registerSignalREvents = (connection: any) => {
   const currentId = () => {
@@ -509,43 +575,7 @@ const registerSignalREvents = (connection: any) => {
   })
 }
 
-watchEffect(() => {
-  const p = product.value
-  if (!p) return
-
-  useSeoMeta({
-    title: `${p.name} ${p.deviceModel} | Sparepart HP Serang Banten`,
-    description: p.description
-      ? p.description.slice(0, 160)
-      : `${p.name} untuk ${p.deviceModel}, ready stok di Serang Banten.`,
-
-    ogTitle: `${p.name} - Sparepart HP Serang`,
-    ogDescription: p.description
-      ? p.description.slice(0, 160)
-      : `${p.name} stok tersedia di Serang`,
-
-    ogImage: p.imageUrl
-      ? getImageUrl(p.imageUrl)
-      : '/default-product.jpg',
-
-    twitterCard: 'summary_large_image'
-  })
-})
-
-const url = useRequestURL()
-
-
-useHead(() => ({
-  link: [
-    {
-      rel: 'canonical',
-      href: `${url.origin}/products/${route.params.id}`
-    }
-  ]
-}))
-
 onMounted(async () => {
-  await loadProduct()
   const connection = await connect()
   if (connection) {
     registerSignalREvents(connection)
@@ -559,5 +589,5 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Custom styles if needed */
+/* Tidak ada style tambahan */
 </style>

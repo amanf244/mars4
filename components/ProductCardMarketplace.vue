@@ -27,7 +27,7 @@
 
     <!-- Image -->
 <NuxtLink
-  :to="`/products/${product.id}`"
+  :to="`/products/${product.id}/${slugify(product.name)}`"
   class="relative h-48 bg-gray-100 overflow-hidden block group cursor-pointer"
 >
   <img
@@ -61,7 +61,7 @@
      <!-- Product Name -->
 <h3 class="font-medium text-gray-900 mb-2 min-h-[3rem]">
   <NuxtLink
-    :to="`/products/${product.id}`"
+    :to="`/products/${product.id}/${slugify(product.name)}`"
     class="block line-clamp-2 hover:text-primary-600"
   >
     {{ product.name }}
@@ -139,6 +139,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { slugify } from '~/utils/slugify' // <-- import
 
 const props = defineProps({
   product: {

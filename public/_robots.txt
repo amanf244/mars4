@@ -1,0 +1,8 @@
+
+# public/_robots.txt (recommended)
+User-agent: *
+Allow: /
+Disallow: /dashboard
+
+User-agent: GPTBot
+Disallow: /
