@@ -13,7 +13,7 @@
         @click.prevent="handleClick('home')"
         class="text-2xl font-bold text-purple-400 hover:text-purple-300 transition-colors cursor-pointer"
       >
-        Aldep 4
+        Mars4Fix
       </a>
       <!-- Desktop Menu -->
       <div class="space-x-8 text-gray-300 hidden md:flex">

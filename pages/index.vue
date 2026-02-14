@@ -120,4 +120,49 @@ const products = [
   { name: 'Protective Case', price: '$15' },
   { name: 'Premium Cables', price: '$12' }
 ]
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Mars4Fix",
+        "image": "https://www.mars4.my.id/images/logo.png",
+        "url": "https://www.mars4.my.id/",
+        "telephone": "+6289630534368",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Lampu merah Warjok, Jl. KH Abdul Fatah Hasan No.42, Cipare, Kec. Serang",
+          "addressLocality": "Serang",
+          "addressRegion": "Banten",
+          "postalCode": "42117",
+          "addressCountry": "ID"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "-6.125473",
+          "longitude": "106.1642682"
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Saturday",
+            "opens": "09:00",
+            "closes": "15:00"
+          }
+        ],
+        "priceRange": "Rp 50.000 - Rp 2.000.000",
+        "description": "Layanan perbaikan HP profesional dengan teknisi ahli. Ganti layar, baterai, perbaikan motherboard, dan servis lainnya."
+      })
+    }
+  ]
+})
 </script>

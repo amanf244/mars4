@@ -104,10 +104,10 @@
           <!-- Konten -->
           <div data-aos="fade-left" class="px-4">
             <h2 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mb-6">
-              Tentang <span class="text-white">Aldep 4</span>
+              Tentang <span class="text-white">Mars4</span>
             </h2>
             <p class="text-gray-300 text-lg leading-relaxed mb-6 bg-gray-900/30 p-4 rounded-lg border-l-4 border-purple-400">
-              Aldep 4 adalah Cabang keempat dari Aldep celluler yang berfokus pada perbaikan dan servis perangkat elektronik dengan teknologi terkini.
+              Mars4 adalah bengkel reparasi ponsel yang telah beroperasi selama lebih dari 16 tahun. Kami mengkhususkan diri dalam memperbaiki berbagai merek dan model ponsel, mulai dari kerusakan layar, baterai, hingga masalah perangkat lunak. Dengan tim teknisi yang berpengalaman dan menggunakan peralatan canggih, kami berkomitmen untuk memberikan layanan terbaik dengan harga yang kompetitif. Kepuasan pelanggan adalah prioritas utama kami, dan kami selalu berusaha untuk menyelesaikan setiap perbaikan dengan cepat dan efisien.
             </p>
             <div class="grid grid-cols-2 gap-4 mb-8">
               <div class="flex items-center space-x-3 p-3 bg-gray-900/40 rounded-lg hover:bg-gray-800/60 transition-all group">
