@@ -27,7 +27,8 @@ export default defineNuxtConfig({
       appVersion: process.env.NUXT_PUBLIC_APP_VERSION || '1.0.0',
       authEndpoint: process.env.NUXT_PUBLIC_AUTH_ENDPOINT || '/auth',
       tokenKey: process.env.NUXT_PUBLIC_TOKEN_KEY || 'mars4_token',
-      refreshTokenKey: process.env.NUXT_PUBLIC_REFRESH_TOKEN_KEY || 'mars4_refresh_token'
+      refreshTokenKey: process.env.NUXT_PUBLIC_REFRESH_TOKEN_KEY || 'mars4_refresh_token',
+      gaID: process.env.NUXT_PUBLIC_GA_ID
     }
   },
 
