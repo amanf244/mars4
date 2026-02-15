@@ -28,10 +28,18 @@ export default defineNuxtConfig({
       authEndpoint: process.env.NUXT_PUBLIC_AUTH_ENDPOINT || '/auth',
       tokenKey: process.env.NUXT_PUBLIC_TOKEN_KEY || 'mars4_token',
       refreshTokenKey: process.env.NUXT_PUBLIC_REFRESH_TOKEN_KEY || 'mars4_refresh_token',
-      gaId: process.env.NUXT_PUBLIC_GA_ID || 'G-47ZF88NPY4',
+      // gaId: process.env.NUXT_PUBLIC_GA_ID || 'G-47ZF88NPY4',
        // Tambahkan konfigurasi lain yang diperlukan untuk GA atau fitur lainnya
        // Contoh: 
        // gaTrackingEnabled: process.env.NUXT_PUBLIC_GA_TRACKING_ENABLED === 'true'
+    }
+  },
+
+  scripts: {
+    registry: {
+      googleAnalytics: {
+        id: 'G-47ZF88NPY4'
+      }
     }
   },
 
@@ -39,14 +47,7 @@ export default defineNuxtConfig({
     transpile: ['gsap', 'three']
   },
 
-  modules: [
-    '@nuxt/ui',
-    '@pinia/nuxt',
-    '@nuxtjs/leaflet',
-    '@nuxt/icon',
-    '@nuxtjs/color-mode',
-    '@nuxtjs/seo'
-  ],
+  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/leaflet', '@nuxt/icon', '@nuxtjs/color-mode', '@nuxtjs/seo', '@nuxt/scripts'],
 
   colorMode: {
     preference: 'system',
