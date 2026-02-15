@@ -28,7 +28,10 @@ export default defineNuxtConfig({
       authEndpoint: process.env.NUXT_PUBLIC_AUTH_ENDPOINT || '/auth',
       tokenKey: process.env.NUXT_PUBLIC_TOKEN_KEY || 'mars4_token',
       refreshTokenKey: process.env.NUXT_PUBLIC_REFRESH_TOKEN_KEY || 'mars4_refresh_token',
-      gaID: process.env.NUXT_PUBLIC_GA_ID
+      gaID: process.env.NUXT_PUBLIC_GA_ID || 'G-47ZF88NPY4',
+       // Tambahkan konfigurasi lain yang diperlukan untuk GA atau fitur lainnya
+       // Contoh: 
+       // gaTrackingEnabled: process.env.NUXT_PUBLIC_GA_TRACKING_ENABLED === 'true'
     }
   },
 
