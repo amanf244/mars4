@@ -1,31 +1,29 @@
+// plugins/ga.client.ts
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
-  const router = useRouter()
+  const gaId = config.public.gaId
 
-  if (!config.public.gaId) return
+  if (!gaId) return
 
-  // Inject script
+  // Inisialisasi dataLayer dan gtag
+  window.dataLayer = window.dataLayer || []
+  window.gtag = function (...args: any[]) {
+    window.dataLayer.push(args)
+  }
+
+  // Load script GA
   const script = document.createElement('script')
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${config.public.gaId}`
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`
   script.async = true
   document.head.appendChild(script)
 
-  // Setup global function (SEBELUM script load)
-  window.dataLayer = window.dataLayer || []
-  function gtag(...args: any[]) {
-    window.dataLayer.push(args)
-  }
-  window.gtag = gtag
+  // Kirim pageview awal
+  window.gtag('js', new Date())
+  window.gtag('config', gaId, { send_page_view: true })
 
-  gtag('js', new Date())
-  gtag('config', config.public.gaId, {
-    send_page_view: true
-  })
-
-  // Track SPA navigation
+  // Track navigasi SPA
+  const router = useRouter()
   router.afterEach((to) => {
-    window.gtag('config', config.public.gaId, {
-      page_path: to.fullPath,
-    })
+    window.gtag('config', gaId, { page_path: to.fullPath })
   })
 })
