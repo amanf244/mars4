@@ -9,7 +9,7 @@ interface Product {
 
 export default defineSitemapEventHandler(async () => {
   const config = useRuntimeConfig()
-  const apiBase = config.public.apiBase || 'http://localhost:5084/api/v1'
+  const apiBase = config.public.apiBase || 'https://api.mars4.my.id/api/v1'
 
   const response = await $fetch<{
     data: Product[]

@@ -54,6 +54,10 @@ export default defineNuxtConfig({
     fallback: 'light',
     classSuffix: ''
   },
+  robots: {
+  sitemap: 'https://mars4.my.id/sitemap.xml'
+},
+
 
   ssr: true,
 

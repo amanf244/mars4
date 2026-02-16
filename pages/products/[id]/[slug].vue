@@ -440,28 +440,37 @@ const relatedProducts = computed<Product[]>(() => {
 const DEFAULT_OG_IMAGE = 'https://mars4.my.id/default-og-product.jpg'
 
 // --- 8. OG IMAGE (SSR FRIENDLY) ---
-defineOgImageComponent('ProductOg', {
-  title: product.value?.name,
-  price: product.value?.retailPrice,
-  image: product.value?.imageUrl
-    ? getImageUrl(product.value.imageUrl)
-    : DEFAULT_OG_IMAGE
-})
+// defineOgImageComponent('ProductOg', {
+//   title: product.value?.name,
+//   price: product.value?.retailPrice,
+//   image: product.value?.imageUrl
+//     ? getImageUrl(product.value.imageUrl)
+//     : DEFAULT_OG_IMAGE
+// })
 
 // --- 9. SEO META (REACTIVE) ---
 useSeoMeta({
   title: () => product.value?.name
     ? `${product.value.name} - Mars4`
     : 'Produk',
-  description: () => product.value?.description?.slice(0, 160)
-    || `Beli ${product.value?.name || 'sparepart'} untuk ${product.value?.deviceModel || 'HP'} di Serang.`,
+
+  description: () =>
+    product.value?.description?.slice(0, 160) ||
+    `Beli ${product.value?.name || 'sparepart'} untuk ${product.value?.deviceModel || 'HP'} di Serang.`,
+
   ogTitle: () => product.value?.name,
-  ogDescription: () => product.value?.description?.slice(0, 160),
-  ogImage: () => product.value?.imageUrl
-    ? getImageUrl(product.value.imageUrl)
-    : DEFAULT_OG_IMAGE,
+
+  ogDescription: () =>
+    product.value?.description?.slice(0, 160),
+
+  ogImage: () =>
+    product.value?.imageUrl
+      ? `https://mars4.my.id/uploads/products/${product.value.imageUrl}`
+      : 'https://mars4.my.id/default-og.png',
+
   twitterCard: 'summary_large_image'
 })
+
 
 // --- 10. SCHEMA.ORG (PAKAI siteConfig DARI TOP-LEVEL) ---
 useSchemaOrg(() => {
