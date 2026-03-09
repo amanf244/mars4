@@ -159,9 +159,16 @@ const navigation = computed<NavItem[]>(() => {
       },
       {
         id: 'admin-queue',
-        label: 'Service Queue',
+        label: 'Kerusakan',
         icon: 'i-heroicons-queue-list',
-        to: '/dashboard/admin/services/queue',
+        to: '/dashboard/admin/services/kerusakan',
+        description: 'Pending services'
+      },
+      {
+        id: 'admin-queue',
+        label: 'Teknisi',
+        icon: 'i-heroicons-queue-list',
+        to: '/dashboard/admin/services/teknisi',
         description: 'Pending services'
       },
       
