@@ -370,7 +370,7 @@ const generatePrintContent = (ticket: ServiceTicket): string => {
       <div style="font-size:15px;font-weight:bold">NOTA SERVIS</div>
       <div>Aldep4 Service</div>
       <div>Telp: 0896-3053-4368</div>
-      <div>Jl. Contoh Alamat No.123</div>
+      <div>Lampu merah Warjok, Jl. KH Abdul Fatah Hasan No.42, Cipare, Kec. Serang, Kota Serang, Banten 42117</div>
       <div>mars4.my.id</div>
     </div>
 
